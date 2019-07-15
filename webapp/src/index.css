@@ -7,7 +7,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
   .space {
-    background: rgb(53, 52, 52);
+    background: rgb(34, 31, 31);
+  }
+  
+  .subject {
+    background: green;
+    color: white;
+    border: 0px;
+    border-radius: 20px;
+    height: 40px;
+    width: 150px;
+    font-size: 20px;
+    padding: 0px;
+    margin: 3px;
+  }
+  
+  .condition {
+    background: blue;
+    color: white;
+    border: 0px;
+    border-radius: 20px;
+    height: 40px;
+    width: 150px;
+    font-size: 20px;
+    padding: 0px;
+    margin: 3px;
   }
 
 

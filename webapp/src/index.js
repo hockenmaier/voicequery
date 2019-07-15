@@ -3,18 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Bubble extends React.Component{
-    render(){        
-        const context = this.props.canvas.getContext('2d');
-        console.log(this.props.canvas);
+    render(){  
         return(
             <div>
-                {context.beginPath()}
-                {context.arc(50, 100, 100, 0, 2 * Math.PI, false)};
-                {context.fillStyle = 'green'};
-                {context.fill()};
-                {context.lineWidth = 5};
-                {context.strokeStyle = '#003300'};
-                {context.stroke()};
+                <button className = {this.props.type} height = {200} width = {150}>{this.props.name}</button>
             </div>
         );
     }
@@ -63,17 +55,17 @@ class Space extends React.Component{
         canvas.height = SizeY;
     }
 
-    renderBubble(){
-        //const canvas = this.refs.canvas
-        //const ctx = canvas.getContext('2d');
-        console.log("rendering bubble")
-        const canvas=this.canvasRef.current
-        console.log(canvas)
+    // renderBubble(){
+    //     //const canvas = this.refs.canvas
+    //     //const ctx = canvas.getContext('2d');
+    //     console.log("rendering bubble")
+    //     const canvas=this.canvasRef.current
+    //     console.log(canvas)
 
-        return <Bubble 
-            canvas={this.canvasRef.current}
-        />;
-    }
+    //     return <Bubble 
+    //         canvas={this.canvasRef.current}
+    //     />;
+    // }
 
     render(){
         //createCanvas();
@@ -82,8 +74,16 @@ class Space extends React.Component{
                 <div className = "canvas">
                     <canvas ref={this.canvasRef} width={0} height={0} id="space_canvas">Please update your browser to use this app</canvas>
                 </div>
-                {this.renderBubble.bind(this)}
-                {this.renderBubble()}
+                <Bubble
+                    id= {0}
+                    name= {'Costume'}
+                    type= {'subject'}
+                />
+                <Bubble
+                    id= {1}
+                    name= {'On the Lot'}
+                    type= {'condition'}
+                />
             </div>
         );
     }    
