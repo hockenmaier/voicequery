@@ -4,7 +4,8 @@ import './index.css';
 
 class Bubble extends React.Component{
     render(){        
-        const context = this.props.ctx
+        const context = this.props.canvas.getContext('2d');
+        console.log(this.props.canvas);
         return(
             <div>
                 {context.beginPath()}
@@ -22,6 +23,7 @@ class Bubble extends React.Component{
 class Space extends React.Component{
     constructor(props){
         super(props);
+        this.canvasRef = React.createRef();
         this.state = {          
           canvas: document.getElementById('space_canvas'),
           ctx: null,
@@ -31,27 +33,29 @@ class Space extends React.Component{
 
     componentDidMount(){
         //creating the canvas here
-        const canvas = this.refs.canvas
-        const mycanvas = React.createContext(canvas)
+        //const canvas = this.refs.canvas
+        const canvas = this.canvasRef.current;
+        //const mycanvas = React.createContext(canvas)
         const ctx = canvas.getContext('2d');
         this.setState({
             canvas: canvas,
             ctx: ctx
         })
         
-        console.log(canvas);
-        console.log(this.state.canvas);
-        console.log(this.context.mycanvas)
-        console.log(ctx);
-        console.log(this.state.ctx);
+        // console.log(canvas);
+        // console.log(this.state.canvas);
+        //console.log(this.context.mycanvas)
+        // console.log(ctx);
+        // console.log(this.state.ctx);
         // console.log(ctx)
         this.resizeCanvas();
-        //window.addEventListener('resize', this.resizeCanvas, false);
+        window.addEventListener('resize', this.resizeCanvas.bind(this), false);
     }
     
     resizeCanvas() { //this resizes the canvas and is called when the window size changes
-        //console.log('resized')
-        const canvas = this.refs.canvas
+        console.log('resized')
+        // const canvas = this.refs.canvas
+        const canvas = this.canvasRef.current;
         //const canvas = this.state.canvas;
         const SizeX = window.innerWidth*.9;
         const SizeY = window.innerHeight*.6;
@@ -62,8 +66,12 @@ class Space extends React.Component{
     renderBubble(){
         //const canvas = this.refs.canvas
         //const ctx = canvas.getContext('2d');
+        console.log("rendering bubble")
+        const canvas=this.canvasRef.current
+        console.log(canvas)
+
         return <Bubble 
-            ctx={this.state.ctx}
+            canvas={this.canvasRef.current}
         />;
     }
 
@@ -72,9 +80,10 @@ class Space extends React.Component{
         return(
             <div className = "space">                
                 <div className = "canvas">
-                    <canvas ref="canvas" width={0} height={0} id="space_canvas">Please update your browser to use this app</canvas>
+                    <canvas ref={this.canvasRef} width={0} height={0} id="space_canvas">Please update your browser to use this app</canvas>
                 </div>
-                {/* {this.renderBubble()} */}
+                {this.renderBubble.bind(this)}
+                {this.renderBubble()}
             </div>
         );
     }    
