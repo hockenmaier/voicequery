@@ -33,7 +33,7 @@ class Space extends React.Component{
     resizeCanvas() { //this resizes the canvas and is called when the window size changes
         console.log('resized')
         const canvas = this.canvasRef.current;
-        const SizeX = window.innerWidth*.9;
+        const SizeX = window.innerWidth*.8;
         const SizeY = window.innerHeight*.6;
         canvas.width = SizeX;
         canvas.height = SizeY;

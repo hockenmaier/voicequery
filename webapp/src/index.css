@@ -6,12 +6,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-  .space {
+  .canvas {
     background: rgb(34, 31, 31);
   }
   
   .subject {
     background: green;
+    enable-background: false;
     color: white;
     border: 0px;
     border-radius: 20px;
@@ -20,6 +21,8 @@ body {
     font-size: 20px;
     padding: 0px;
     margin: 3px;
+    user-select: none;
+    outline: none;
   }
   
   .condition {
@@ -32,6 +35,8 @@ body {
     font-size: 20px;
     padding: 0px;
     margin: 3px;
+    user-select: none;
+    outline: none;
   }
 
 
