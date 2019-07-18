@@ -10,33 +10,26 @@ body {
     background: rgb(34, 31, 31);
   }
   
+  .bubble {
+    color: white;
+    border: 0px;
+    font-size: 20px;
+    padding: 0px;
+    margin: 3px;
+    outline: none;
+    isolation: isolate;
+    position: inherit;
+  }
+
   .subject {
     background: green;
-    enable-background: false;
-    color: white;
-    border: 0px;
-    border-radius: 20px;
-    height: 40px;
-    width: 150px;
-    font-size: 20px;
-    padding: 0px;
-    margin: 3px;
-    user-select: none;
-    outline: none;
+    border-radius: 50%;
   }
   
-  .condition {
+  .bubble .condition {
     background: blue;
-    color: white;
-    border: 0px;
-    border-radius: 20px;
-    height: 40px;
-    width: 150px;
-    font-size: 20px;
-    padding: 0px;
-    margin: 3px;
-    user-select: none;
-    outline: none;
+    border-radius: 5px;
+    transform: skew(-20deg);
   }
 
 

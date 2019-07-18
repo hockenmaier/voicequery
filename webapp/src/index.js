@@ -2,21 +2,54 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+var lastDragStartId = '';
+
 class Bubble extends React.Component{
-    allowDrop(){
-        console.log('bubble dragover: ' + this.props.id);
+    constructor(props){
+        super(props);
+        this.state = {
+            dragover: false,
+        };
+    }
+    
+    handleDragOver(e){
+        let dragover = true;
+        //console.log('target id is: ' + e.nativeEvent.target.id + ' and this.props.id is: ' + this.props.id + ' and global lasdragstartid is: ' + lastDragStartId);
+        if (e.nativeEvent.srcElement.id === lastDragStartId.toString()){
+            dragover = false;
+        }
+        this.setState({
+            dragover: dragover,
+        })
+    }
+    handleDragLeave(e){
+        this.setState({
+            dragover: false,
+        })
     }
 
+    // handleDragStart(e){
+    //     console.log('drag start and this.props.id is: ' + this.props.id);
+    // }
+
     render(){
+        let bubbleHeight = (this.state.dragover ? '73px' : '65px');
+        let bubbleWidth = (this.state.dragover ? '160px' : '150px');
         return(
-            <div>
-                <button className = {this.props.type} 
-                height = {200} 
-                width = {150} 
-                draggable="true" 
-                onDragStart={this.props.onDrag}
-                onDrop={this.props.onDrop}
-                onDragOver={this.allowDrop.bind(this)}
+            <div className = 'bubble'>
+                <button 
+                    id = {this.props.id}
+                    className = {this.props.type}        
+                    draggable="true" 
+                    onDragStart={this.props.onDragStart}
+                    //onDragStart={this.handleDragStart.bind(this)}
+                    onDrop={this.props.onDrop}
+                    onDragOver={this.handleDragOver.bind(this)}
+                    onDragLeave={this.handleDragLeave.bind(this)}
+                    style={{
+                        height: bubbleHeight,
+                        width: bubbleWidth
+                    }}
                 >{this.props.name}
                 </button>
             </div>
@@ -33,12 +66,6 @@ class Space extends React.Component{
 
     componentDidMount(){
         //getting the canvas here
-        const canvas = this.canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        this.setState({
-            canvas: canvas,
-            ctx: ctx
-        })
         this.resizeCanvas();
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
     }
@@ -52,21 +79,23 @@ class Space extends React.Component{
         canvas.height = SizeY;
     }
 
-    handleDrag(event, id){
-        console.log("draggin in Space");
-        console.log('react SyntheticEvent ==> ', event);
-        console.log('nativeEvent ==> ', event.nativeEvent); //<- gets native JS event
-        console.log('id is: ' + id);
+    handleDragStart(e, id){
+        // console.log("draggin in Space");
+        // console.log('react SyntheticEvent ==> ', e);
+        // console.log('nativeEvent ==> ', e.nativeEvent); //<- gets native JS event
+        // console.log('id is: ' + id);
+        //this.context.lastDragStartId = id;
+        lastDragStartId = id;
     }
-    handleDrop(event, id){
+    handleDrop(e, id){
         console.log('dropped, id is: ' + id);
     }
 
-    handleCanvasDrop(event){
+    handleCanvasDrop(e){
         console.log('canvas drop');
     }
 
-    handleCanvasDragOver(event){
+    handleCanvasDragOver(e){
         console.log('canvas dragover');
     }
 
@@ -87,15 +116,15 @@ class Space extends React.Component{
                 <Bubble
                     id= {0}
                     name= {'Costume'}
-                    type= {'subject'}
-                    onDrag={(event) => this.handleDrag(event, 0)} 
+                    type= {'bubble subject'}
+                    onDragStart={(event) => this.handleDragStart(event, 0)} 
                     onDrop={(event) => this.handleDrop(event, 0)} 
                 />
                 <Bubble
                     id= {1}
                     name= {'On the Lot'}
-                    type= {'condition'}
-                    onDrag={(event) => this.handleDrag(event, 1)}
+                    type= {'bubble condition'}
+                    onDragStart={(event) => this.handleDragStart(event, 1)}
                     onDrop={(event) => this.handleDrop(event, 1)} 
                 />
             </div>
