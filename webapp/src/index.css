@@ -8,6 +8,8 @@ body {
 }
   .canvas {
     background: rgb(34, 31, 31);
+    border: red;
+    border: '5px'
   }
   
   .bubble {
@@ -18,7 +20,7 @@ body {
     margin: 3px;
     outline: none;
     isolation: isolate;
-    position: inherit;
+    position: absolute;
   }
 
   .subject {

@@ -15,6 +15,7 @@ class Bubble extends React.Component{
     handleDragOver(e){
         let dragover = true;
         //console.log('target id is: ' + e.nativeEvent.target.id + ' and this.props.id is: ' + this.props.id + ' and global lasdragstartid is: ' + lastDragStartId);
+        
         if (e.nativeEvent.srcElement.id === lastDragStartId.toString()){
             dragover = false;
         }
@@ -33,8 +34,11 @@ class Bubble extends React.Component{
     // }
 
     render(){
-        let bubbleHeight = (this.state.dragover ? '73px' : '65px');
-        let bubbleWidth = (this.state.dragover ? '160px' : '150px');
+        let bubbleHeight = (this.state.dragover ? '57px' : '50px');
+        let bubbleWidth = (this.state.dragover ? '130px' : '120px');
+        const xLocationPixels = this.props.xLocation + 'px';
+        const yLocationPixels = this.props.yLocation + 'px';
+
         return(
             <div>
                 <button 
@@ -48,7 +52,9 @@ class Bubble extends React.Component{
                     onDragLeave={this.handleDragLeave.bind(this)}
                     style={{
                         height: bubbleHeight,
-                        width: bubbleWidth
+                        width: bubbleWidth,
+                        top: yLocationPixels,
+                        left:xLocationPixels
                     }}
                 >{this.props.name}
                 </button>
@@ -62,6 +68,45 @@ class Space extends React.Component{
     constructor(props){
         super(props);
         this.canvasRef = React.createRef();
+        this.state = {
+            bubbles: [
+                {
+                    id: "0",
+                    text: "visitor",
+                    type: "bubble subject",
+                    xLocation: 50,
+                    yLocation: 50
+                },
+                {
+                    id: "1",
+                    text: "costume",
+                    type: "bubble subject",
+                    xLocation: 50,
+                    yLocation: 110
+                },
+                {
+                    id: "2",
+                    text: "people",
+                    type: "bubble subject",
+                    xLocation: 50,
+                    yLocation: 170
+                },
+                {
+                    id: "3",
+                    text: "rented",
+                    type: "bubble condition",
+                    xLocation: 50,
+                    yLocation: 400
+                },
+                {
+                    id: "4",
+                    text: "on the lot",
+                    type: "bubble condition",
+                    xLocation: 50,
+                    yLocation: 460
+                }
+              ],
+          };
       }
 
     componentDidMount(){
@@ -71,7 +116,7 @@ class Space extends React.Component{
     }
     
     resizeCanvas() { //this resizes the canvas and is called when the window size changes
-        console.log('resized')
+        //console.log('resized')
         const canvas = this.canvasRef.current;
         const SizeX = window.innerWidth*.8;
         const SizeY = window.innerHeight*.6;
@@ -101,32 +146,42 @@ class Space extends React.Component{
 
     render(){
         //createCanvas();
+        //console.log(this.state.bubbles[0]);
+        const bubbles = this.state.bubbles.map((bub) => {
+            //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
+            return (
+              <Bubble key={bub.id}
+                    id= {bub.id}
+                    name= {bub.text}
+                    type= {bub.type}
+                    onDragStart={(event) => this.handleDragStart(event, bub.id)} 
+                    onDrop={(event) => this.handleDrop(event, bub.id)}
+                    xLocation= {bub.xLocation}
+                    yLocation={bub.yLocation}
+                />
+            );
+        });
+        
+        
         return(
             <div className = "space">                
-                <div className = "canvas">
-                    <canvas ref={this.canvasRef} 
+                <div className = "canvas"
+                    ref={this.canvasRef} 
                     width={0} 
-                    height={0} 
+                    height={200} 
                     id="space_canvas"
                     onDrop={this.handleCanvasDrop}
                     onDragOver={this.handleCanvasDragOver}
-                    >Please update your browser to use this app
-                    </canvas>
+                    style={{
+                        position: "absolute",
+                        height: '900px',
+                        width: '900px',
+                        top: '10px',
+                        left: '10px',
+                    }}
+                    >
                 </div>
-                <Bubble
-                    id= {0}
-                    name= {'Costume'}
-                    type= {'bubble subject'}
-                    onDragStart={(event) => this.handleDragStart(event, 0)} 
-                    onDrop={(event) => this.handleDrop(event, 0)} 
-                />
-                <Bubble
-                    id= {1}
-                    name= {'On the Lot'}
-                    type= {'bubble condition'}
-                    onDragStart={(event) => this.handleDragStart(event, 1)}
-                    onDrop={(event) => this.handleDrop(event, 1)} 
-                />
+                {bubbles}
             </div>
         );
     }    
