@@ -26,7 +26,7 @@ body {
     border-radius: 50%;
   }
   
-  .bubble .condition {
+  .condition {
     background: blue;
     border-radius: 5px;
     transform: skew(-20deg);

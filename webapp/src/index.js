@@ -36,7 +36,7 @@ class Bubble extends React.Component{
         let bubbleHeight = (this.state.dragover ? '73px' : '65px');
         let bubbleWidth = (this.state.dragover ? '160px' : '150px');
         return(
-            <div className = 'bubble'>
+            <div>
                 <button 
                     id = {this.props.id}
                     className = {this.props.type}        
