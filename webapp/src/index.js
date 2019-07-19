@@ -13,6 +13,7 @@ class Bubble extends React.Component{
     }
     
     handleDragOver(e){
+        e.preventDefault();
         let dragover = true;
         //console.log('target id is: ' + e.nativeEvent.target.id + ' and this.props.id is: ' + this.props.id + ' and global lasdragstartid is: ' + lastDragStartId);
         
@@ -75,73 +76,93 @@ class Space extends React.Component{
                     text: "visitor",
                     type: "bubble subject",
                     xLocation: 50,
-                    yLocation: 50
+                    yLocation: 130
                 },
                 {
                     id: "1",
                     text: "costume",
                     type: "bubble subject",
                     xLocation: 50,
-                    yLocation: 110
+                    yLocation: 190
                 },
                 {
                     id: "2",
                     text: "people",
                     type: "bubble subject",
                     xLocation: 50,
-                    yLocation: 170
+                    yLocation: 250
                 },
                 {
                     id: "3",
                     text: "rented",
                     type: "bubble condition",
                     xLocation: 50,
-                    yLocation: 400
+                    yLocation: 460
                 },
                 {
                     id: "4",
                     text: "on the lot",
                     type: "bubble condition",
                     xLocation: 50,
-                    yLocation: 460
+                    yLocation: 520
                 }
               ],
           };
       }
 
-    componentDidMount(){
-        //getting the canvas here
-        this.resizeCanvas();
-        window.addEventListener('resize', this.resizeCanvas.bind(this), false);
-    }
+    // componentDidMount(){
+    //     //getting the canvas here
+    //     this.resizeCanvas();
+    //     window.addEventListener('resize', this.resizeCanvas.bind(this), false);
+    // }
     
-    resizeCanvas() { //this resizes the canvas and is called when the window size changes
-        //console.log('resized')
-        const canvas = this.canvasRef.current;
-        const SizeX = window.innerWidth*.8;
-        const SizeY = window.innerHeight*.6;
-        canvas.width = SizeX;
-        canvas.height = SizeY;
-    }
+    // resizeCanvas() { //this resizes the canvas and is called when the window size changes
+    //     //console.log('resized')
+    //     const canvas = this.canvasRef.current;
+    //     const SizeX = window.innerWidth*.8;
+    //     const SizeY = window.innerHeight*.6;
+    //     canvas.width = SizeX;
+    //     canvas.height = SizeY;
+    // }
 
-    handleDragStart(e, id){
+    handleBubbleDragStart(e, id){
         // console.log("draggin in Space");
         // console.log('react SyntheticEvent ==> ', e);
         // console.log('nativeEvent ==> ', e.nativeEvent); //<- gets native JS event
         // console.log('id is: ' + id);
         //this.context.lastDragStartId = id;
+        console.log('drag started, id is: ' + id);
         lastDragStartId = id;
     }
-    handleDrop(e, id){
-        console.log('dropped, id is: ' + id);
+    handleBubbleDrop(e, id){
+        e.nativeEvent.preventDefault();
+        console.log('bubble dropped upon, id of receiving bubble is: ' + id + ' and id of dragged bubble is: ' + lastDragStartId);
     }
 
-    handleCanvasDrop(e){
-        console.log('canvas drop');
+    handleWorkRoomDrop(e){
+        console.log('workroom drop, id of dragged bubble is: ' + lastDragStartId);
+        console.log(e.nativeEvent);
+        const newX = e.nativeEvent.clientX;
+        const newY = e.nativeEvent.clientY;
+        console.log(newX);
+        const newBubbles = this.state.bubbles.map((bub) => {
+            //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
+            if (bub.id === lastDragStartId.toString()){
+                bub.xLocation = newX;
+                bub.yLocation = newY;
+            }
+            return bub;
+        })
+        this.setState({
+            bubbles: newBubbles                
+        })
+        
+
     }
 
-    handleCanvasDragOver(e){
-        console.log('canvas dragover');
+    handleWorkRoomDragOver(e){
+        e.nativeEvent.preventDefault();
+        console.log('workroom dragover');
     }
 
     render(){
@@ -154,32 +175,49 @@ class Space extends React.Component{
                     id= {bub.id}
                     name= {bub.text}
                     type= {bub.type}
-                    onDragStart={(event) => this.handleDragStart(event, bub.id)} 
-                    onDrop={(event) => this.handleDrop(event, bub.id)}
+                    onDragStart={(event) => this.handleBubbleDragStart(event, bub.id)} 
+                    onDrop={(event) => this.handleBubbleDrop(event, bub.id)}
                     xLocation= {bub.xLocation}
                     yLocation={bub.yLocation}
                 />
             );
-        });
-        
+        });        
         
         return(
             <div className = "space">                
-                <div className = "canvas"
-                    ref={this.canvasRef} 
-                    width={0} 
-                    height={200} 
-                    id="space_canvas"
-                    onDrop={this.handleCanvasDrop}
-                    onDragOver={this.handleCanvasDragOver}
+                <div className = "workroom"
+                    //ref={this.canvasRef} 
+                    //id="space_canvas"
+                    onDrop={this.handleWorkRoomDrop.bind(this)}
+                    onDragOver={this.handleWorkRoomDragOver}
                     style={{
                         position: "absolute",
                         height: '900px',
-                        width: '900px',
-                        top: '10px',
-                        left: '10px',
+                        width: '1600px',
+                        top: '0px',
+                        left: '0px',
                     }}
                     >
+                </div>
+                <div className = "subjectroom"
+                    style={{
+                        height: '300px',
+                        width: '300px',
+                        top: '100px',
+                        left: '40px',
+                    }}
+                    >
+                    Unmapped Subjects
+                </div>
+                <div className = "conditionroom"
+                    style={{
+                        height: '300px',
+                        width: '300px',
+                        top: '430px',
+                        left: '40px',
+                    }}
+                    >
+                    Unmapped Conditions
                 </div>
                 {bubbles}
             </div>
