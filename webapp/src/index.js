@@ -2,7 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-var lastDragStartId = '';
+//var lastDragStartId = '';
+class lastDragStart{
+    id = '';
+    shiftX = 0;
+    shifty = 0;
+}
 
 class Bubble extends React.Component{
     constructor(props){
@@ -17,7 +22,7 @@ class Bubble extends React.Component{
         let dragover = true;
         //console.log('target id is: ' + e.nativeEvent.target.id + ' and this.props.id is: ' + this.props.id + ' and global lasdragstartid is: ' + lastDragStartId);
         
-        if (e.nativeEvent.srcElement.id === lastDragStartId.toString()){
+        if (e.nativeEvent.srcElement.id === lastDragStart.id.toString()){
             dragover = false;
         }
         this.setState({
@@ -41,25 +46,23 @@ class Bubble extends React.Component{
         const yLocationPixels = this.props.yLocation + 'px';
 
         return(
-            <div>
-                <button 
-                    id = {this.props.id}
-                    className = {this.props.type}        
-                    draggable="true" 
-                    onDragStart={this.props.onDragStart}
-                    //onDragStart={this.handleDragStart.bind(this)}
-                    onDrop={this.props.onDrop}
-                    onDragOver={this.handleDragOver.bind(this)}
-                    onDragLeave={this.handleDragLeave.bind(this)}
-                    style={{
-                        height: bubbleHeight,
-                        width: bubbleWidth,
-                        top: yLocationPixels,
-                        left:xLocationPixels
-                    }}
-                >{this.props.name}
-                </button>
-            </div>
+            <button 
+                id = {this.props.id}
+                className = {this.props.type}        
+                draggable="true" 
+                onDragStart={this.props.onDragStart}
+                //onDragStart={this.handleDragStart.bind(this)}
+                onDrop={this.props.onDrop}
+                onDragOver={this.handleDragOver.bind(this)}
+                onDragLeave={this.handleDragLeave.bind(this)}
+                style={{
+                    height: bubbleHeight,
+                    width: bubbleWidth,
+                    top: yLocationPixels,
+                    left:xLocationPixels
+                }}
+            >{this.props.name}
+            </button>
         );
     }
 }
@@ -132,22 +135,26 @@ class Space extends React.Component{
         // console.log('id is: ' + id);
         //this.context.lastDragStartId = id;
         console.log('drag started, id is: ' + id);
-        lastDragStartId = id;
+        //lastDragStartId = id;
+        lastDragStart.id = id;
+        console.log(e.nativeEvent);
+        lastDragStart.shiftX = e.nativeEvent.clientX - e.nativeEvent.srcElement.getBoundingClientRect().left;
+        lastDragStart.shiftY = e.nativeEvent.clientY - e.nativeEvent.srcElement.getBoundingClientRect().top;
     }
     handleBubbleDrop(e, id){
         e.nativeEvent.preventDefault();
-        console.log('bubble dropped upon, id of receiving bubble is: ' + id + ' and id of dragged bubble is: ' + lastDragStartId);
+        console.log('bubble dropped upon, id of receiving bubble is: ' + id + ' and id of dragged bubble is: ' + lastDragStart.id);
     }
 
     handleWorkRoomDrop(e){
-        console.log('workroom drop, id of dragged bubble is: ' + lastDragStartId);
+        console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
         console.log(e.nativeEvent);
-        const newX = e.nativeEvent.clientX;
-        const newY = e.nativeEvent.clientY;
+        const newX = e.nativeEvent.clientX - lastDragStart.shiftX;
+        const newY = e.nativeEvent.clientY - lastDragStart.shiftY;
         console.log(newX);
         const newBubbles = this.state.bubbles.map((bub) => {
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
-            if (bub.id === lastDragStartId.toString()){
+            if (bub.id === lastDragStart.id.toString()){
                 bub.xLocation = newX;
                 bub.yLocation = newY;
             }
