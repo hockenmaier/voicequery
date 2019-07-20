@@ -199,6 +199,19 @@ class Space extends React.Component{
                     }}
                     >
                 </div>
+                <div className = "query"
+                    style={{
+                        height: '150px',
+                        width: '800px',
+                        top: '20px',
+                        left: '40px',
+                    }}
+                    >
+                    <form>
+                        Ask your data:
+                        <input type="text"></input>
+                    </form>
+                </div>
                 <div className = "subjectroom"
                     style={{
                         height: '300px',
@@ -220,6 +233,19 @@ class Space extends React.Component{
                     Unmapped Conditions
                 </div>
                 {bubbles}
+                <div className = "query"
+                    style={{
+                        height: '150px',
+                        width: '800px',
+                        top: '20px',
+                        left: '40px',
+                    }}
+                    >
+                    <form>
+                        Ask your data:
+                        <input type="text"></input>
+                    </form>
+                </div>
             </div>
         );
     }    

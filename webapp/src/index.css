@@ -7,7 +7,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
   .workroom {
-    background: rgb(34, 31, 31);
+    background: rgba(34, 31, 31);
     border: 7px solid rgb(0, 0, 0);
     position: fixed;
     user-select: none;
@@ -40,6 +40,12 @@ body {
     text-indent: .5em;
     user-select: none;
   }
+  
+  .condition {
+    background: rgb(102, 64, 190);
+    border-radius: 5px;
+    transform: skew(-12deg);
+  }
 
   .conditionroom {
     background: rgb(58, 56, 56);
@@ -50,12 +56,12 @@ body {
     font-weight: 700;
     text-indent: .5em;
     user-select: none;
-  }
-  
-  .condition {
-    background: rgb(102, 64, 190);
+  }  
+
+  .query {
     border-radius: 5px;
-    transform: skew(-12deg);
+    color: aquamarine;
+    position: fixed;    
   }
 
 
