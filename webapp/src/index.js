@@ -13,7 +13,7 @@ class BubbleDeets{
     constructor(id,text,typetext){
         this.id = id;
         this.text=text;
-        this.type=typetext;
+        this.type='bubble ' + typetext;
         this.xLocation= nextXLocation(this.type);
         this.yLocation= nextYLocation(this.type);
     }
@@ -89,13 +89,13 @@ class Space extends React.Component{
         this.canvasRef = React.createRef();
         this.state = {
             bubbles: [                
-                    new BubbleDeets("0","visitor", "bubble subject"),
-                    new BubbleDeets("5","through gate 6", "bubble condition"),    
-                    new BubbleDeets("1","costume", "bubble subject"),          
-                    new BubbleDeets("2","people", "bubble subject"),   
-                    new BubbleDeets("3","rented", "bubble condition"),    
-                    new BubbleDeets("4","on the lot", "bubble condition"),
-                    new BubbleDeets("6","ladder light", "bubble subject"),
+                    new BubbleDeets("0","visitor", "subject"),
+                    new BubbleDeets("5","through gate 6", "condition"),    
+                    new BubbleDeets("1","costume", "subject"),          
+                    new BubbleDeets("2","people", "subject"),   
+                    new BubbleDeets("3","rented", "condition"),    
+                    new BubbleDeets("4","on the lot", "condition"),
+                    new BubbleDeets("6","ladder light", "subject"),
               ],
           };
       }
@@ -130,15 +130,21 @@ class Space extends React.Component{
     }
     handleBubbleDrop(e, id){
         e.nativeEvent.preventDefault();
+        if (id === lastDragStart.id.toString()){
+            this.moveBubble(e);
+        }
         //console.log('bubble dropped upon, id of receiving bubble is: ' + id + ' and id of dragged bubble is: ' + lastDragStart.id);
     }
 
     handleWorkRoomDrop(e){
+        this.moveBubble(e);
+    }
+
+    moveBubble(e){
         //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
         //console.log(e.nativeEvent);
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3;
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
-        //console.log(newX);
         const newBubbles = this.state.bubbles.map((bub) => {
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
             if (bub.id === lastDragStart.id.toString()){
@@ -150,8 +156,6 @@ class Space extends React.Component{
         this.setState({
             bubbles: newBubbles                
         })
-        
-
     }
 
     handleWorkRoomDragOver(e){
