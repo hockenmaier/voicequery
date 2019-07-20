@@ -9,6 +9,19 @@ class lastDragStart{
     shifty = 0;
 }
 
+class BubbleDeets{
+    constructor(id,text,typetext){
+        this.id = id;
+        this.text=text;
+        this.type=typetext;
+    }
+    id= "";
+    text= "";
+    type= "";
+    xLocation= nextXLocation(this.type);
+    yLocation= nextYLocation(this.type);
+}
+
 class Bubble extends React.Component{
     constructor(props){
         super(props);
@@ -73,14 +86,8 @@ class Space extends React.Component{
         super(props);
         this.canvasRef = React.createRef();
         this.state = {
-            bubbles: [
-                {
-                    id: "0",
-                    text: "visitor",
-                    type: "bubble subject",
-                    xLocation: 50,
-                    yLocation: 130
-                },
+            bubbles: [                
+                    new BubbleDeets("0","visitor", "bubble subject"),                
                 {
                     id: "1",
                     text: "costume",
@@ -175,8 +182,10 @@ class Space extends React.Component{
     render(){
         //createCanvas();
         //console.log(this.state.bubbles[0]);
+        console.log(this.state.bubbles);
         const bubbles = this.state.bubbles.map((bub) => {
-            //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
+            console.log(bub.bub);
+            console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
             return (
               <Bubble key={bub.id}
                     id= {bub.id}
@@ -230,6 +239,17 @@ class Space extends React.Component{
             </div>
         );
     }    
+}
+
+const subjectCount = 0;
+const conditionCount = 0;
+
+function nextXLocation(type){
+    return 50;
+}
+
+function nextYLocation(type){
+    return 130;
 }
 
 ReactDOM.render(<Space />, document.getElementById('root'));
