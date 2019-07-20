@@ -14,12 +14,14 @@ class BubbleDeets{
         this.id = id;
         this.text=text;
         this.type=typetext;
+        this.xLocation= nextXLocation(this.type);
+        this.yLocation= nextYLocation(this.type);
     }
     id= "";
     text= "";
     type= "";
-    xLocation= nextXLocation(this.type);
-    yLocation= nextYLocation(this.type);
+    xLocation= 0;
+    yLocation= 0;
 }
 
 class Bubble extends React.Component{
@@ -87,35 +89,13 @@ class Space extends React.Component{
         this.canvasRef = React.createRef();
         this.state = {
             bubbles: [                
-                    new BubbleDeets("0","visitor", "bubble subject"),                
-                {
-                    id: "1",
-                    text: "costume",
-                    type: "bubble subject",
-                    xLocation: 50,
-                    yLocation: 190
-                },
-                {
-                    id: "2",
-                    text: "people",
-                    type: "bubble subject",
-                    xLocation: 50,
-                    yLocation: 250
-                },
-                {
-                    id: "3",
-                    text: "rented",
-                    type: "bubble condition",
-                    xLocation: 50,
-                    yLocation: 460
-                },
-                {
-                    id: "4",
-                    text: "on the lot",
-                    type: "bubble condition",
-                    xLocation: 50,
-                    yLocation: 520
-                }
+                    new BubbleDeets("0","visitor", "bubble subject"),
+                    new BubbleDeets("5","through gate 6", "bubble condition"),    
+                    new BubbleDeets("1","costume", "bubble subject"),          
+                    new BubbleDeets("2","people", "bubble subject"),   
+                    new BubbleDeets("3","rented", "bubble condition"),    
+                    new BubbleDeets("4","on the lot", "bubble condition"),
+                    new BubbleDeets("6","ladder light", "bubble subject"),
               ],
           };
       }
@@ -141,24 +121,24 @@ class Space extends React.Component{
         // console.log('nativeEvent ==> ', e.nativeEvent); //<- gets native JS event
         // console.log('id is: ' + id);
         //this.context.lastDragStartId = id;
-        console.log('drag started, id is: ' + id);
+        //console.log('drag started, id is: ' + id);
         //lastDragStartId = id;
         lastDragStart.id = id;
-        console.log(e.nativeEvent);
+        //console.log(e.nativeEvent);
         lastDragStart.shiftX = e.nativeEvent.clientX - e.nativeEvent.srcElement.getBoundingClientRect().left;
         lastDragStart.shiftY = e.nativeEvent.clientY - e.nativeEvent.srcElement.getBoundingClientRect().top;
     }
     handleBubbleDrop(e, id){
         e.nativeEvent.preventDefault();
-        console.log('bubble dropped upon, id of receiving bubble is: ' + id + ' and id of dragged bubble is: ' + lastDragStart.id);
+        //console.log('bubble dropped upon, id of receiving bubble is: ' + id + ' and id of dragged bubble is: ' + lastDragStart.id);
     }
 
     handleWorkRoomDrop(e){
-        console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
-        console.log(e.nativeEvent);
+        //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
+        //console.log(e.nativeEvent);
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3;
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
-        console.log(newX);
+        //console.log(newX);
         const newBubbles = this.state.bubbles.map((bub) => {
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
             if (bub.id === lastDragStart.id.toString()){
@@ -176,16 +156,16 @@ class Space extends React.Component{
 
     handleWorkRoomDragOver(e){
         e.nativeEvent.preventDefault();
-        console.log('workroom dragover');
+        //console.log('workroom dragover');
     }
 
     render(){
         //createCanvas();
         //console.log(this.state.bubbles[0]);
-        console.log(this.state.bubbles);
+        //console.log(this.state.bubbles);
         const bubbles = this.state.bubbles.map((bub) => {
-            console.log(bub.bub);
-            console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
+            //console.log(bub.bub);
+            //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
             return (
               <Bubble key={bub.id}
                     id= {bub.id}
@@ -241,15 +221,29 @@ class Space extends React.Component{
     }    
 }
 
-const subjectCount = 0;
-const conditionCount = 0;
+let subjectCount = 0;
+let conditionCount = 0;
 
 function nextXLocation(type){
     return 50;
 }
 
 function nextYLocation(type){
-    return 130;
+    console.log(type);
+    if (type == 'bubble subject'){
+        const nextY =  130 + subjectCount*60;
+        subjectCount++;
+        return nextY;
+    }
+    else if (type == 'bubble condition'){
+        const nextY = 460 + conditionCount*60;
+        conditionCount++;
+        return nextY;
+    }
+    else{
+        return 10;
+    }
+    
 }
 
 ReactDOM.render(<Space />, document.getElementById('root'));

@@ -10,6 +10,7 @@ body {
     background: rgb(34, 31, 31);
     border: 7px solid rgb(0, 0, 0);
     position: fixed;
+    user-select: none;
   }
   
   .bubble {
@@ -37,6 +38,7 @@ body {
     color: rgb(218, 255, 204);
     font-weight: 500;
     text-indent: .5em;
+    user-select: none;
   }
 
   .conditionroom {
@@ -47,6 +49,7 @@ body {
     color: rgb(188, 159, 255);
     font-weight: 700;
     text-indent: .5em;
+    user-select: none;
   }
   
   .condition {
