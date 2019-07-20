@@ -1,0 +1,1 @@
+Removed on 7-19-19: file containing the entire pip module now in dropbox projects > voicequery > python stuff
