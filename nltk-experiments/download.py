@@ -1,1 +1,2 @@
-g
+import nltk
+nltk.download()
