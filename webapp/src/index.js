@@ -156,8 +156,8 @@ class Space extends React.Component{
     handleWorkRoomDrop(e){
         console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
         console.log(e.nativeEvent);
-        const newX = e.nativeEvent.clientX - lastDragStart.shiftX;
-        const newY = e.nativeEvent.clientY - lastDragStart.shiftY;
+        const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3;
+        const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
         console.log(newX);
         const newBubbles = this.state.bubbles.map((bub) => {
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);

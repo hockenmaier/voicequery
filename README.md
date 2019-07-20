@@ -1,6 +1,6 @@
 This project contains all files for the voicequery project.
 
-##Organization
+## Organization
 
 Under "webapp" you will find the react app for the frontend of the application. See that folder's readme for a list of available scripts
 
