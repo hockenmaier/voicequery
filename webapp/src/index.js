@@ -10,8 +10,9 @@ class lastDragStart{
 }
 
 class BubbleDeets{
-    constructor(id,text,typetext){
-        this.id = id;
+    constructor(internalId,text,typetext){
+        this.internalID = internalId;
+        this.id = getNextBubbleID();
         this.text=text;
         this.type='bubble ' + typetext;
         this.xLocation= nextXLocation(this.type);
@@ -22,6 +23,13 @@ class BubbleDeets{
     type= "";
     xLocation= 0;
     yLocation= 0;
+}
+
+let nextBubbleID = 0;
+function getNextBubbleID(){
+    const next = nextBubbleID;
+    nextBubbleID++;
+    return next.toString();
 }
 
 class Bubble extends React.Component{
@@ -55,11 +63,26 @@ class Bubble extends React.Component{
     // }
 
     render(){
-        let bubbleHeight = (this.state.dragover ? '57px' : '50px');
-        let bubbleWidth = (this.state.dragover ? '130px' : '120px');
-        const xLocationPixels = this.props.xLocation + 'px';
-        const yLocationPixels = this.props.yLocation + 'px';
+        //set base size by type
+        let height = 50;
+        let width = 120
 
+        //modify size based on dragover event
+        const dragScale = 1.2;
+        height = (this.state.dragover ? height*dragScale : height);
+        width = (this.state.dragover ? width*dragScale : width);
+        
+        //turn size into strings
+        const stringHeight = (height + 'px');
+        const stringWidth = (width + 'px');
+
+        //set base location based on props
+        const xLocation = this.props.xLocation;
+        const yLocation = this.props.yLocation;
+
+        //turn location into strings
+        const stringXLocation = xLocation + 'px';
+        const stringYLocation = yLocation + 'px';
         return(
             <button 
                 id = {this.props.id}
@@ -71,10 +94,10 @@ class Bubble extends React.Component{
                 onDragOver={this.handleDragOver.bind(this)}
                 onDragLeave={this.handleDragLeave.bind(this)}
                 style={{
-                    height: bubbleHeight,
-                    width: bubbleWidth,
-                    top: yLocationPixels,
-                    left:xLocationPixels
+                    height: stringHeight,
+                    width: stringWidth,
+                    top: stringYLocation,
+                    left: stringXLocation
                 }}
             >{this.props.name}
             </button>
@@ -89,13 +112,21 @@ class Space extends React.Component{
         this.canvasRef = React.createRef();
         this.state = {
             bubbles: [                
-                    new BubbleDeets("0","visitor", "subject"),
-                    new BubbleDeets("5","through gate 6", "condition"),    
-                    new BubbleDeets("1","costume", "subject"),          
-                    new BubbleDeets("2","people", "subject"),   
-                    new BubbleDeets("3","rented", "condition"),    
-                    new BubbleDeets("4","on the lot", "condition"),
-                    new BubbleDeets("6","ladder light", "subject"),
+                    new BubbleDeets("","visitor", "subject"),
+                    new BubbleDeets("","through gate 6", "condition"),    
+                    new BubbleDeets("","costume", "subject"),          
+                    new BubbleDeets("","people", "subject"),   
+                    new BubbleDeets("","rented", "condition"),    
+                    new BubbleDeets("","on the lot", "condition"),
+                    new BubbleDeets("","ladder light", "subject"),
+                    new BubbleDeets("","transaction_id", "info-field"),
+                    new BubbleDeets("","checkout_date", "info-field"),
+                    new BubbleDeets("","checkin_date", "info-field"),                    
+                    new BubbleDeets("","transaction_type", "info-field"),
+                    new BubbleDeets("","last_update_date", "info-field"),
+                    new BubbleDeets("","asset_id", "info-field"),
+                    new BubbleDeets("","asset_name", "info-field"),
+                    new BubbleDeets("","order_id", "info-field"),
               ],
             sampleQuery: randomSampleQuery(),
             queryInput: '',
@@ -103,29 +134,11 @@ class Space extends React.Component{
         this.handleQueryChange = this.handleQueryChange.bind(this);
       }
 
-    // componentDidMount(){
-    //     //getting the canvas here
-    //     this.resizeCanvas();
-    //     window.addEventListener('resize', this.resizeCanvas.bind(this), false);
-    // }
-    
-    // resizeCanvas() { //this resizes the canvas and is called when the window size changes
-    //     //console.log('resized')
-    //     const canvas = this.canvasRef.current;
-    //     const SizeX = window.innerWidth*.8;
-    //     const SizeY = window.innerHeight*.6;
-    //     canvas.width = SizeX;
-    //     canvas.height = SizeY;
-    // }
-
     handleBubbleDragStart(e, id){
         // console.log("draggin in Space");
         // console.log('react SyntheticEvent ==> ', e);
         // console.log('nativeEvent ==> ', e.nativeEvent); //<- gets native JS event
-        // console.log('id is: ' + id);
-        //this.context.lastDragStartId = id;
-        //console.log('drag started, id is: ' + id);
-        //lastDragStartId = id;
+        //console.log('id is: ' + id);
         lastDragStart.id = id;
         //console.log(e.nativeEvent);
         lastDragStart.shiftX = e.nativeEvent.clientX - e.nativeEvent.srcElement.getBoundingClientRect().left;
@@ -145,13 +158,14 @@ class Space extends React.Component{
 
     moveBubble(e){
         //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
-        //console.log(e.nativeEvent);
+        //console.log(e.nativeEvent);        
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3;
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
         const newBubbles = this.state.bubbles.map((bub) => {
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
             if (bub.id === lastDragStart.id.toString()){
                 bub.xLocation = newX;
+                //console.log('id is: ' + bub.id + ' and new x location is: '+ bub.xLocation);
                 bub.yLocation = newY;
             }
             return bub;
@@ -188,6 +202,7 @@ class Space extends React.Component{
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
             return (
               <Bubble key={bub.id}
+                    internalID = {bub.internalId}
                     id= {bub.id}
                     name= {bub.text}
                     type= {bub.type}
@@ -201,7 +216,7 @@ class Space extends React.Component{
         
         return(
             <div className = "space">                
-                <div className = "workroom"
+                <div className = "work-room"
                     //ref={this.canvasRef} 
                     //id="space_canvas"
                     onDrop={this.handleWorkRoomDrop.bind(this)}
@@ -215,33 +230,43 @@ class Space extends React.Component{
                     }}
                     >
                 </div>
-                <div className = "topbar"
+                <div className = "top-bar"
                     style={{
                         top: '0px',
                         left: '0px',
-                        height: '80px',
+                        height: '70px',
                         width: window.innerWidth,
                         }}
                 ></div>                
-                <div className = "subjectroom"
+                <div className = "subject-room"
                     style={{
                         height: '300px',
                         width: '300px',
                         top: '100px',
-                        left: '40px',
+                        left: '30px',
                     }}
                     >
                     Unmapped Subjects
                 </div>
-                <div className = "conditionroom"
+                <div className = "condition-room"
                     style={{
                         height: '300px',
                         width: '300px',
                         top: '430px',
-                        left: '40px',
+                        left: '30px',
                     }}
                     >
                     Unmapped Conditions
+                </div>
+                <div className = "info-room"
+                    style={{
+                        height: '630px',
+                        width: '500px',
+                        top: '100px',
+                        right: '30px',
+                    }}
+                    >
+                    Available Info - rental_transaction Table
                 </div>
                 {bubbles}
                 <div className = "query"
@@ -249,11 +274,11 @@ class Space extends React.Component{
                         height: '0px',
                         width: '0px',
                         top: '20px',
-                        left: '40px',
+                        left: '30px',
                     }}
                     >
                     <input 
-                        className="queryinput"
+                        className="query-input"
                         type="text"
                         placeholder={this.state.sampleQuery} 
                         onChange={this.handleQueryChange}
@@ -277,15 +302,20 @@ function randomSampleQuery(){
     queries.push("Which department has the highest AWS spend per user?");
     queries.push("Which department has the lowest revenue per square foot?");
     const randomInt = Math.floor(Math.random()*queries.length);
-    console.log(queries[randomInt]);
+    //console.log(queries[randomInt]);
     return queries[randomInt];
 }
 
 let subjectCount = 0;
 let conditionCount = 0;
+let infoFieldCount = 0;
 
 function nextXLocation(type){
-    return 50;
+    if (type === 'bubble subject' | type === 'bubble condition'){
+        return 50;
+    }else if (type === 'bubble info-field'){
+        return window.innerWidth - 510;
+    }
 }
 
 function nextYLocation(type){
@@ -298,6 +328,11 @@ function nextYLocation(type){
     else if (type === 'bubble condition'){
         const nextY = 460 + conditionCount*60;
         conditionCount++;
+        return nextY;
+    }
+    else if (type === 'bubble info-field'){
+        const nextY = 130 + infoFieldCount*60;
+        infoFieldCount++;
         return nextY;
     }
     else{
