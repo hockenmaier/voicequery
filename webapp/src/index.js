@@ -97,7 +97,10 @@ class Space extends React.Component{
                     new BubbleDeets("4","on the lot", "condition"),
                     new BubbleDeets("6","ladder light", "subject"),
               ],
+            sampleQuery: randomSampleQuery(),
+            queryInput: '',
           };
+        this.handleQueryChange = this.handleQueryChange.bind(this);
       }
 
     // componentDidMount(){
@@ -163,6 +166,19 @@ class Space extends React.Component{
         //console.log('workroom dragover');
     }
 
+    handleQueryChange(e){
+        this.setState({queryInput: e.target.value})
+        this.updateSampleQuery();
+    }
+
+    updateSampleQuery(){
+        if (this.state.queryInput === ''){
+            this.setState({
+                sampleQuery: randomSampleQuery(),         
+            })
+        }
+    }
+
     render(){
         //createCanvas();
         //console.log(this.state.bubbles[0]);
@@ -199,19 +215,6 @@ class Space extends React.Component{
                     }}
                     >
                 </div>
-                <div className = "query"
-                    style={{
-                        height: '150px',
-                        width: '800px',
-                        top: '20px',
-                        left: '40px',
-                    }}
-                    >
-                    <form>
-                        Ask your data:
-                        <input type="text"></input>
-                    </form>
-                </div>
                 <div className = "subjectroom"
                     style={{
                         height: '300px',
@@ -235,20 +238,39 @@ class Space extends React.Component{
                 {bubbles}
                 <div className = "query"
                     style={{
-                        height: '150px',
-                        width: '800px',
+                        height: '0px',
+                        width: '0px',
                         top: '20px',
-                        left: '40px',
+                        left: '30px',
                     }}
                     >
-                    <form>
-                        Ask your data:
-                        <input type="text"></input>
-                    </form>
+                    <input 
+                        className="queryinput"
+                        type="text"
+                        placeholder={this.state.sampleQuery} 
+                        onChange={this.handleQueryChange}
+                        value={this.state.queryInput}
+                    >
+                    </input>
                 </div>
             </div>
         );
     }    
+}
+
+function randomSampleQuery(){
+    let queries = [];
+    queries.push("What was my highest utilization edit bay last month?");
+    queries.push("How many visitors came on campus during upfronts?");
+    queries.push("What was the most popular week to visit the lot last year?");
+    queries.push("Which grip assets are most often part of a subrental?");
+    queries.push("What was my AWS spend last month?");
+    queries.push("How much did I spend on data storage services in Azure this year to date?");
+    queries.push("Which department has the highest AWS spend per user?");
+    queries.push("Which department has the lowest revenue per square foot?");
+    const randomInt = Math.floor(Math.random()*queries.length);
+    console.log(queries[randomInt]);
+    return queries[randomInt];
 }
 
 let subjectCount = 0;
@@ -259,13 +281,13 @@ function nextXLocation(type){
 }
 
 function nextYLocation(type){
-    console.log(type);
-    if (type == 'bubble subject'){
+    //console.log(type);
+    if (type === 'bubble subject'){
         const nextY =  130 + subjectCount*60;
         subjectCount++;
         return nextY;
     }
-    else if (type == 'bubble condition'){
+    else if (type === 'bubble condition'){
         const nextY = 460 + conditionCount*60;
         conditionCount++;
         return nextY;

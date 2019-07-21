@@ -59,9 +59,20 @@ body {
   }  
 
   .query {
-    border-radius: 5px;
-    color: aquamarine;
-    position: fixed;    
+    position: fixed;
+    background: none;
+  }
+
+  .queryinput{    
+    border-radius: 8px;
+    color: rgb(226, 226, 226);
+    border: 2px solid rgb(226, 226, 226);
+    font-size: 18px;
+    height: 25px;
+    width: 700px;
+    position: fixed;
+    background: none;
+    outline: none;    
   }
 
 
