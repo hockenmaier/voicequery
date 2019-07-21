@@ -208,13 +208,21 @@ class Space extends React.Component{
                     onDragOver={this.handleWorkRoomDragOver}
                     style={{
                         position: "absolute",
-                        height: '900px',
-                        width: '1600px',
+                        height: window.innerHeight,
+                        width: window.innerWidth,
                         top: '0px',
                         left: '0px',
                     }}
                     >
                 </div>
+                <div className = "topbar"
+                    style={{
+                        top: '0px',
+                        left: '0px',
+                        height: '80px',
+                        width: window.innerWidth,
+                        }}
+                ></div>                
                 <div className = "subjectroom"
                     style={{
                         height: '300px',
@@ -241,7 +249,7 @@ class Space extends React.Component{
                         height: '0px',
                         width: '0px',
                         top: '20px',
-                        left: '30px',
+                        left: '40px',
                     }}
                     >
                     <input 

@@ -7,8 +7,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
   .workroom {
-    background: rgba(34, 31, 31);
-    border: 7px solid rgb(0, 0, 0);
+    background: rgb(34, 31, 31);
     position: fixed;
     user-select: none;
   }
@@ -64,15 +63,20 @@ body {
   }
 
   .queryinput{    
-    border-radius: 8px;
+    border-radius: 9px;
     color: rgb(226, 226, 226);
-    border: 2px solid rgb(226, 226, 226);
+    border: 0px solid rgb(226, 226, 226);
     font-size: 18px;
     height: 25px;
     width: 700px;
     position: fixed;
-    background: none;
+    background: rgb(34, 31, 31);
     outline: none;    
+  }
+
+  .topbar{
+    background: rgb(226, 226, 226);
+    position: fixed;    
   }
 
 
