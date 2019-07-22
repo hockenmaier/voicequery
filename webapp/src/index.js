@@ -342,16 +342,19 @@ class Space extends React.Component{
         console.log(e.nativeEvent);        
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
+
         const newBubbles = this.state.bubbles.map((bub) => {
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
-            let inner;
-            for (inner = 0; inner < bub.bubbles.length; inner++){
+
+            //I NEED TO REMOVE THIS LATER WITH BUBBLE LOOPER HELPER FUNCTION
+            for (let inner = 0; inner < bub.bubbles.length; inner++){
                 if (bub.bubbles[inner].id === lastDragStart.id.toString()){
                     bub.bubbles[inner].xLocation = newX;
                     bub.bubbles[inner].yLocation = newY;
-                    //return bub.bubbles[inner];
                 }
             }
+            //I NEED TO REMOVE THIS LATER WITH BUBBLE LOOPER HELPER FUNCTION
+
             if (bub.id === lastDragStart.id.toString()){
                 bub.xLocation = newX;
                 //console.log('id is: ' + bub.id + ' and new x location is: '+ bub.xLocation);
@@ -406,19 +409,12 @@ class Space extends React.Component{
         let bubbleArray = [];
         let bubbles = this.state.bubbles;
         //console.log(bubbles);
-        let outer;
-        for (outer = 0; outer < bubbles.length; outer++){
-            //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
-            
+        for (let outer = 0; outer < bubbles.length; outer++){
+            //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);            
             if (bubbles[outer].bubbles.length > 0){
-                //console.log(bubbles[outer].bubbles);
-                let inner;
-                for (inner = 0; inner < bubbles[outer].bubbles.length; inner++){
+                for (let inner = 0; inner < bubbles[outer].bubbles.length; inner++){
                     bubbleArray.push(this.renderBubble(bubbles[outer].bubbles[inner]));
                 }
-                // bub.bubbles.forEach(function(intBub){
-                //     bubbleArray.push(this.renderBubble(intBub));
-                // });
             }
             bubbleArray.push(this.renderBubble(bubbles[outer]));            
         };
