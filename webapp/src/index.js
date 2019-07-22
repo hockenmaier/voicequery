@@ -110,7 +110,7 @@ class Bubble extends React.Component{
         }
         else if (this.props.type === 'bubble info-value'){
             height = 30;
-            width = 120
+            width = 150
         }     
 
         //modify size based on dragover event
@@ -339,11 +339,19 @@ class Space extends React.Component{
 
     moveBubble(e){
         //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
-        //console.log(e.nativeEvent);        
+        console.log(e.nativeEvent);        
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
         const newBubbles = this.state.bubbles.map((bub) => {
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
+            let inner;
+            for (inner = 0; inner < bub.bubbles.length; inner++){
+                if (bub.bubbles[inner].id === lastDragStart.id.toString()){
+                    bub.bubbles[inner].xLocation = newX;
+                    bub.bubbles[inner].yLocation = newY;
+                    //return bub.bubbles[inner];
+                }
+            }
             if (bub.id === lastDragStart.id.toString()){
                 bub.xLocation = newX;
                 //console.log('id is: ' + bub.id + ' and new x location is: '+ bub.xLocation);
@@ -514,8 +522,10 @@ let infoFieldCount = 0;
 function nextXLocation(type){
     if (type === 'bubble subject' | type === 'bubble condition'){
         return layout.BubbleLeftMargin;
-    }else if (type === 'bubble info-field'| type === 'bubble info-value'){
+    }else if (type === 'bubble info-field'){
         return layout.InfoBubbleLeft;
+    }else if (type === 'bubble info-value'){
+        return layout.InfoBubbleLeft + 20;
     }
 }
 
