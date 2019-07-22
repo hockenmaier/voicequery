@@ -37,6 +37,8 @@ function initializeLayout(){
     layout.InfoBubbleLeft = window.innerWidth - (layout.infoWidth + layout.rightMargin - layout.BubbleRoomLeftMargin);
 }
 
+let bubblesInitialized = false;
+
 //var lastDragStartId = '';
 class lastDragStart{
     id = '';
@@ -45,19 +47,16 @@ class lastDragStart{
 }
 
 class BubbleDeets{
-    constructor(internalId,text,typetext){
+    constructor(internalId,text,typetext,bubbles,parentBubbleId){
         this.internalID = internalId;
         this.id = getNextBubbleID();
-        this.text=text;
-        this.type='bubble ' + typetext;
-        this.xLocation= nextXLocation(this.type);
-        this.yLocation= nextYLocation(this.type);
+        this.text = text;
+        this.type ='bubble ' + typetext;
+        this.xLocation = nextXLocation(this.type);
+        this.yLocation = nextYLocation(this.type);
+        this.bubbles = bubbles;
+        this.parentBubbleId = parentBubbleId;
     }
-    id= "";
-    text= "";
-    type= "";
-    xLocation= 0;
-    yLocation= 0;
 }
 
 let nextBubbleID = 0;
@@ -108,7 +107,11 @@ class Bubble extends React.Component{
         }else if (this.props.type === 'bubble info-field'){
             height = 40;
             width = 150
-        }        
+        }
+        else if (this.props.type === 'bubble info-value'){
+            height = 30;
+            width = 120
+        }     
 
         //modify size based on dragover event
         const dragScale = 1.25;
@@ -160,36 +163,165 @@ class Space extends React.Component{
         initializeLayout();
         this.state = {
             bubbles: [                
-                    new BubbleDeets("","visitor", "subject"),
-                    new BubbleDeets("","through gate 6", "condition"),    
-                    new BubbleDeets("","costume", "subject"),          
-                    new BubbleDeets("","people", "subject"),   
-                    new BubbleDeets("","rented", "condition"),    
-                    new BubbleDeets("","on the lot", "condition"),
-                    new BubbleDeets("","ladder light", "subject"),
-                    new BubbleDeets("","transaction_id", "info-field"),
-                    new BubbleDeets("","checkout_date", "info-field"),
-                    new BubbleDeets("","checkin_date", "info-field"),                    
-                    new BubbleDeets("","transaction_type", "info-field"),
-                    new BubbleDeets("","last_update_date", "info-field"),
-                    new BubbleDeets("","asset_id", "info-field"),
-                    new BubbleDeets("","asset_name", "info-field"),
-                    new BubbleDeets("","asset_department", "info-field"),
-                    new BubbleDeets("","order_id", "info-field"),
+                    // new BubbleDeets("","visitor", "subject"),
+                    // new BubbleDeets("","through gate 6", "condition"),    
+                    // new BubbleDeets("","costume", "subject"),          
+                    // new BubbleDeets("","people", "subject"),   
+                    // new BubbleDeets("","rented", "condition"),    
+                    // new BubbleDeets("","on the lot", "condition"),
+                    // new BubbleDeets("","ladder light", "subject"),
+                    // new BubbleDeets("","transaction_id", "info-field"),
+                    // new BubbleDeets("","checkout_date", "info-field"),
+                    // new BubbleDeets("","checkin_date", "info-field"),                    
+                    // new BubbleDeets("","transaction_type", "info-field"),
+                    // new BubbleDeets("","last_update_date", "info-field"),
+                    // new BubbleDeets("","asset_id", "info-field"),
+                    // new BubbleDeets("","asset_name", "info-field"),
+                    // new BubbleDeets("","asset_department", "info-field"),
+                    // new BubbleDeets("","order_id", "info-field"),
+                    {
+                        internalID: "",
+                        name: "visitor",
+                        type: "subject",
+                        bubbles: []
+                    },                    
+                    {
+                        internalID: "",
+                        name: "through gate 6",
+                        type: "condition",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "costume",
+                        type: "subject",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "people",
+                        type: "subject",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "rented",
+                        type: "condition",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "on the lot",
+                        type: "condition",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "ladder light",
+                        type: "subject",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "transaction_id",
+                        type: "info-field",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "checkout_date",
+                        type: "info-field",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "checkin_date",
+                        type: "info-field",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "transaction_type",
+                        type: "info-field",
+                        bubbles: [
+                            {
+                                internalID: "",
+                                name: "rental",
+                                type: "info-value",
+                                bubbles: []
+                            },
+                            {
+                                internalID: "",
+                                name: "sale",
+                                type: "info-value",
+                                bubbles: []
+                            },
+                            {
+                                internalID: "",
+                                name: "subrental",
+                                type: "info-value",
+                                bubbles: []
+                            }
+                        ]
+                    },
+                    {
+                        internalID: "",
+                        name: "last_update_date",
+                        type: "info-field",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "asset_id",
+                        type: "info-field",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "asset_name",
+                        type: "info-field",
+                        bubbles: []
+                    },
+                    {
+                        internalID: "",
+                        name: "asset_department",
+                        type: "info-field",
+                        bubbles: []
+                    },
               ],
             sampleQuery: randomSampleQuery(),
             queryInput: '',
           };
-        this.handleQueryChange = this.handleQueryChange.bind(this);        
+        this.handleQueryChange = this.handleQueryChange.bind(this);
       }
 
+    componentDidMount(){
+        this.initializeBubbles(this.state.bubbles);
+        bubblesInitialized = true;
+    }
+
+    initializeBubbles(bubbles){
+        //console.log(this.state.bubbles);
+        const newBubbles = bubbles.map((bub) => {
+            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"");
+            if(newBub.bubbles.length > 0){
+                //console.log("internal bubbles are: " + newBub.bubbles);
+                //console.log(newBub.bubbles);
+                newBub.bubbles = newBub.bubbles.map((intBub) => {
+                    const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id);
+                    return newIntBub;
+                })
+            }
+            return newBub;
+        })
+        this.setState({
+            bubbles: newBubbles
+        })
+        //console.log(newBubbles);
+    }
+
     handleBubbleDragStart(e, id){
-        // console.log("draggin in Space");
-        // console.log('react SyntheticEvent ==> ', e);
-        // console.log('nativeEvent ==> ', e.nativeEvent); //<- gets native JS event
-        //console.log('id is: ' + id);
         lastDragStart.id = id;
-        //console.log(e.nativeEvent);
         lastDragStart.shiftX = e.nativeEvent.clientX - e.nativeEvent.srcElement.getBoundingClientRect().left;
         lastDragStart.shiftY = e.nativeEvent.clientY - e.nativeEvent.srcElement.getBoundingClientRect().top;
     }
@@ -242,26 +374,46 @@ class Space extends React.Component{
         }
     }
 
+    renderBubble(bub){
+        return (
+            <Bubble key={bub.id}
+                  internalID = {bub.internalId}
+                  id= {bub.id}
+                  name= {bub.text}
+                  type= {bub.type}
+                  onDragStart={(event) => this.handleBubbleDragStart(event, bub.id)} 
+                  onDrop={(event) => this.handleBubbleDrop(event, bub.id)}
+                  xLocation= {bub.xLocation}
+                  yLocation={bub.yLocation}
+            />
+        );
+    }
+
     render(){
-        //createCanvas();
+        if (!bubblesInitialized){
+            return<div className = "space"></div>; //doing this so that render doesn't execute before bubbles are initialized on componentdidmount
+        }
         //console.log(this.state.bubbles[0]);
         //console.log(this.state.bubbles);
-        const bubbles = this.state.bubbles.map((bub) => {
-            //console.log(bub.bub);
+        let bubbleArray = [];
+        let bubbles = this.state.bubbles;
+        //console.log(bubbles);
+        let outer;
+        for (outer = 0; outer < bubbles.length; outer++){
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
-            return (
-              <Bubble key={bub.id}
-                    internalID = {bub.internalId}
-                    id= {bub.id}
-                    name= {bub.text}
-                    type= {bub.type}
-                    onDragStart={(event) => this.handleBubbleDragStart(event, bub.id)} 
-                    onDrop={(event) => this.handleBubbleDrop(event, bub.id)}
-                    xLocation= {bub.xLocation}
-                    yLocation={bub.yLocation}
-                />
-            );
-        });        
+            
+            if (bubbles[outer].bubbles.length > 0){
+                //console.log(bubbles[outer].bubbles);
+                let inner;
+                for (inner = 0; inner < bubbles[outer].bubbles.length; inner++){
+                    bubbleArray.push(this.renderBubble(bubbles[outer].bubbles[inner]));
+                }
+                // bub.bubbles.forEach(function(intBub){
+                //     bubbleArray.push(this.renderBubble(intBub));
+                // });
+            }
+            bubbleArray.push(this.renderBubble(bubbles[outer]));            
+        };
         
         return(
             <div className = "space">                
@@ -316,7 +468,7 @@ class Space extends React.Component{
                     >
                     Available Info - rental_transaction Table
                 </div>
-                {bubbles}
+                {bubbleArray}
                 <div className = "query"
                     style={{
                         height: 0,
@@ -362,7 +514,7 @@ let infoFieldCount = 0;
 function nextXLocation(type){
     if (type === 'bubble subject' | type === 'bubble condition'){
         return layout.BubbleLeftMargin;
-    }else if (type === 'bubble info-field'){
+    }else if (type === 'bubble info-field'| type === 'bubble info-value'){
         return layout.InfoBubbleLeft;
     }
 }
@@ -379,7 +531,7 @@ function nextYLocation(type){
         conditionCount++;
         return nextY;
     }
-    else if (type === 'bubble info-field'){
+    else if (type === 'bubble info-field'| type === 'bubble info-value'){
         const nextY = layout.BubbleTopMargin + infoFieldCount*55;
         infoFieldCount++;
         return nextY;
