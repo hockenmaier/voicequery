@@ -20,7 +20,7 @@ function initializeLayout(){
     layout.subjectHeight = 380;
     layout.subjectWidth = 300;
 
-    layout.roomBuffer = 30;
+    layout.roomBuffer = 20;
     layout.conditionTop = layout.topMargin + layout.subjectHeight + layout.roomBuffer;
     layout.conditionHeight = 380;
     layout.conditionWidth = 300;
