@@ -2,6 +2,41 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+class layout{
+    //properties are created in the initializeLayout() function below
+}
+
+function initializeLayout(){
+    layout.topbarX = 0;
+    layout.topbarY = 0;
+    layout.topbarHeight = 70;
+    layout.queryTop = 20;
+    layout.queryLeft = 30;
+
+    layout.leftMargin = 30;
+    layout.topMargin = layout.topbarHeight + 30;
+    layout.rightMargin = 30;
+
+    layout.subjectHeight = 380;
+    layout.subjectWidth = 300;
+
+    layout.roomBuffer = 30;
+    layout.conditionTop = layout.topMargin + layout.subjectHeight + layout.roomBuffer;
+    layout.conditionHeight = 380;
+    layout.conditionWidth = 300;
+
+    layout.infoHeight = layout.conditionHeight + layout.subjectHeight + layout.roomBuffer;
+    layout.infoWidth = 500;
+
+    layout.BubbleRoomLeftMargin = 20;
+    layout.BubbleRoomTopMargin = 30;
+    layout.BubbleLeftMargin = layout.leftMargin + layout.BubbleRoomLeftMargin;
+    layout.BubbleTopMargin = layout.topMargin + layout.BubbleRoomTopMargin;
+    layout.conditionBubbleTopMargin = layout.conditionTop + layout.BubbleRoomTopMargin;
+
+    layout.InfoBubbleLeft = window.innerWidth - (layout.infoWidth + layout.rightMargin - layout.BubbleRoomLeftMargin);
+}
+
 //var lastDragStartId = '';
 class lastDragStart{
     id = '';
@@ -64,11 +99,19 @@ class Bubble extends React.Component{
 
     render(){
         //set base size by type
-        let height = 50;
-        let width = 120
+        
+        let height;
+        let width;
+        if (this.props.type === 'bubble subject' | this.props.type === 'bubble condition'){
+            height = 50;
+            width = 120
+        }else if (this.props.type === 'bubble info-field'){
+            height = 40;
+            width = 150
+        }        
 
         //modify size based on dragover event
-        const dragScale = 1.2;
+        const dragScale = 1.25;
         height = (this.state.dragover ? height*dragScale : height);
         width = (this.state.dragover ? width*dragScale : width);
         
@@ -77,12 +120,17 @@ class Bubble extends React.Component{
         const stringWidth = (width + 'px');
 
         //set base location based on props
-        const xLocation = this.props.xLocation;
-        const yLocation = this.props.yLocation;
+        let yLocation = this.props.yLocation;
+        let xLocation = this.props.xLocation;
+        
+        //modify location based on scale (so that expanding bubbles appear to expand fromt the center)
+        yLocation = (this.state.dragover ? yLocation - (height * (dragScale-1) / 2.5) : yLocation);  //according to my math we should be dividing by 2 in there instead of 2.5
+        xLocation = (this.state.dragover ? xLocation - (width * (dragScale-1) / 2.5) : xLocation);  //I don't know why we have to use 2.5 but we do to get it pixel-perfect and this range of dragscales
 
         //turn location into strings
-        const stringXLocation = xLocation + 'px';
         const stringYLocation = yLocation + 'px';
+        const stringXLocation = xLocation + 'px';
+        
         return(
             <button 
                 id = {this.props.id}
@@ -109,7 +157,7 @@ class Bubble extends React.Component{
 class Space extends React.Component{
     constructor(props){
         super(props);
-        this.canvasRef = React.createRef();
+        initializeLayout();
         this.state = {
             bubbles: [                
                     new BubbleDeets("","visitor", "subject"),
@@ -126,12 +174,13 @@ class Space extends React.Component{
                     new BubbleDeets("","last_update_date", "info-field"),
                     new BubbleDeets("","asset_id", "info-field"),
                     new BubbleDeets("","asset_name", "info-field"),
+                    new BubbleDeets("","asset_department", "info-field"),
                     new BubbleDeets("","order_id", "info-field"),
               ],
             sampleQuery: randomSampleQuery(),
             queryInput: '',
           };
-        this.handleQueryChange = this.handleQueryChange.bind(this);
+        this.handleQueryChange = this.handleQueryChange.bind(this);        
       }
 
     handleBubbleDragStart(e, id){
@@ -159,7 +208,7 @@ class Space extends React.Component{
     moveBubble(e){
         //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
         //console.log(e.nativeEvent);        
-        const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3;
+        const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
         const newBubbles = this.state.bubbles.map((bub) => {
             //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
@@ -222,48 +271,47 @@ class Space extends React.Component{
                     onDrop={this.handleWorkRoomDrop.bind(this)}
                     onDragOver={this.handleWorkRoomDragOver}
                     style={{
-                        position: "absolute",
                         height: window.innerHeight,
                         width: window.innerWidth,
-                        top: '0px',
-                        left: '0px',
+                        top: 0,
+                        left: 0,
                     }}
                     >
                 </div>
                 <div className = "top-bar"
                     style={{
-                        top: '0px',
-                        left: '0px',
-                        height: '70px',
+                        top: layout.topbarY,
+                        left: layout.topbarX,
+                        height: layout.topbarHeight,
                         width: window.innerWidth,
                         }}
                 ></div>                
                 <div className = "subject-room"
                     style={{
-                        height: '300px',
-                        width: '300px',
-                        top: '100px',
-                        left: '30px',
+                        height: layout.subjectHeight,
+                        width: layout.subjectWidth,
+                        top: layout.topMargin,
+                        left: layout.leftMargin,
                     }}
                     >
                     Unmapped Subjects
                 </div>
                 <div className = "condition-room"
                     style={{
-                        height: '300px',
-                        width: '300px',
-                        top: '430px',
-                        left: '30px',
+                        height: layout.conditionHeight,
+                        width: layout.conditionWidth,
+                        top: layout.conditionTop,
+                        left: layout.leftMargin,
                     }}
                     >
                     Unmapped Conditions
                 </div>
                 <div className = "info-room"
                     style={{
-                        height: '630px',
-                        width: '500px',
-                        top: '100px',
-                        right: '30px',
+                        height: layout.infoHeight,
+                        width: layout.infoWidth,
+                        top: layout.topMargin,
+                        right: layout.rightMargin,
                     }}
                     >
                     Available Info - rental_transaction Table
@@ -271,10 +319,10 @@ class Space extends React.Component{
                 {bubbles}
                 <div className = "query"
                     style={{
-                        height: '0px',
-                        width: '0px',
-                        top: '20px',
-                        left: '30px',
+                        height: 0,
+                        width: 0,
+                        top: layout.queryTop,
+                        left: layout.queryLeft,
                     }}
                     >
                     <input 
@@ -301,6 +349,7 @@ function randomSampleQuery(){
     queries.push("How much did I spend on data storage services in Azure this year to date?");
     queries.push("Which department has the highest AWS spend per user?");
     queries.push("Which department has the lowest revenue per square foot?");
+    queries.push("How well are the props purchased in the last year renting?");
     const randomInt = Math.floor(Math.random()*queries.length);
     //console.log(queries[randomInt]);
     return queries[randomInt];
@@ -312,26 +361,26 @@ let infoFieldCount = 0;
 
 function nextXLocation(type){
     if (type === 'bubble subject' | type === 'bubble condition'){
-        return 50;
+        return layout.BubbleLeftMargin;
     }else if (type === 'bubble info-field'){
-        return window.innerWidth - 510;
+        return layout.InfoBubbleLeft;
     }
 }
 
 function nextYLocation(type){
     //console.log(type);
     if (type === 'bubble subject'){
-        const nextY =  130 + subjectCount*60;
+        const nextY =  layout.BubbleTopMargin + subjectCount*60;
         subjectCount++;
         return nextY;
     }
     else if (type === 'bubble condition'){
-        const nextY = 460 + conditionCount*60;
+        const nextY = layout.conditionBubbleTopMargin + conditionCount*60;
         conditionCount++;
         return nextY;
     }
     else if (type === 'bubble info-field'){
-        const nextY = 130 + infoFieldCount*60;
+        const nextY = layout.BubbleTopMargin + infoFieldCount*55;
         infoFieldCount++;
         return nextY;
     }
