@@ -2,9 +2,9 @@ This project contains all files for the voicequery project.
 
 ## Organization
 
-Under "webapp" you will find the react app for the frontend of the application, also known as the "Lexicon Console". See that folder's readme for a list of available scripts
+### Under "webapp" you will find the react app for the frontend of the application, also known as the "Lexicon Console". See that folder's readme for a list of available scripts
 
-Under "nltk-experiments" you will find several NLP scripts using they python nltk library
+### Under "nltk-experiments" you will find several NLP scripts using they python nltk library
 
 ## Description
 
@@ -29,7 +29,7 @@ The design will be broken up into several components:
 This responder component is easier to demonstrate with an example.  In this example, imagine the current date is 6/20/19 and the questioner works for a rental department for costumes and other apparel.
 
 
-Question:
+### Question:
 What costumes were rented the least in the last 2 years?
 
 Logic:
@@ -41,7 +41,7 @@ rented = lexicon entry for “rental” in the “transaction_type” field
 last week = 6/20/19 through 6/20/19
 
 
-Resulting SQL:
+### Resulting SQL:
 
 SELECT rental_transaction_id, rental_transaction_out_date, asset_id, asset_description
 
@@ -56,15 +56,15 @@ WHERE rental_transaction_out_date BETWEEN #6/20/17# AND #6/20/19#;
 WHERE asset_department = (costume)
 
 
-Operations to perform in code:
+### Operations to perform in code:
 
 Count number of transactions per costume asset
 
 Find 5 assets with the minimum number of transactions
 
-Simple human-audible answer: "The 5 least utilized costume assets rented in the last 2 years were: A, B, C, D, and E" (where A-E represent the costume asset names.
+### Simple human-audible answer: "The 5 least utilized costume assets rented in the last 2 years were: A, B, C, D, and E" (where A-E represent the costume asset names.
 
-Visual: produce table with bottom 5 or 10% of transaction counts
+### Visual: produce table with bottom 5 or 10% of transaction counts
 
   
     
