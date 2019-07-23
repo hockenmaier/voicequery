@@ -13,11 +13,11 @@ This application is being developed to solve the core business problem of using 
 The design will be broken up into several components:
   1. A query processor, which, using common libraries and NLP tools, will tokenize incoming business queries into (at least) the following 3 pieces:
   
-    *Subjects (the "target" of the question, such as a business asset or record.
+    -Subjects (the "target" of the question, such as a business asset or record.
     
-    *Conditions (which are parts of the sentence which are intended to act as data "filters" such as "during black friday" or "last week" or basic descriptors like "queen-sized" or "red".
+    -Conditions (which are parts of the sentence which are intended to act as data "filters" such as "during black friday" or "last week" or basic descriptors like "queen-sized" or "red".
     
-    *Quantifiers (Usually at the start of the question and define the overall query type, such as "How many" or "What is the average" or "When did".
+    -Quantifiers (Usually at the start of the question and define the overall query type, such as "How many" or "What is the average" or "When did".
     
     
   2. An "Lexicon Console", the current portion of the app that is furthest develop and found in the "webapp" folder.  In this console, the user defines the "business lexicon."  Business lexicon can be either subjects or conditions, and represents business-specific terminology such as time period names only relevant to the business, or asset categories specific to the industry.  This console allows users to drag-and-drop business lexicon onto corresponding fields and field values from a referenced database, and stores these relationships as "concepts".  For example, a user might drag the "rented" business lexicon condition onto the "rental" field value of the "transaction type" field in order to create a relationship, informing that when a user uses the term "rented" in a business query, it should filter table data only to records which have the "renta" value in the "transaction type" field.
