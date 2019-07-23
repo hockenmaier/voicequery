@@ -62,9 +62,9 @@ Count number of transactions per costume asset
 
 Find 5 assets with the minimum number of transactions
 
-### Simple human-audible answer: "The 5 least utilized costume assets rented in the last 2 years were: A, B, C, D, and E" (where A-E represent the costume asset names.
+Create and return simple human-audible answer: "The 5 least utilized costume assets rented in the last 2 years were: A, B, C, D, and E" (where A-E represent the costume asset names.)
 
-### Visual: produce table with bottom 5 or 10% of transaction counts
+Create visual: produce table with bottom 5 or 10% of transaction counts
 
   
     
