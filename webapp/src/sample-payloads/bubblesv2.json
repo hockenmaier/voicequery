@@ -107,5 +107,24 @@
       "name": "asset_department",
       "type": "info-field",
       "bubbles": []
-    }
-  ]
+    },
+    {
+      "internalID": "",
+      "name": "loss_or_damage",
+      "type": "info-field",
+      "bubbles": [
+        {
+          "internalID": "",
+          "name": "yes",
+          "type": "info-value",
+          "bubbles": []
+        },
+        {
+          "internalID": "",
+          "name": "no",
+          "type": "info-value",
+          "bubbles": []
+        }
+    ]
+  }
+]

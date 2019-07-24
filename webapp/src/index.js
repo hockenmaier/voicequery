@@ -157,6 +157,8 @@ class Bubble extends React.Component{
     }
 }
 
+
+
 class Space extends React.Component{
     constructor(props){
         super(props);
@@ -172,11 +174,11 @@ class Space extends React.Component{
 
     componentDidMount(){
         // console.log(bubblesPayload);
-        const rawBubs = this.state.bubbles;
-        console.log(rawBubs);
-        const stringifiedBubs = JSON.stringify(rawBubs);
-        console.log(stringifiedBubs);
-        console.log(JSON.parse(stringifiedBubs));
+        // const rawBubs = this.state.bubbles;
+        // console.log(rawBubs);
+        // const stringifiedBubs = JSON.stringify(rawBubs);
+        // console.log(stringifiedBubs);
+        // console.log(JSON.parse(stringifiedBubs));
         
         this.initializeBubbles(this.state.bubbles);
         bubblesInitialized = true;        
@@ -204,7 +206,7 @@ class Space extends React.Component{
 
     handleBubbleDragStart(e, id){
         lastDragStart.id = id;
-        console.log(id);
+        //console.log(id);
         lastDragStart.shiftX = e.nativeEvent.clientX - e.nativeEvent.srcElement.getBoundingClientRect().left;
         lastDragStart.shiftY = e.nativeEvent.clientY - e.nativeEvent.srcElement.getBoundingClientRect().top;
     }
@@ -226,25 +228,28 @@ class Space extends React.Component{
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
 
-        const newBubbles = this.state.bubbles.map((bub) => {
-            //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
-
-            //I NEED TO REMOVE THIS LATER WITH BUBBLE LOOPER HELPER FUNCTION
-            for (let inner = 0; inner < bub.bubbles.length; inner++){
-                if (bub.bubbles[inner].id === lastDragStart.id.toString()){
-                    bub.bubbles[inner].xLocation = newX;
-                    bub.bubbles[inner].yLocation = newY;
-                }
+        const flatBubbles = this.state.bubbles;
+        const newBubbles = [];
+        for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
+            if (flatBubbles[bubblePos].id === lastDragStart.id.toString()){
+                flatBubbles[bubblePos].xLocation = newX;
+                flatBubbles[bubblePos].yLocation = newY;
             }
-            //I NEED TO REMOVE THIS LATER WITH BUBBLE LOOPER HELPER FUNCTION
+            newBubbles.push(flatBubbles[bubblePos]);    
+        };
 
-            if (bub.id === lastDragStart.id.toString()){
-                bub.xLocation = newX;
-                //console.log('id is: ' + bub.id + ' and new x location is: '+ bub.xLocation);
-                bub.yLocation = newY;
-            }
-            return bub;
-        })
+        // const newBubbles = flatBubbles.map((bub) => {
+        //     //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
+
+        //     if (bub.id === lastDragStart.id.toString()){
+        //         bub.xLocation = newX;
+        //         //console.log('id is: ' + bub.id + ' and new x location is: '+ bub.xLocation);
+        //         bub.yLocation = newY;
+        //     }
+        //     return bub;            
+        // })
+
+        console.log(newBubbles);
         this.setState({
             bubbles: newBubbles                
         })
@@ -283,30 +288,33 @@ class Space extends React.Component{
         );
     }
 
+    bubbleFlattener(bubbles){
+        let flatBubbles = [];        
+        for (let outer = 0; outer < bubbles.length; outer++){            
+            flatBubbles.push(bubbles[outer]);
+            if (bubbles[outer].bubbles.length > 0){
+                for (let inner = 0; inner < bubbles[outer].bubbles.length; inner++){
+                    flatBubbles.push(bubbles[outer].bubbles[inner]);
+                }
+            }          
+        };
+        return flatBubbles;
+    }
+
     render(){
         if (!bubblesInitialized){
             return<div className = "space"></div>; //doing this so that render doesn't execute before bubbles are initialized on componentdidmount
         }
-        //console.log(this.state.bubbles[0]);
-        //console.log(this.state.bubbles);
+
         let bubbleArray = [];
-        let bubbles = this.state.bubbles;
-        //console.log(bubbles);
-        for (let outer = 0; outer < bubbles.length; outer++){
-            //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);            
-            if (bubbles[outer].bubbles.length > 0){
-                for (let inner = 0; inner < bubbles[outer].bubbles.length; inner++){
-                    bubbleArray.push(this.renderBubble(bubbles[outer].bubbles[inner]));
-                }
-            }
-            bubbleArray.push(this.renderBubble(bubbles[outer]));            
+        let flatBubbles = this.bubbleFlattener(this.state.bubbles);
+        for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
+            bubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));            
         };
         
         return(
             <div className = "space">                
                 <div className = "work-room"
-                    //ref={this.canvasRef} 
-                    //id="space_canvas"
                     onDrop={this.handleWorkRoomDrop.bind(this)}
                     onDragOver={this.handleWorkRoomDragOver}
                     style={{
