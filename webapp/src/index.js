@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import bubblesPayload from './sample-payloads/bubblesv2.json' 
 
 class layout{
     //properties are created in the initializeLayout() function below
@@ -156,157 +157,38 @@ class Bubble extends React.Component{
     }
 }
 
-
 class Space extends React.Component{
     constructor(props){
         super(props);
         initializeLayout();
         this.state = {
-            bubbles: [                
-                    // new BubbleDeets("","visitor", "subject"),
-                    // new BubbleDeets("","through gate 6", "condition"),    
-                    // new BubbleDeets("","costume", "subject"),          
-                    // new BubbleDeets("","people", "subject"),   
-                    // new BubbleDeets("","rented", "condition"),    
-                    // new BubbleDeets("","on the lot", "condition"),
-                    // new BubbleDeets("","ladder light", "subject"),
-                    // new BubbleDeets("","transaction_id", "info-field"),
-                    // new BubbleDeets("","checkout_date", "info-field"),
-                    // new BubbleDeets("","checkin_date", "info-field"),                    
-                    // new BubbleDeets("","transaction_type", "info-field"),
-                    // new BubbleDeets("","last_update_date", "info-field"),
-                    // new BubbleDeets("","asset_id", "info-field"),
-                    // new BubbleDeets("","asset_name", "info-field"),
-                    // new BubbleDeets("","asset_department", "info-field"),
-                    // new BubbleDeets("","order_id", "info-field"),
-                    {
-                        internalID: "",
-                        name: "visitor",
-                        type: "subject",
-                        bubbles: []
-                    },                    
-                    {
-                        internalID: "",
-                        name: "through gate 6",
-                        type: "condition",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "costume",
-                        type: "subject",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "people",
-                        type: "subject",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "rented",
-                        type: "condition",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "on the lot",
-                        type: "condition",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "ladder light",
-                        type: "subject",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "transaction_id",
-                        type: "info-field",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "checkout_date",
-                        type: "info-field",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "checkin_date",
-                        type: "info-field",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "transaction_type",
-                        type: "info-field",
-                        bubbles: [
-                            {
-                                internalID: "",
-                                name: "rental",
-                                type: "info-value",
-                                bubbles: []
-                            },
-                            {
-                                internalID: "",
-                                name: "sale",
-                                type: "info-value",
-                                bubbles: []
-                            },
-                            {
-                                internalID: "",
-                                name: "subrental",
-                                type: "info-value",
-                                bubbles: []
-                            }
-                        ]
-                    },
-                    {
-                        internalID: "",
-                        name: "last_update_date",
-                        type: "info-field",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "asset_id",
-                        type: "info-field",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "asset_name",
-                        type: "info-field",
-                        bubbles: []
-                    },
-                    {
-                        internalID: "",
-                        name: "asset_department",
-                        type: "info-field",
-                        bubbles: []
-                    },
-              ],
+            bubbles: bubblesPayload,
             sampleQuery: randomSampleQuery(),
             queryInput: '',
           };
         this.handleQueryChange = this.handleQueryChange.bind(this);
+        
       }
 
     componentDidMount(){
+        // console.log(bubblesPayload);
+        const rawBubs = this.state.bubbles;
+        console.log(rawBubs);
+        const stringifiedBubs = JSON.stringify(rawBubs);
+        console.log(stringifiedBubs);
+        console.log(JSON.parse(stringifiedBubs));
+        
         this.initializeBubbles(this.state.bubbles);
-        bubblesInitialized = true;
+        bubblesInitialized = true;        
     }
 
     initializeBubbles(bubbles){
-        //console.log(this.state.bubbles);
+        //initializing full bubbledeets object for each top-level bubble in incoming payload
         const newBubbles = bubbles.map((bub) => {
             const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"");
+
+            //Now we do the same for sub-bubbles
             if(newBub.bubbles.length > 0){
-                //console.log("internal bubbles are: " + newBub.bubbles);
-                //console.log(newBub.bubbles);
                 newBub.bubbles = newBub.bubbles.map((intBub) => {
                     const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id);
                     return newIntBub;
@@ -471,7 +353,7 @@ class Space extends React.Component{
                         right: layout.rightMargin,
                     }}
                     >
-                    Available Info - rental_transaction Table
+                    Available Info: rental_transaction Table
                 </div>
                 {bubbleArray}
                 <div className = "query"
