@@ -51,11 +51,11 @@ class BubbleDeets{
         this.internalID = internalId;
         this.id = getNextBubbleID();
         this.text = text;
-        this.type ='bubble ' + typetext;
-        this.xLocation = nextXLocation(this.type);
-        this.yLocation = nextYLocation(this.type);
+        this.type ='bubble ' + typetext;        
         this.bubbles = bubbles;
-        this.parentBubbleId = parentBubbleId;
+        this.parentBubbleId = parentBubbleId;        
+        this.xLocation = nextXLocation(this.type,this.id,this.parentBubbleId);
+        this.yLocation = nextYLocation(this.type);
     }
 }
 
@@ -110,7 +110,7 @@ class Bubble extends React.Component{
         }
         else if (this.props.type === 'bubble info-value'){
             height = 30;
-            width = 150
+            width = 90
         }     
 
         //modify size based on dragover event
@@ -322,6 +322,7 @@ class Space extends React.Component{
 
     handleBubbleDragStart(e, id){
         lastDragStart.id = id;
+        console.log(id);
         lastDragStart.shiftX = e.nativeEvent.clientX - e.nativeEvent.srcElement.getBoundingClientRect().left;
         lastDragStart.shiftY = e.nativeEvent.clientY - e.nativeEvent.srcElement.getBoundingClientRect().top;
     }
@@ -339,7 +340,7 @@ class Space extends React.Component{
 
     moveBubble(e){
         //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
-        console.log(e.nativeEvent);        
+        //console.log(e.nativeEvent);        
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
 
@@ -515,13 +516,13 @@ let subjectCount = 0;
 let conditionCount = 0;
 let infoFieldCount = 0;
 
-function nextXLocation(type){
+function nextXLocation(type,id,parentId){
     if (type === 'bubble subject' | type === 'bubble condition'){
         return layout.BubbleLeftMargin;
     }else if (type === 'bubble info-field'){
         return layout.InfoBubbleLeft;
     }else if (type === 'bubble info-value'){
-        return layout.InfoBubbleLeft + 20;
+        return layout.InfoBubbleLeft + 60 + ((parseInt(id)-parseInt(parentId))*105);
     }
 }
 
@@ -537,9 +538,13 @@ function nextYLocation(type){
         conditionCount++;
         return nextY;
     }
-    else if (type === 'bubble info-field'| type === 'bubble info-value'){
+    else if (type === 'bubble info-field'){
         const nextY = layout.BubbleTopMargin + infoFieldCount*55;
         infoFieldCount++;
+        return nextY;
+    }
+    else if (type === 'bubble info-value'){
+        const nextY = layout.BubbleTopMargin + (infoFieldCount-1)*55 + 5;
         return nextY;
     }
     else{
