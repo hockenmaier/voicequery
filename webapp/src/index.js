@@ -201,7 +201,6 @@ class Space extends React.Component{
         this.setState({
             bubbles: newBubbles
         })
-        //console.log(newBubbles);
     }
 
     handleBubbleDragStart(e, id){
@@ -228,28 +227,19 @@ class Space extends React.Component{
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
 
-        const flatBubbles = this.state.bubbles;
-        const newBubbles = [];
-        for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
-            if (flatBubbles[bubblePos].id === lastDragStart.id.toString()){
-                flatBubbles[bubblePos].xLocation = newX;
-                flatBubbles[bubblePos].yLocation = newY;
+        const newBubbles = this.state.bubbles.map((bub) => {
+            for (let inner = 0; inner < bub.bubbles.length; inner++){
+                if (bub.bubbles[inner].id === lastDragStart.id.toString()){
+                    bub.bubbles[inner].xLocation = newX;
+                    bub.bubbles[inner].yLocation = newY;
+                }
             }
-            newBubbles.push(flatBubbles[bubblePos]);    
-        };
-
-        // const newBubbles = flatBubbles.map((bub) => {
-        //     //console.log("id: " + bub.id + ' text: ' +bub.text+' type: ' +bub.type);
-
-        //     if (bub.id === lastDragStart.id.toString()){
-        //         bub.xLocation = newX;
-        //         //console.log('id is: ' + bub.id + ' and new x location is: '+ bub.xLocation);
-        //         bub.yLocation = newY;
-        //     }
-        //     return bub;            
-        // })
-
-        console.log(newBubbles);
+            if (bub.id === lastDragStart.id.toString()){
+                bub.xLocation = newX;
+                bub.yLocation = newY;
+            }
+            return bub;
+        })
         this.setState({
             bubbles: newBubbles                
         })
