@@ -36,6 +36,9 @@ function initializeLayout(){
     layout.conditionBubbleTopMargin = layout.conditionTop + layout.BubbleRoomTopMargin;
 
     layout.InfoBubbleLeft = window.innerWidth - (layout.infoWidth + layout.rightMargin - layout.BubbleRoomLeftMargin);
+
+    layout.conceptWidth = 200;
+    layout.conceptHeight = 200;
 }
 
 let bubblesInitialized = false;
@@ -43,20 +46,30 @@ let bubblesInitialized = false;
 //var lastDragStartId = '';
 class lastDragStart{
     id = '';
+    type = '';
     shiftX = 0;
     shifty = 0;
 }
 
 class BubbleDeets{
-    constructor(internalId,text,typetext,bubbles,parentBubbleId){
+    constructor(internalId,text,typetext,bubbles,parentBubbleId, xLocation, yLocation){
         this.internalID = internalId;
         this.id = getNextBubbleID();
         this.text = text;
         this.type ='bubble ' + typetext;        
         this.bubbles = bubbles;
-        this.parentBubbleId = parentBubbleId;        
-        this.xLocation = nextXLocation(this.type,this.id,this.parentBubbleId);
-        this.yLocation = nextYLocation(this.type);
+        this.parentBubbleId = parentBubbleId;
+        if(xLocation){
+            this.xLocation = xLocation;
+        }else{
+            this.xLocation = nextXLocation(this.type,this.id,this.parentBubbleId);
+        }
+        if(xLocation){
+            this.yLocation = yLocation;
+        }else{
+            this.yLocation = nextYLocation(this.type);
+        }
+        
     }
 }
 
@@ -104,16 +117,19 @@ class Bubble extends React.Component{
         let width;
         if (this.props.type === 'bubble subject' | this.props.type === 'bubble condition'){
             height = 50;
-            width = 120
+            width = 120;
         }else if (this.props.type === 'bubble info-field'){
             height = 40;
-            width = 150
+            width = 150;
         }
         else if (this.props.type === 'bubble info-value'){
             height = 30;
-            width = 90
+            width = 90;
+        }
+        else if (this.props.type === 'bubble concept'){
+            height = layout.conceptHeight;
+            width = layout.conceptWidth;
         }     
-
         //modify size based on dragover event
         const dragScale = 1.25;
         height = (this.state.dragover ? height*dragScale : height);
@@ -149,7 +165,7 @@ class Bubble extends React.Component{
                     height: stringHeight,
                     width: stringWidth,
                     top: stringYLocation,
-                    left: stringXLocation
+                    left: stringXLocation,
                 }}
             >{this.props.name}
             </button>
@@ -168,8 +184,7 @@ class Space extends React.Component{
             sampleQuery: randomSampleQuery(),
             queryInput: '',
           };
-        this.handleQueryChange = this.handleQueryChange.bind(this);
-        
+        this.handleQueryChange = this.handleQueryChange.bind(this);        
       }
 
     componentDidMount(){
@@ -211,10 +226,62 @@ class Space extends React.Component{
     }
     handleBubbleDrop(e, id){
         e.nativeEvent.preventDefault();
-        if (id === lastDragStart.id.toString()){
+        const draggedID = lastDragStart.id.toString();
+        const droppedID = id;
+
+        if (droppedID === draggedID){
             this.moveBubble(e);
+            return;
         }
-        //console.log('bubble dropped upon, id of receiving bubble is: ' + id + ' and id of dragged bubble is: ' + lastDragStart.id);
+
+        const dragged = this.getBubble(draggedID);
+        const dropped = this.getBubble(droppedID);        
+        
+        if (dragged.type === dropped.type){
+            console.log('same type');
+            return;
+        }else if(dragged.type === 'bubble subject' && dropped.type === 'bubble condition'){
+            console.log('subject-condtion');
+            return;
+        }
+        else if(dragged.type === 'bubble condition' && dropped.type === 'bubble subject'){
+            console.log('condition-subject');
+            return;            
+        }
+        else if(dragged.type === 'bubble concept' | dropped.type === 'bubble concept'){
+            console.log('concept addition');
+            return;
+        }
+        else{
+            console.log('concept creation');
+            this.createConcept(dragged,dropped,e)
+        }
+    }
+
+    getBubble = (id) => {
+        const flatBubs = this.bubbleFlattener(this.state.bubbles);
+        for (let iter = 0; iter < flatBubs.length; iter++){
+            if (flatBubs[iter].id === id){
+                return flatBubs[iter];
+            }
+        }
+    }
+
+    createConcept = (dragged,dropped,e) => {
+        const newBubbles = this.state.bubbles;
+        const newX = e.nativeEvent.clientX - layout.conceptWidth / 2
+        const newY = e.nativeEvent.clientY - layout.conceptHeight / 2
+        const newConcept = new BubbleDeets('','New Concept','concept',[],'',newX,newY)
+        newBubbles.unshift(newConcept);
+        
+        //TODO:
+        //Add dragged,dropped to concept bubbles array
+        //Remove dragged and dropped from newBubbles array
+        //Move dragged and dropped to new locations (offset up/down?)
+
+        this.setState({
+            bubbles: newBubbles
+        })
     }
 
     handleWorkRoomDrop(e){
@@ -286,7 +353,7 @@ class Space extends React.Component{
                 for (let inner = 0; inner < bubbles[outer].bubbles.length; inner++){
                     flatBubbles.push(bubbles[outer].bubbles[inner]);
                 }
-            }          
+            }
         };
         return flatBubbles;
     }
@@ -370,7 +437,7 @@ class Space extends React.Component{
                         value={this.state.queryInput}
                     >
                     </input>
-                </div>
+                </div>                
             </div>
         );
     }    
@@ -403,6 +470,8 @@ function nextXLocation(type,id,parentId){
         return layout.InfoBubbleLeft;
     }else if (type === 'bubble info-value'){
         return layout.InfoBubbleLeft + 60 + ((parseInt(id)-parseInt(parentId))*105);
+    }else{
+    return 300;
     }
 }
 
@@ -428,7 +497,7 @@ function nextYLocation(type){
         return nextY;
     }
     else{
-        return 10;
+        return 300;
     }
     
 }

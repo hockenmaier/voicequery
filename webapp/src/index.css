@@ -65,7 +65,7 @@ body {
   }
   
   .info-value {
-    background: rgb(113, 132, 136);
+    background: rgb(95, 116, 121);
     border-radius: 5px;
     font-size: 14px;
   }
@@ -79,7 +79,7 @@ body {
     font-weight: 600;
     text-indent: .5em;
     user-select: none;
-  }  
+  }
 
   .query {
     position: fixed;
@@ -101,6 +101,18 @@ body {
   .top-bar{
     background: rgb(226, 226, 226);
     position: fixed;    
+  }
+
+  .concept {
+    background: rgb(216, 216, 216);
+    border-radius: 5px;
+    border: 3px solid rgb(162, 170, 167);
+    border-radius: 50%;    
+    color: rgb(12, 65, 34);
+    font-weight: 600;
+    font-size: 20px;
+    padding-bottom: 6em;
+    position: fixed;
   }
 
 
