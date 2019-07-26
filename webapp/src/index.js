@@ -37,8 +37,8 @@ function initializeLayout(){
 
     layout.InfoBubbleLeft = window.innerWidth - (layout.infoWidth + layout.rightMargin - layout.BubbleRoomLeftMargin);
 
-    layout.conceptWidth = 200;
-    layout.conceptHeight = 200;
+    layout.conceptWidth = 250;
+    layout.conceptHeight = 250;
 }
 
 let bubblesInitialized = false;
@@ -52,7 +52,7 @@ class lastDragStart{
 }
 
 class BubbleDeets{
-    constructor(internalId,text,typetext,bubbles,parentBubbleId, xLocation, yLocation){
+    constructor(internalId,text,typetext,bubbles,parentBubbleId, xLocation, yLocation,bubsInConcept){
         this.internalID = internalId;
         this.id = getNextBubbleID();
         this.text = text;
@@ -60,6 +60,11 @@ class BubbleDeets{
         this.bubbles = bubbles;
         this.parentBubbleId = parentBubbleId;
         this.atHome = true;
+        if (bubsInConcept){
+            this.bubsInConcept = bubsInConcept;
+        }else{
+            this.bubsInConcept = [];
+        }
         if(xLocation){
             this.xLocation = xLocation;
         }else{
@@ -247,10 +252,18 @@ class Space extends React.Component{
             console.log('condition-subject');
             return;            
         }
+        else if(dragged.type === 'bubble info-value' && dropped.type === 'bubble info-field'){
+            console.log('value-field');
+            return;
+        }
+        else if(dragged.type === 'bubble info-field' && dropped.type === 'bubble info-value'){
+            console.log('field-value');
+            return;
+        }
         else if(dragged.type === 'bubble concept' | dropped.type === 'bubble concept'){
             console.log('concept addition');
             return;
-        }
+        }        
         else{
             console.log('concept creation');
             this.createConcept(dragged,dropped,e)
@@ -270,16 +283,56 @@ class Space extends React.Component{
         let newBubbles = this.state.bubbles;
         const newX = e.nativeEvent.clientX - layout.conceptWidth / 2
         const newY = e.nativeEvent.clientY - layout.conceptHeight / 2
-        newBubbles = this.removeBubble(dragged);
-        newBubbles = this.removeBubble(dropped);
-        const newConcept = new BubbleDeets('','New Concept','concept',[dragged,dropped],'',newX,newY)
+        // newBubbles = this.removeBubble(dragged);  //Don't need to do this now that we're just storing ids
+        // newBubbles = this.removeBubble(dropped);
+        const newbubsInConcept = []
+        newbubsInConcept.push(dragged.id);
+        newbubsInConcept.push(dropped.id);
+        const newConcept = new BubbleDeets('','New Concept','concept',[],'',newX,newY,newbubsInConcept)
+        // this.addToConcept(newConcept,dragged.id);
+        // this.addToConcept(newConcept,dropped.id);
         newBubbles.unshift(newConcept);        
         
         //TODO:
         //Add dragged,dropped to concept bubbles array
         //Remove dragged and dropped from newBubbles array
         //Move dragged and dropped to new locations (offset up/down?)
-        console.log(newBubbles);
+        //console.log(newBubbles);
+        this.setState({
+            bubbles: newBubbles
+        })
+        this.positionConceptBubbles(newConcept,newX,newY)
+    }
+
+    addToConcept = (concept,childID) => {
+        let newBubbles = this.state.bubbles;
+        for (let iter = 0; iter < newBubbles.length; iter++){
+            if (newBubbles[iter].id === concept.id){
+                newBubbles[iter].bubsInConcept.push(childID);
+            }
+        }
+        this.setState({
+            bubbles: newBubbles
+        })
+    }
+
+    removeFromConcept = (childID) => {
+        let newBubbles = this.state.bubbles;
+        for (let iter = 0; iter < newBubbles.length; iter++){
+            if (newBubbles[iter].type === 'bubble concept'){
+                for (let iter2 = 0; iter2 < newBubbles[iter].bubsInConcept.length; iter2++){
+                    if (newBubbles[iter].bubsInConcept[iter2] === childID){
+                        newBubbles[iter].bubsInConcept.splice(iter2,1);
+                        //now removing concept if it contains no bubs:
+                        if(newBubbles[iter].bubsInConcept.length === 0){
+                            newBubbles.splice(iter,1);
+                        }
+                    }
+                }
+            }
+        }
+        
+        //console.log(newBubbles);
         this.setState({
             bubbles: newBubbles
         })
@@ -305,6 +358,7 @@ class Space extends React.Component{
     handleWorkRoomDrop(e){
         this.updateAtHome(false);
         this.moveBubble(e);
+        this.removeFromConcept(lastDragStart.id.toString())
     }
 
     updateAtHome(){
@@ -328,16 +382,40 @@ class Space extends React.Component{
             if (bub.id === lastDragStart.id.toString()){
                 bub.xLocation = newX;
                 bub.yLocation = newY;
+                if(bub.type === 'bubble concept'){
+                    this.positionConceptBubbles(bub,newX,newY)
+                }
             }
             return bub;
         })
+
         this.setState({
             bubbles: newBubbles                
         })
     }
 
-    updateAtHome(){
-
+    positionConceptBubbles = (concept,X,Y) => {
+        let newBubbles = this.state.bubbles;
+        const xOffset = 50;
+        const yOffset = 80;
+        const nextYOffset = 60;
+        for (let outer = 0; outer < newBubbles.length; outer++){
+            if(concept.bubsInConcept.includes(newBubbles[outer].id)){
+                newBubbles[outer].xLocation = X + xOffset;
+                newBubbles[outer].yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(newBubbles[outer].id)*nextYOffset);
+            }      
+            if (newBubbles[outer].bubbles.length > 0){
+                for (let inner = 0; inner < newBubbles[outer].bubbles.length; inner++){
+                    if(concept.bubsInConcept.includes(newBubbles[outer].bubbles[inner].id)){
+                        newBubbles[outer].bubbles[inner].xLocation = X + xOffset;
+                        newBubbles[outer].bubbles[inner].yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(newBubbles[outer].bubbles[inner].id)*nextYOffset);
+                    }   
+                }
+            }
+        };
+        this.setState({
+            bubbles: newBubbles                
+        })
     }
 
     handleWorkRoomDragOver(e){
@@ -357,6 +435,19 @@ class Space extends React.Component{
             })
         }
     }
+    
+    bubbleFlattener(bubbles){
+        let flatBubbles = [];        
+        for (let outer = 0; outer < bubbles.length; outer++){            
+            flatBubbles.push(bubbles[outer]);
+            if (bubbles[outer].bubbles.length > 0){
+                for (let inner = 0; inner < bubbles[outer].bubbles.length; inner++){
+                    flatBubbles.push(bubbles[outer].bubbles[inner]);
+                }
+            }
+        };
+        return flatBubbles;
+    }
 
     renderBubble(bub){
         return (
@@ -373,18 +464,6 @@ class Space extends React.Component{
         );
     }
 
-    bubbleFlattener(bubbles){
-        let flatBubbles = [];        
-        for (let outer = 0; outer < bubbles.length; outer++){            
-            flatBubbles.push(bubbles[outer]);
-            if (bubbles[outer].bubbles.length > 0){
-                for (let inner = 0; inner < bubbles[outer].bubbles.length; inner++){
-                    flatBubbles.push(bubbles[outer].bubbles[inner]);
-                }
-            }
-        };
-        return flatBubbles;
-    }
 
     render(){
         if (!bubblesInitialized){
