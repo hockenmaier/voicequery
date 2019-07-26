@@ -37,8 +37,8 @@ function initializeLayout(){
 
     layout.InfoBubbleLeft = window.innerWidth - (layout.infoWidth + layout.rightMargin - layout.BubbleRoomLeftMargin);
 
-    layout.conceptWidth = 250;
-    layout.conceptHeight = 250;
+    layout.conceptWidth = 235;
+    layout.conceptHeight = 235;
 }
 
 let bubblesInitialized = false;
