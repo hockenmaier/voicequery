@@ -290,8 +290,8 @@ class Space extends React.Component{
         for (let outer = 0; outer < newBubbles.length; outer++){    
             if (newBubbles[outer].bubbles.length > 0){
                 for (let inner = 0; inner < newBubbles[outer].bubbles.length; inner++){
-                    if (newBubbles[inner].id === bubbleToRemove.id){
-                        newBubbles.splice(inner,1);
+                    if (newBubbles[outer].bubbles[inner].id === bubbleToRemove.id){
+                        newBubbles[outer].bubbles.splice(inner,1);
                     }
                 }
             }
