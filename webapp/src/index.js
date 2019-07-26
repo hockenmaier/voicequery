@@ -59,6 +59,7 @@ class BubbleDeets{
         this.type ='bubble ' + typetext;        
         this.bubbles = bubbles;
         this.parentBubbleId = parentBubbleId;
+        this.atHome = true;
         if(xLocation){
             this.xLocation = xLocation;
         }else{
@@ -173,8 +174,6 @@ class Bubble extends React.Component{
     }
 }
 
-
-
 class Space extends React.Component{
     constructor(props){
         super(props);
@@ -285,7 +284,13 @@ class Space extends React.Component{
     }
 
     handleWorkRoomDrop(e){
+        this.updateAtHome(false);
         this.moveBubble(e);
+    }
+
+    updateAtHome(){
+        //Todo:
+        //update subject or condition bubble's "athome" state and subtract the appropriate count to allow all bubbles below it to shift up when it drags out
     }
 
     moveBubble(e){
@@ -310,6 +315,10 @@ class Space extends React.Component{
         this.setState({
             bubbles: newBubbles                
         })
+    }
+
+    updateAtHome(){
+
     }
 
     handleWorkRoomDragOver(e){
