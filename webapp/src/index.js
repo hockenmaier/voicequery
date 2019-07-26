@@ -267,20 +267,39 @@ class Space extends React.Component{
     }
 
     createConcept = (dragged,dropped,e) => {
-        const newBubbles = this.state.bubbles;
+        let newBubbles = this.state.bubbles;
         const newX = e.nativeEvent.clientX - layout.conceptWidth / 2
         const newY = e.nativeEvent.clientY - layout.conceptHeight / 2
-        const newConcept = new BubbleDeets('','New Concept','concept',[],'',newX,newY)
-        newBubbles.unshift(newConcept);
+        newBubbles = this.removeBubble(dragged);
+        newBubbles = this.removeBubble(dropped);
+        const newConcept = new BubbleDeets('','New Concept','concept',[dragged,dropped],'',newX,newY)
+        newBubbles.unshift(newConcept);        
         
         //TODO:
         //Add dragged,dropped to concept bubbles array
         //Remove dragged and dropped from newBubbles array
         //Move dragged and dropped to new locations (offset up/down?)
-
+        console.log(newBubbles);
         this.setState({
             bubbles: newBubbles
         })
+    }
+
+    removeBubble = (bubbleToRemove) => {
+        let newBubbles = this.state.bubbles;        
+        for (let outer = 0; outer < newBubbles.length; outer++){    
+            if (newBubbles[outer].bubbles.length > 0){
+                for (let inner = 0; inner < newBubbles[outer].bubbles.length; inner++){
+                    if (newBubbles[inner].id === bubbleToRemove.id){
+                        newBubbles.splice(inner,1);
+                    }
+                }
+            }
+            if (newBubbles[outer].id === bubbleToRemove.id){
+                newBubbles.splice(outer,1);
+            }
+        };
+        return newBubbles;
     }
 
     handleWorkRoomDrop(e){
