@@ -260,8 +260,8 @@ class Space extends React.Component{
             console.log('field-value');
             return;
         }
-        else if(dragged.type === 'bubble concept' | dropped.type === 'bubble concept'){
-            console.log('concept addition');
+        else if(dragged.type !== 'bubble concept' && dropped.type === 'bubble concept'){
+            this.addToConcept(dropped,dragged.id);
             return;
         }        
         else{
@@ -314,6 +314,7 @@ class Space extends React.Component{
         this.setState({
             bubbles: newBubbles
         })
+        this.positionConceptBubbles(concept,concept.xLocation,concept.yLocation);
     }
 
     removeFromConcept = (childID) => {
