@@ -262,7 +262,7 @@ class Space extends React.Component{
             return;
         }
         else if(dragged.type !== 'bubble concept' && dropped.type === 'bubble concept'){
-            this.addToConcept(dropped,dragged.id);
+            this.addToConcept(dragged, dropped, e);
             return;
         }if (dragged.type === dropped.type){
             if(dragged.type === 'bubble subject' | dragged.type === 'bubble condition'){
@@ -290,7 +290,7 @@ class Space extends React.Component{
         const droppedConcept = this.findConcept(dropped.id)
         if (draggedConcept){
             if(droppedConcept && (draggedConcept.id === droppedConcept.id)){
-                console.log('already in same concept');
+                console.log('bubbles already in same concept');
                 return; //don't create concept if the two bubbles are already in the same concept
             }
             this.removeFromConcept(dragged.id);
@@ -314,21 +314,27 @@ class Space extends React.Component{
         this.positionConceptBubbles(newConcept,newX,newY)
     }
 
-    addToConcept = (concept,childID) => {
+    addToConcept = (draggedChild,droppedConcept, e) => {
         //TODO
         //Add logic to remove from old concept
-        //Add logic that the same bubble can't be added to the same concept again
+        //Add logic that the same bubble can't be added to the same concept again //Done
         //Add logic to not be able to add different types of bubbles (conditions to subjects or more than one info)
+        this.removeFromConcept(draggedChild.id);
+        
         let newBubbles = this.state.bubbles;
         for (let iter = 0; iter < newBubbles.length; iter++){
-            if (newBubbles[iter].id === concept.id){
-                newBubbles[iter].bubsInConcept.push(childID);
+            if (newBubbles[iter].id === droppedConcept.id){
+                if (!droppedConcept.bubsInConcept.includes(draggedChild.id)){
+                    newBubbles[iter].bubsInConcept.push(draggedChild.id);
+                }else{
+                    console.log('already in concept');
+                }
             }
         }
         this.setState({
             bubbles: newBubbles
         })
-        this.positionConceptBubbles(concept,concept.xLocation,concept.yLocation);
+        this.positionConceptBubbles(droppedConcept,droppedConcept.xLocation,droppedConcept.yLocation);
     }
 
     removeFromConcept = (childID) => {
