@@ -242,7 +242,9 @@ class Space extends React.Component{
         const dropped = this.getBubble(droppedID);        
         
         if (dragged.type === dropped.type){
-            console.log('same type');
+            if(dragged.type === 'bubble subject' | dragged.type === 'bubble condition'){
+                this.createConcept(dragged,dropped,e)
+            }
             return;
         }else if(dragged.type === 'bubble subject' && dropped.type === 'bubble condition'){
             console.log('subject-condtion');
@@ -280,27 +282,30 @@ class Space extends React.Component{
     }
 
     createConcept = (dragged,dropped,e) => {
+        const draggedConcept = this.findConcept(dragged.id);
+        const droppedConcept = this.findConcept(dropped.id)
+        if (draggedConcept){
+            if(droppedConcept && (draggedConcept.id === droppedConcept.id)){
+                console.log('already in same concept');
+                return; //don't create concept if the two bubbles are already in the same concept
+            }
+        }
+
         let newBubbles = this.state.bubbles;
         const newX = e.nativeEvent.clientX - layout.conceptWidth / 2
         const newY = e.nativeEvent.clientY - layout.conceptHeight / 2
-        // newBubbles = this.removeBubble(dragged);  //Don't need to do this now that we're just storing ids
-        // newBubbles = this.removeBubble(dropped);
+
         const newbubsInConcept = []
         newbubsInConcept.push(dragged.id);
         newbubsInConcept.push(dropped.id);
+
         const newConcept = new BubbleDeets('','New Concept','concept',[],'',newX,newY,newbubsInConcept)
-        // this.addToConcept(newConcept,dragged.id);
-        // this.addToConcept(newConcept,dropped.id);
-        newBubbles.unshift(newConcept);        
-        
-        //TODO:
-        //Add dragged,dropped to concept bubbles array
-        //Remove dragged and dropped from newBubbles array
-        //Move dragged and dropped to new locations (offset up/down?)
-        //console.log(newBubbles);
+        newBubbles.unshift(newConcept);
+
         this.setState({
             bubbles: newBubbles
         })
+
         this.positionConceptBubbles(newConcept,newX,newY)
     }
 
@@ -327,6 +332,8 @@ class Space extends React.Component{
                         //now removing concept if it contains no bubs:
                         if(newBubbles[iter].bubsInConcept.length === 0){
                             newBubbles.splice(iter,1);
+                        }else{
+                            this.positionConceptBubbles(newBubbles[iter], newBubbles[iter].xLocation, newBubbles[iter].yLocation);
                         }
                     }
                 }
@@ -354,6 +361,15 @@ class Space extends React.Component{
             }
         };
         return newBubbles;
+    }
+    
+    findConcept = (childID) => {
+        let bubbles = this.state.bubbles;
+        for (let iter = 0; iter < bubbles.length; iter++){
+            if (bubbles[iter].bubsInConcept.includes(childID)){
+                return bubbles[iter];
+            }
+        }
     }
 
     handleWorkRoomDrop(e){
