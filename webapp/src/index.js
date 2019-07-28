@@ -241,12 +241,11 @@ class Space extends React.Component{
         const dragged = this.getBubble(draggedID);
         const dropped = this.getBubble(droppedID);        
         
-        if (dragged.type === dropped.type){
-            if(dragged.type === 'bubble subject' | dragged.type === 'bubble condition'){
-                this.createConcept(dragged,dropped,e)
-            }
-            return;
-        }else if(dragged.type === 'bubble subject' && dropped.type === 'bubble condition'){
+        
+        if(dragged.type === 'bubble concept'){
+            return; //don't add concepts to other concepts or create concepts out of concepts
+        }   
+        else if(dragged.type === 'bubble subject' && dropped.type === 'bubble condition'){
             console.log('subject-condtion');
             return;
         }
@@ -265,7 +264,12 @@ class Space extends React.Component{
         else if(dragged.type !== 'bubble concept' && dropped.type === 'bubble concept'){
             this.addToConcept(dropped,dragged.id);
             return;
-        }        
+        }if (dragged.type === dropped.type){
+            if(dragged.type === 'bubble subject' | dragged.type === 'bubble condition'){
+                this.createConcept(dragged,dropped,e)
+            }
+            return; //don't create concepts from same types other than subjects and conditions
+        }
         else{
             console.log('concept creation');
             this.createConcept(dragged,dropped,e)
@@ -289,6 +293,7 @@ class Space extends React.Component{
                 console.log('already in same concept');
                 return; //don't create concept if the two bubbles are already in the same concept
             }
+            this.removeFromConcept(dragged.id);
         }
 
         let newBubbles = this.state.bubbles;
