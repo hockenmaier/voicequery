@@ -56,7 +56,7 @@ class BubbleDeets{
         this.internalID = internalId;
         this.id = getNextBubbleID();
         this.text = text;
-        this.type ='bubble ' + typetext;        
+        this.type = typetext;        
         this.bubbles = bubbles;
         this.parentBubbleId = parentBubbleId;
         this.atHome = true;
@@ -121,18 +121,18 @@ class Bubble extends React.Component{
         
         let height;
         let width;
-        if (this.props.type === 'bubble subject' | this.props.type === 'bubble condition'){
+        if (this.props.type === 'subject' | this.props.type === 'condition'){
             height = 50;
             width = 120;
-        }else if (this.props.type === 'bubble info-field'){
+        }else if (this.props.type === 'info-field'){
             height = 40;
             width = 150;
         }
-        else if (this.props.type === 'bubble info-value'){
+        else if (this.props.type === 'info-value'){
             height = 30;
             width = 90;
         }
-        else if (this.props.type === 'bubble concept'){
+        else if (this.props.type === 'concept'){
             height = layout.conceptHeight;
             width = layout.conceptWidth;
         }     
@@ -156,11 +156,13 @@ class Bubble extends React.Component{
         //turn location into strings
         const stringYLocation = yLocation + 'px';
         const stringXLocation = xLocation + 'px';
+
+        const typeBubble= 'bubble ' + this.props.type
         
         return(
             <button 
                 id = {this.props.id}
-                className = {this.props.type}        
+                className = {typeBubble}      
                 draggable="true" 
                 onDragStart={this.props.onDragStart}
                 //onDragStart={this.handleDragStart.bind(this)}
@@ -242,30 +244,30 @@ class Space extends React.Component{
         const dropped = this.getBubble(droppedID);        
         
         
-        if(dragged.type === 'bubble concept'){
+        if(dragged.type === 'concept'){
             return; //don't add concepts to other concepts or create concepts out of concepts
         }   
-        else if(dragged.type === 'bubble subject' && dropped.type === 'bubble condition'){
-            console.log('subject-condtion');
+        else if(dragged.type === 'subject' && dropped.type === 'condition'){
+            console.log('subject-condition');
             return;
         }
-        else if(dragged.type === 'bubble condition' && dropped.type === 'bubble subject'){
+        else if(dragged.type === 'condition' && dropped.type === 'subject'){
             console.log('condition-subject');
             return;            
         }
-        else if(dragged.type === 'bubble info-value' && dropped.type === 'bubble info-field'){
+        else if(dragged.type === 'info-value' && dropped.type === 'info-field'){
             console.log('value-field');
             return;
         }
-        else if(dragged.type === 'bubble info-field' && dropped.type === 'bubble info-value'){
+        else if(dragged.type === 'info-field' && dropped.type === 'info-value'){
             console.log('field-value');
             return;
         }
-        else if(dragged.type !== 'bubble concept' && dropped.type === 'bubble concept'){
+        else if(dragged.type !== 'concept' && dropped.type === 'concept'){
             this.addToConcept(dragged, dropped, e);
             return;
         }if (dragged.type === dropped.type){
-            if(dragged.type === 'bubble subject' | dragged.type === 'bubble condition'){
+            if(dragged.type === 'subject' | dragged.type === 'condition'){
                 this.createConcept(dragged,dropped,e)
             }
             return; //don't create concepts from same types other than subjects and conditions
@@ -316,7 +318,7 @@ class Space extends React.Component{
 
     addToConcept = (draggedChild,droppedConcept, e) => {
         //TODO
-        //Add logic to remove from old concept
+        //Add logic to remove from old concept //Done
         //Add logic that the same bubble can't be added to the same concept again //Done
         //Add logic to not be able to add different types of bubbles (conditions to subjects or more than one info)
         this.removeFromConcept(draggedChild.id);
@@ -340,7 +342,7 @@ class Space extends React.Component{
     removeFromConcept = (childID) => {
         let newBubbles = this.state.bubbles;
         for (let iter = 0; iter < newBubbles.length; iter++){
-            if (newBubbles[iter].type === 'bubble concept'){
+            if (newBubbles[iter].type === 'concept'){
                 for (let iter2 = 0; iter2 < newBubbles[iter].bubsInConcept.length; iter2++){
                     if (newBubbles[iter].bubsInConcept[iter2] === childID){
                         newBubbles[iter].bubsInConcept.splice(iter2,1);
@@ -414,7 +416,7 @@ class Space extends React.Component{
             if (bub.id === lastDragStart.id.toString()){
                 bub.xLocation = newX;
                 bub.yLocation = newY;
-                if(bub.type === 'bubble concept'){
+                if(bub.type === 'concept'){
                     this.positionConceptBubbles(bub,newX,newY)
                 }
             }
@@ -603,11 +605,11 @@ let conditionCount = 0;
 let infoFieldCount = 0;
 
 function nextXLocation(type,id,parentId){
-    if (type === 'bubble subject' | type === 'bubble condition'){
+    if (type === 'subject' | type === 'condition'){
         return layout.BubbleLeftMargin;
-    }else if (type === 'bubble info-field'){
+    }else if (type === 'info-field'){
         return layout.InfoBubbleLeft;
-    }else if (type === 'bubble info-value'){
+    }else if (type === 'info-value'){
         return layout.InfoBubbleLeft + 60 + ((parseInt(id)-parseInt(parentId))*105);
     }else{
     return 300;
@@ -616,22 +618,22 @@ function nextXLocation(type,id,parentId){
 
 function nextYLocation(type){
     //console.log(type);
-    if (type === 'bubble subject'){
+    if (type === 'subject'){
         const nextY =  layout.BubbleTopMargin + subjectCount*60;
         subjectCount++;
         return nextY;
     }
-    else if (type === 'bubble condition'){
+    else if (type === 'condition'){
         const nextY = layout.conditionBubbleTopMargin + conditionCount*60;
         conditionCount++;
         return nextY;
     }
-    else if (type === 'bubble info-field'){
+    else if (type === 'info-field'){
         const nextY = layout.BubbleTopMargin + infoFieldCount*55;
         infoFieldCount++;
         return nextY;
     }
-    else if (type === 'bubble info-value'){
+    else if (type === 'info-value'){
         const nextY = layout.BubbleTopMargin + (infoFieldCount-1)*55 + 5;
         return nextY;
     }
