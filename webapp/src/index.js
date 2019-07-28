@@ -288,15 +288,18 @@ class Space extends React.Component{
     }
 
     createConcept = (dragged,dropped,e) => {
-        const draggedConcept = this.findConcept(dragged.id);
-        const droppedConcept = this.findConcept(dropped.id)
-        if (draggedConcept){
-            if(droppedConcept && (draggedConcept.id === droppedConcept.id)){
+        const draggedParentConcept = this.findConcept(dragged.id);
+        const droppedParentConcept = this.findConcept(dropped.id)
+        if (draggedParentConcept){
+            if(droppedParentConcept && (draggedParentConcept.id === droppedParentConcept.id)){
                 console.log('bubbles already in same concept');
                 return; //don't create concept if the two bubbles are already in the same concept
             }
-            this.removeFromConcept(dragged.id);
+            console.log('removing dragged from concept: ' + dragged.id);
+            this.removeFromConcept(dragged.id);            
         }
+        console.log('removing dropped from concept: ' + dropped.id);
+        this.removeFromConcept(dropped.id);
 
         let newBubbles = this.state.bubbles;
         const newX = e.nativeEvent.clientX - layout.conceptWidth / 2
@@ -318,9 +321,24 @@ class Space extends React.Component{
 
     addToConcept = (draggedChild,droppedConcept, e) => {
         //TODO
-        //Add logic to remove from old concept //Done
-        //Add logic that the same bubble can't be added to the same concept again //Done
         //Add logic to not be able to add different types of bubbles (conditions to subjects or more than one info)
+        const typesInConcept = this.getConceptTypes(droppedConcept);
+        const includesConditions = typesInConcept.includes('condition');
+        const includesSubjects = typesInConcept.includes('subject');
+        const includesInfo = (typesInConcept.includes('info-value') | typesInConcept.includes('info-field'));
+        if (draggedChild.type === 'subject' && includesConditions){
+            console.log('subject-condition addition');
+            return;
+        }
+        else if (draggedChild.type === 'condition' && includesSubjects){
+            console.log('condition-subject addition');
+            return;
+        }
+        else if (((draggedChild.type === 'info-value')|(draggedChild.type === 'info-field')) && includesInfo){
+            console.log('too much info addition');
+            return;
+        }
+
         this.removeFromConcept(draggedChild.id);
         
         let newBubbles = this.state.bubbles;
@@ -387,6 +405,15 @@ class Space extends React.Component{
                 return bubbles[iter];
             }
         }
+    }
+
+    getConceptTypes = (concept) => {
+        let types = [];
+        for (let iter = 0; iter < concept.bubsInConcept.length; iter++){
+            const bub = this.getBubble(concept.bubsInConcept[iter]);
+            types.push(bub.type);
+        }
+        return types;
     }
 
     handleWorkRoomDrop(e){
