@@ -304,7 +304,7 @@ class Space extends React.Component{
         newbubsInConcept.push(dragged.id);
         newbubsInConcept.push(dropped.id);
 
-        const newConcept = new BubbleDeets('','New Concept','concept',[],'',newX,newY,newbubsInConcept)
+        const newConcept = new BubbleDeets('','Concept','concept',[],'',newX,newY,newbubsInConcept)
         newBubbles.unshift(newConcept);
 
         this.setState({
@@ -315,6 +315,10 @@ class Space extends React.Component{
     }
 
     addToConcept = (concept,childID) => {
+        //TODO
+        //Add logic to remove from old concept
+        //Add logic that the same bubble can't be added to the same concept again
+        //Add logic to not be able to add different types of bubbles (conditions to subjects or more than one info)
         let newBubbles = this.state.bubbles;
         for (let iter = 0; iter < newBubbles.length; iter++){
             if (newBubbles[iter].id === concept.id){
@@ -419,7 +423,7 @@ class Space extends React.Component{
     positionConceptBubbles = (concept,X,Y) => {
         let newBubbles = this.state.bubbles;
         const xOffset = 50;
-        const yOffset = 80;
+        const yOffset = 50;
         const nextYOffset = 60;
         for (let outer = 0; outer < newBubbles.length; outer++){
             if(concept.bubsInConcept.includes(newBubbles[outer].id)){
