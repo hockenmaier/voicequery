@@ -73,7 +73,7 @@ class BubbleDeets{
         if(xLocation){
             this.yLocation = yLocation;
         }else{
-            this.yLocation = nextYLocation(this.type);
+            this.yLocation = nextYLocation(this.type,this.id,this.parentBubbleId);
         }
         
     }
@@ -326,16 +326,17 @@ class Space extends React.Component{
         const includesConditions = typesInConcept.includes('condition');
         const includesSubjects = typesInConcept.includes('subject');
         const includesInfo = (typesInConcept.includes('info-value') | typesInConcept.includes('info-field'));
+
         if (draggedChild.type === 'subject' && includesConditions){
-            console.log('subject-condition addition');
+            console.log('No subject-condition addition');
             return;
         }
         else if (draggedChild.type === 'condition' && includesSubjects){
-            console.log('condition-subject addition');
+            console.log('No condition-subject addition');
             return;
         }
         else if (((draggedChild.type === 'info-value')|(draggedChild.type === 'info-field')) && includesInfo){
-            console.log('too much info addition');
+            console.log('Too much info addition');
             return;
         }
 
@@ -630,6 +631,7 @@ function randomSampleQuery(){
 let subjectCount = 0;
 let conditionCount = 0;
 let infoFieldCount = 0;
+const infoValueRows = 3;
 
 function nextXLocation(type,id,parentId){
     if (type === 'subject' | type === 'condition'){
@@ -637,13 +639,13 @@ function nextXLocation(type,id,parentId){
     }else if (type === 'info-field'){
         return layout.InfoBubbleLeft;
     }else if (type === 'info-value'){
-        return layout.InfoBubbleLeft + 60 + ((parseInt(id)-parseInt(parentId))*105);
+        return layout.InfoBubbleLeft + 55 + (((parseInt(id)-parseInt(parentId))%infoValueRows + 1)*105);
     }else{
     return 300;
     }
 }
 
-function nextYLocation(type){
+function nextYLocation(type,id,parentId){
     //console.log(type);
     if (type === 'subject'){
         const nextY =  layout.BubbleTopMargin + subjectCount*60;
@@ -662,6 +664,9 @@ function nextYLocation(type){
     }
     else if (type === 'info-value'){
         const nextY = layout.BubbleTopMargin + (infoFieldCount-1)*55 + 5;
+        if((parseInt(id)-parseInt(parentId))%infoValueRows === 0){
+            infoFieldCount++;
+        }
         return nextY;
     }
     else{

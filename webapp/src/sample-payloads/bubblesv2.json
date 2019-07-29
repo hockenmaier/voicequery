@@ -106,7 +106,56 @@
     "internalID": "",
     "name": "asset_department",
     "type": "info-field",
-    "bubbles": []
+    "bubbles": [
+      {
+        "internalID": "",
+        "name": "costume",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "property",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "lighting",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "grip",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "post production",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "production services",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "craft services",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "marketing",
+        "type": "info-value",
+        "bubbles": []
+      }
+    ]
   },
   {
     "internalID": "",
