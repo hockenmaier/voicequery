@@ -639,7 +639,8 @@ function nextXLocation(type,id,parentId){
     }else if (type === 'info-field'){
         return layout.InfoBubbleLeft;
     }else if (type === 'info-value'){
-        return layout.InfoBubbleLeft + 55 + (((parseInt(id)-parseInt(parentId))%infoValueRows + 1)*105);
+        console.log(((parseInt(id)-parseInt(parentId))%infoValueRows + 1)*105);
+        return layout.InfoBubbleLeft + 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
     }else{
     return 300;
     }
@@ -664,15 +665,13 @@ function nextYLocation(type,id,parentId){
     }
     else if (type === 'info-value'){
         const nextY = layout.BubbleTopMargin + (infoFieldCount-1)*55 + 5;
-        if((parseInt(id)-parseInt(parentId))%infoValueRows === 0){
+        if((parseInt(id)-parseInt(parentId)-1)%infoValueRows === 2){
             infoFieldCount++;
         }
         return nextY;
     }
     else{
         return 300;
-    }
-    
+    }    
 }
-
 ReactDOM.render(<Space />, document.getElementById('root'));
