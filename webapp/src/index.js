@@ -120,8 +120,7 @@ class Bubble extends React.Component{
     // }
 
     render(){
-        //set base size by type
-        
+        //set base size by type        
         let height;
         let width;
         if (this.props.type === 'subject' | this.props.type === 'condition'){
@@ -624,7 +623,6 @@ class Space extends React.Component{
                         onChange={this.handleQueryChange}                        
                         value={this.state.queryInput}
                         style={{
-                            height: 20,
                             width: 700,
                             top: layout.queryTop,
                             left: layout.queryLeft,
@@ -635,8 +633,7 @@ class Space extends React.Component{
                         className="query-button"
                         onClick={this.handleQuerySubmit}
                         style={{
-                            height: 20,
-                            width: 40,
+                            width: 80,
                             top: layout.queryTop,
                             left: layout.queryLeft + 720,
                         }}

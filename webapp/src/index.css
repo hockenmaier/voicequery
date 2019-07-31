@@ -67,7 +67,7 @@ body {
   .info-value {
     background: rgb(95, 116, 121);
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .info-room {
@@ -84,23 +84,27 @@ body {
   .query-input{    
     border-radius: 9px;
     color: rgb(226, 226, 226);
-    border: 3px solid rgb(34, 31, 31);
+    border-width: 0px;
     font-size: 18px;
     position: fixed;
     background: rgb(34, 31, 31);
-    outline: none;    
+    outline: none;
+    padding-left: 0.4em;
   }
 
   .query-button{
     position: fixed;
     color: white;
     background: rgb(34, 31, 31);
-    border: 3px solid rgb(34, 31, 31);
+    border-radius: 3px;
+    border-width: 0px;
+    font-size: 18px;
+    outline: none;
   }
 
   .top-bar{
     background: rgb(226, 226, 226);
-    position: fixed;    
+    position: fixed;
   }
 
   .concept {
