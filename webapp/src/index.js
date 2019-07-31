@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import bubblesPayload from './sample-payloads/bubblesv2.json' 
+import bubblesPayload from './sample-payloads/bubblesv2.json';
+import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
 
 class layout{
     //properties are created in the initializeLayout() function below
@@ -85,6 +86,8 @@ function getNextBubbleID(){
     nextBubbleID++;
     return next.toString();
 }
+
+let mockBubbleUpdates = 0;
 
 class Bubble extends React.Component{
     constructor(props){
@@ -189,8 +192,7 @@ class Space extends React.Component{
             bubbles: bubblesPayload,
             sampleQuery: randomSampleQuery(),
             queryInput: '',
-          };
-        this.handleQueryChange = this.handleQueryChange.bind(this);        
+          };   
       }
 
     componentDidMount(){
@@ -202,10 +204,17 @@ class Space extends React.Component{
         // console.log(JSON.parse(stringifiedBubs));
         
         this.initializeBubbles(this.state.bubbles);
-        bubblesInitialized = true;        
+        bubblesInitialized = true;
     }
 
-    initializeBubbles(bubbles){
+    initializeBubbles(bubbles){        
+        const newBubbles = this.createBubbleDeets(bubbles);
+        this.setState({
+            bubbles: newBubbles
+        })
+    }
+
+    createBubbleDeets(bubbles){
         //initializing full bubbledeets object for each top-level bubble in incoming payload
         const newBubbles = bubbles.map((bub) => {
             const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"");
@@ -219,8 +228,16 @@ class Space extends React.Component{
             }
             return newBub;
         })
+        return newBubbles;
+    }
+
+    updateBubbles = () => {
+        const stateBubbles = this.state.bubbles.slice(0);
+        const newBubbles = this.createBubbleDeets(bubbleUpdatePayload.bubbles);
+        const allBubbles = stateBubbles.concat(newBubbles);
+        //console.log(bubbleUpdatePayload.bubbles);
         this.setState({
-            bubbles: newBubbles
+            bubbles: allBubbles
         })
     }
 
@@ -312,9 +329,9 @@ class Space extends React.Component{
         const newConcept = new BubbleDeets('','Concept','concept',[],'',newX,newY,newbubsInConcept)
         newBubbles.unshift(newConcept);
 
-        this.setState({
-            bubbles: newBubbles
-        })
+        // this.setState({   // Have to refactor everywhere now since i am actually setting state directly by assigning an array to the state array
+        //     bubbles: newBubbles
+        // })
 
         this.positionConceptBubbles(newConcept,newX,newY)
     }
@@ -485,9 +502,9 @@ class Space extends React.Component{
         //console.log('workroom dragover');
     }
 
-    handleQueryChange(e){
+    handleQueryChange = (e) => {
         this.setState({queryInput: e.target.value})
-        this.updateSampleQuery();
+        this.updateSampleQuery();        
     }
 
     updateSampleQuery(){
@@ -497,8 +514,16 @@ class Space extends React.Component{
             })
         }
     }
+
+    handleQuerySubmit = () => {
+        if (mockBubbleUpdates < 1){
+            this.updateBubbles();
+            mockBubbleUpdates++;
+        }
+    }
     
     bubbleFlattener(bubbles){
+        console.log(bubbles);
         let flatBubbles = [];        
         for (let outer = 0; outer < bubbles.length; outer++){            
             flatBubbles.push(bubbles[outer]);
@@ -591,21 +616,31 @@ class Space extends React.Component{
                 </div>
                 {bubbleArray}
                 <div className = "query"
-                    style={{
-                        height: 0,
-                        width: 0,
-                        top: layout.queryTop,
-                        left: layout.queryLeft,
-                    }}
                     >
                     <input 
                         className="query-input"
                         type="text"
                         placeholder={this.state.sampleQuery} 
-                        onChange={this.handleQueryChange}
+                        onChange={this.handleQueryChange}                        
                         value={this.state.queryInput}
+                        style={{
+                            height: 20,
+                            width: 700,
+                            top: layout.queryTop,
+                            left: layout.queryLeft,
+                        }}
                     >
-                    </input>
+                    </input>                    
+                    <button
+                        className="query-button"
+                        onClick={this.handleQuerySubmit}
+                        style={{
+                            height: 20,
+                            width: 40,
+                            top: layout.queryTop,
+                            left: layout.queryLeft + 720,
+                        }}
+                    >Ask</button>
                 </div>                
             </div>
         );
@@ -639,7 +674,7 @@ function nextXLocation(type,id,parentId){
     }else if (type === 'info-field'){
         return layout.InfoBubbleLeft;
     }else if (type === 'info-value'){
-        console.log(((parseInt(id)-parseInt(parentId))%infoValueRows + 1)*105);
+        //console.log(((parseInt(id)-parseInt(parentId))%infoValueRows + 1)*105);
         return layout.InfoBubbleLeft + 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
     }else{
     return 300;

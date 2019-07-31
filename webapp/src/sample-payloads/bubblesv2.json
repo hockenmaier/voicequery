@@ -1,12 +1,6 @@
 [
   {
     "internalID": "",
-    "name": "visitor",
-    "type": "subject",
-    "bubbles": []
-  },
-  {
-    "internalID": "",
     "name": "through gate 6",
     "type": "condition",
     "bubbles": []

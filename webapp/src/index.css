@@ -81,21 +81,21 @@ body {
     user-select: none;
   }
 
-  .query {
-    position: fixed;
-    background: none;
-  }
-
   .query-input{    
     border-radius: 9px;
     color: rgb(226, 226, 226);
     border: 3px solid rgb(34, 31, 31);
     font-size: 18px;
-    height: 20px;
-    width: 700px;
     position: fixed;
     background: rgb(34, 31, 31);
     outline: none;    
+  }
+
+  .query-button{
+    position: fixed;
+    color: white;
+    background: rgb(34, 31, 31);
+    border: 3px solid rgb(34, 31, 31);
   }
 
   .top-bar{
