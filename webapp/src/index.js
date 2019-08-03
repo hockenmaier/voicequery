@@ -511,11 +511,16 @@ class Space extends React.Component{
 
     handleQuerySubmit = () => {        
         window.setTimeout(this.handleQueryResponse,1200);
-        console.log('ask');
+        //console.log('ask');
+        const responseText = '...';
+
+        this.setState({
+            queryResponseText: responseText,                
+        })
     }
 
     handleQueryResponse = () => {
-        console.log('respond');
+        //console.log('respond');
         if (mockBubbleUpdates < 1){
             this.updateBubbles();
             mockBubbleUpdates++;
@@ -534,9 +539,9 @@ class Space extends React.Component{
     }
 
     updateQueryResponse = () => {
-         const responseText = bubbleUpdatePayload.text;
+        const responseText = bubbleUpdatePayload.text;
 
-         this.setState({
+        this.setState({
             queryResponseText: responseText,                
         })
     }
