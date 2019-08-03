@@ -102,6 +102,14 @@ body {
     outline: none;
   }
 
+  .query-response{
+    position: fixed;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    outline: none;
+  }
+
   .top-bar{
     background: rgb(226, 226, 226);
     position: fixed;

@@ -11,12 +11,14 @@ class layout{
 function initializeLayout(){
     layout.topbarX = 0;
     layout.topbarY = 0;
-    layout.topbarHeight = 70;
-    layout.queryTop = 20;
+    layout.topbarHeight = 50;
+    layout.queryTop = 15;
     layout.queryLeft = 30;
-
+    layout.queryWidth = 700;
+    
+    layout.queryParsedTop = layout.topbarHeight - 10;
     layout.leftMargin = 30;
-    layout.topMargin = layout.topbarHeight + 30;
+    layout.topMargin = layout.topbarHeight + 45;
     layout.rightMargin = 30;
 
     layout.subjectHeight = 380;
@@ -191,6 +193,7 @@ class Space extends React.Component{
             bubbles: bubblesPayload,
             sampleQuery: randomSampleQuery(),
             queryInput: '',
+            queryResponseText: '',
           };   
       }
 
@@ -230,15 +233,7 @@ class Space extends React.Component{
         return newBubbles;
     }
 
-    updateBubbles = () => {
-        const stateBubbles = this.state.bubbles.slice(0);
-        const newBubbles = this.createBubbleDeets(bubbleUpdatePayload.bubbles);
-        const allBubbles = stateBubbles.concat(newBubbles);
-        //console.log(bubbleUpdatePayload.bubbles);
-        this.setState({
-            bubbles: allBubbles
-        })
-    }
+    
 
     handleBubbleDragStart(e, id){
         lastDragStart.id = id;
@@ -514,15 +509,40 @@ class Space extends React.Component{
         }
     }
 
-    handleQuerySubmit = () => {
+    handleQuerySubmit = () => {        
+        window.setTimeout(this.handleQueryResponse,1200);
+        console.log('ask');
+    }
+
+    handleQueryResponse = () => {
+        console.log('respond');
         if (mockBubbleUpdates < 1){
             this.updateBubbles();
             mockBubbleUpdates++;
         }
+        this.updateQueryResponse();
+    }
+
+    updateBubbles = () => {
+        const stateBubbles = this.state.bubbles.slice(0);
+        const newBubbles = this.createBubbleDeets(bubbleUpdatePayload.bubbles);
+        const allBubbles = stateBubbles.concat(newBubbles);
+        //console.log(bubbleUpdatePayload.bubbles);
+        this.setState({
+            bubbles: allBubbles
+        })
+    }
+
+    updateQueryResponse = () => {
+         const responseText = bubbleUpdatePayload.text;
+
+         this.setState({
+            queryResponseText: responseText,                
+        })
     }
     
     bubbleFlattener(bubbles){
-        console.log(bubbles);
+        //console.log(bubbles);
         let flatBubbles = [];        
         for (let outer = 0; outer < bubbles.length; outer++){            
             flatBubbles.push(bubbles[outer]);
@@ -623,7 +643,7 @@ class Space extends React.Component{
                         onChange={this.handleQueryChange}                        
                         value={this.state.queryInput}
                         style={{
-                            width: 700,
+                            width: layout.queryWidth,
                             top: layout.queryTop,
                             left: layout.queryLeft,
                         }}
@@ -635,9 +655,18 @@ class Space extends React.Component{
                         style={{
                             width: 80,
                             top: layout.queryTop,
-                            left: layout.queryLeft + 720,
+                            left: layout.queryLeft + layout.queryWidth + 20,
                         }}
                     >Ask</button>
+                    <p
+                        className="query-response"
+                        style={{
+                            width: layout.queryWidth,
+                            top: layout.queryParsedTop,
+                            left: layout.queryLeft + 8,
+                        }}
+                    >{this.state.queryResponseText}
+                    </p>
                 </div>                
             </div>
         );
