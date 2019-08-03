@@ -1,6 +1,6 @@
 {
 "version": 1.0,
-"text": "How many visitors came on campus during upfronts?",
+"htmlResponse": "<p>How many <span class=\"query-response-subject\"> visitors </span> came <span class=\"query-response-condition\"> on campus </span> during upfronts?</p>",
 "bubbles": [
     {
       "internalID": "",

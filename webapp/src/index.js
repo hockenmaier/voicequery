@@ -193,7 +193,7 @@ class Space extends React.Component{
             bubbles: bubblesPayload,
             sampleQuery: randomSampleQuery(),
             queryInput: '',
-            queryResponseText: '',
+            queryResponseHTML: '',
           };   
       }
 
@@ -512,10 +512,10 @@ class Space extends React.Component{
     handleQuerySubmit = () => {        
         window.setTimeout(this.handleQueryResponse,1200);
         //console.log('ask');
-        const responseText = '...';
+        const responseText = '<p>...</p>';
 
         this.setState({
-            queryResponseText: responseText,                
+            queryResponseHTML: responseText,                
         })
     }
 
@@ -539,10 +539,10 @@ class Space extends React.Component{
     }
 
     updateQueryResponse = () => {
-        const responseText = bubbleUpdatePayload.text;
+        const responseText = bubbleUpdatePayload.htmlResponse;
 
         this.setState({
-            queryResponseText: responseText,                
+            queryResponseHTML: responseText,                
         })
     }
     
@@ -663,15 +663,16 @@ class Space extends React.Component{
                             left: layout.queryLeft + layout.queryWidth + 20,
                         }}
                     >Ask</button>
-                    <p
+                    <div
                         className="query-response"
                         style={{
                             width: layout.queryWidth,
                             top: layout.queryParsedTop,
                             left: layout.queryLeft + 8,
                         }}
-                    >{this.state.queryResponseText}
-                    </p>
+                        dangerouslySetInnerHTML={ {__html: this.state.queryResponseHTML} }
+                    >
+                    </div>
                 </div>                
             </div>
         );

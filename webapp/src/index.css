@@ -113,12 +113,24 @@ body {
     outline: none;
   }
 
-  .query-response{
+  .query-response, .query-response-subject, .query-response-condition{
     position: fixed;
     color: white;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 400;
     outline: none;
+  }
+
+  .query-response-subject{
+    position: static;
+    color: var(--subject-color);
+    font-weight: 700;
+  }
+
+  .query-response-condition{    
+    position: static;
+    color: var(--condition-color);
+    font-weight: 700;
   }
 
   .top-bar{
