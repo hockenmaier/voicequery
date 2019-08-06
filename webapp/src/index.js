@@ -232,7 +232,6 @@ class Space extends React.Component{
         })
         return newBubbles;
     }
-
     
 
     handleBubbleDragStart(e, id){
@@ -285,7 +284,8 @@ class Space extends React.Component{
         }
         else{
             console.log('concept creation');
-            this.createConcept(dragged,dropped,e)
+            const newConcept = this.createConcept(dragged,dropped,e)
+            //this.positionConceptBubbles(newConcept,newConcept.xLocation,newConcept.yLocation)
         }
     }
 
@@ -312,7 +312,7 @@ class Space extends React.Component{
         console.log('removing dropped from concept: ' + dropped.id);
         this.removeFromConcept(dropped.id);
 
-        let newBubbles = this.state.bubbles;
+        let newBubbles = this.state.bubbles.slice(0);
         const newX = e.nativeEvent.clientX - layout.conceptWidth / 2
         const newY = e.nativeEvent.clientY - layout.conceptHeight / 2
 
@@ -322,12 +322,11 @@ class Space extends React.Component{
 
         const newConcept = new BubbleDeets('','Concept','concept',[],'',newX,newY,newbubsInConcept)
         newBubbles.unshift(newConcept);
-
-        // this.setState({   // Have to refactor everywhere now since i am actually setting state directly by assigning an array to the state array
-        //     bubbles: newBubbles
-        // })
-
-        this.positionConceptBubbles(newConcept,newX,newY)
+        console.log(newBubbles);
+        this.setState({   // Have to refactor everywhere now since i am actually setting state directly by assigning an array to the state array
+            bubbles: newBubbles
+        }, this.positionConceptBubbles(newConcept,newX,newY))
+        //return newConcept;        
     }
 
     addToConcept = (draggedChild,droppedConcept, e) => {
@@ -353,7 +352,7 @@ class Space extends React.Component{
 
         this.removeFromConcept(draggedChild.id);
         
-        let newBubbles = this.state.bubbles;
+        let newBubbles = this.state.bubbles.slice(0);
         for (let iter = 0; iter < newBubbles.length; iter++){
             if (newBubbles[iter].id === droppedConcept.id){
                 if (!droppedConcept.bubsInConcept.includes(draggedChild.id)){
@@ -394,7 +393,7 @@ class Space extends React.Component{
     }
 
     removeBubble = (bubbleToRemove) => {
-        let newBubbles = this.state.bubbles;        
+        let newBubbles = this.state.bubbles.slice;        
         for (let outer = 0; outer < newBubbles.length; outer++){    
             if (newBubbles[outer].bubbles.length > 0){
                 for (let inner = 0; inner < newBubbles[outer].bubbles.length; inner++){
@@ -411,7 +410,7 @@ class Space extends React.Component{
     }
     
     findConcept = (childID) => {
-        let bubbles = this.state.bubbles;
+        let bubbles = this.state.bubbles.slice(0);
         for (let iter = 0; iter < bubbles.length; iter++){
             if (bubbles[iter].bubsInConcept.includes(childID)){
                 return bubbles[iter];
@@ -468,7 +467,7 @@ class Space extends React.Component{
     }
 
     positionConceptBubbles = (concept,X,Y) => {
-        let newBubbles = this.state.bubbles;
+        let newBubbles = this.state.bubbles.slice(0);
         const xOffset = 50;
         const yOffset = 50;
         const nextYOffset = 60;

@@ -1,5 +1,5 @@
 :root {
-  --main-background: rgb(0, 0, 0);
+  --main-background: rgb(6, 0, 12);
   --room-background: rgb(58, 56, 56);
   --subject-color: rgb(75, 155, 44); 
   --subject-text-light: rgb(218, 255, 204); 
@@ -121,13 +121,13 @@ body {
     outline: none;
   }
 
-  .query-response-subject{
+  .res-subject{
     position: static;
     color: var(--subject-color);
     font-weight: 700;
   }
 
-  .query-response-condition{    
+  .res-condition{    
     position: static;
     color: var(--condition-color);
     font-weight: 700;

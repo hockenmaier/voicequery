@@ -1,6 +1,6 @@
 {
 "version": 1.0,
-"htmlResponse": "<p>How many <span class=\"query-response-subject\"> visitors </span> came <span class=\"query-response-condition\"> on campus </span> during <span class=\"query-response-subject\">upfronts</span>?</p>",
+"htmlResponse": "<p>How many <span class=\"res-subject\"> visitors </span> came <span class=\"res-condition\"> on campus </span> during <span class=\"res-subject\">upfronts</span>?</p>",
 "bubbles": [
     {
       "internalID": "",
