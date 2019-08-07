@@ -1,5 +1,6 @@
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import wordnet
 
 text = "Hello there Mr. Smith, how are ya?  The portalone is crisp and clean and python is tripping me up!  The sky is pinkish-blue.  You should not eat cardboard faster than you already are eating. Which of my wily coyotes might I bring along with me farting around town?"
 text2 = "How many orders are in the latest facility deal?"
@@ -36,3 +37,7 @@ def process_content():
         print(str(e))
 
 process_content()
+
+w1 = wordnet.synset("visitor.n.01")
+w2 = wordnet.synset("person.n.01")
+print('similarity of "' + str(w1) + '" and "' + str(w2) + '":' + str(w1.wup_similarity(w2)))
