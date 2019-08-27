@@ -1,0 +1,26 @@
+"What was my highest utilization edit bay last month?"
+('What', 'WP'), ('was', 'VBD'), ('my', 'PRP$'), ('highest', 'JJS'), ('utilization', 'NN'), ('edit', 'NN'), ('bay', 'NN'), ('last', 'JJ'), ('month', 'NN'), ('?'                                                                       , '.')
+
+"How many visitors came on campus during upfronts?"
+('How', 'WRB'), ('many', 'JJ'), ('visitors', 'NNS'), ('came', 'VBD'), ('on', 'IN'), ('campus', 'NN'), ('during', 'IN'), ('upfronts', 'NNS'), ('?', '.')]
+
+"What was the most popular week to visit the lot last year?"
+[('What', 'WP'), ('was', 'VBD'), ('the', 'DT'), ('most', 'RBS'), ('popular', 'JJ'), ('week', 'NN'), ('to', 'TO'), ('visit', 'VB'), ('the', 'DT'), ('lot', 'NN'), ('last', 'JJ'), ('year', 'NN'), ('?', '.')
+
+"Which grip assets are most often part of a subrental?"
+('Which', 'WDT'), ('grip', 'NN'), ('assets', 'NNS'), ('are', 'VBP'), ('most', 'RBS'), ('often', 'RB'), ('part', 'NN'), ('of', 'IN'), ('a', 'DT'), ('subrental', 'NN'), ('?', '.')
+
+"What was my AWS spend last month?"
+('What', 'WP'), ('was', 'VBD'), ('my', 'PRP$'), ('AWS', 'NNP'), ('spend', 'NN'), ('last', 'JJ'), ('month', 'NN'), ('?', '.')
+
+"How much did I spend on data storage services in Azure this year to date?"
+('How', 'WRB'), ('much', 'JJ'), ('did', 'VBD'), ('I', 'PRP'), ('spend', 'VBP'), ('on', 'IN'), ('data', 'NNS'), ('storage', 'NN'), ('services', 'NNS'), ('in', 'IN'), ('Azure', 'NNP'), ('this', 'DT'), ('year', 'NN'), ('to', 'TO'), ('date', 'NN')
+
+"Which department has the highest AWS spend per user?"
+('Which', 'NNP'), ('department', 'NN'), ('has', 'VBZ'), ('the', 'DT'), ('highest', 'JJS'), ('AWS', 'JJ'), ('spend', 'NN'), ('per', 'IN'), ('user', 'NN'), ('?', '.')
+
+"Which department has the lowest revenue per square foot?"
+('Which', 'NNP'), ('department', 'NN'), ('has', 'VBZ'), ('the', 'DT'), ('lowest', 'JJS'), ('revenue', 'NN'), ('per', 'IN'), ('square', 'JJ'), ('foot', 'NN'), ('?', '.')
+
+"How well are the props purchased in the last year renting?"
+('How', 'WRB'), ('well', 'RB'), ('are', 'VBP'), ('the', 'DT'), ('props', 'NNS'), ('purchased', 'VBN'), ('in', 'IN'), ('the', 'DT'), ('last', 'JJ'), ('year', 'NN'), ('renting', 'NN'), ('?', '.')

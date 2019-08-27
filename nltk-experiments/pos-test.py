@@ -1,7 +1,7 @@
 import nltk
 from nltk.tokenize import word_tokenize
 
-testText = "What was my highest utilization edit bay last month?"
+testText = "How well are the props purchased in the last year renting?"
 
 def process_content():
         words = nltk.word_tokenize(testText)
