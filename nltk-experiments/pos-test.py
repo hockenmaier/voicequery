@@ -1,11 +1,30 @@
 import nltk
 from nltk.tokenize import word_tokenize
 
-testText = "How well are the props purchased in the last year renting?"
+testText = "How many visitors came on campus during upfronts?"
 
-def process_content():
-        words = nltk.word_tokenize(testText)
-        tagged = nltk.pos_tag(words)
-        print(tagged)
+words = nltk.word_tokenize(testText)
+tagged = nltk.pos_tag(words)
+#print(tagged)
 
-process_content()
+
+grammar = r"""
+  NP:
+    {<N.?>+}          # Chunk everything
+    }<VB.?|IN>+{      # Chink sequences of VBD and IN
+  """
+
+grammar2 = r"""
+  NP: {<DT|JJ|NN.*>+}          # Chunk sequences of DT, JJ, NN
+  PP: {<IN><NP>}               # Chunk prepositions followed by NP
+  VP: {<VB.*><NP|PP|CLAUSE>+$} # Chunk verbs and their arguments
+  CLAUSE: {<NP><VP>}           # Chunk NP, VP
+  """
+
+parser = nltk.RegexpParser(grammar2)
+
+# for tree in parser.parse(tagged):
+#         print(tree)
+
+tree = parser.parse(tagged)
+tree.draw()
