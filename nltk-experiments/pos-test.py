@@ -18,7 +18,7 @@ test8 = "I've already read that book"
 test9 = "I will walk to the store"
 test10 = "Would you like to go for a walk?"
 
-words = nltk.word_tokenize(test1i)
+words = nltk.word_tokenize(test1a)
 tagged = nltk.pos_tag(words)
 print(tagged)
 
@@ -37,11 +37,11 @@ grammar2 = r"""
   CLAUSE: {<NP><VP>}                        # Chunk NP, VP
   """
 
-grammar3 = r"""
+grammar3 = r"""m
   QueryType: {<W..*>+<JJ.?>?}               # Chunk "wh-words" including modifiers like "How many"
   NP: {<DT>?<PR.*>?<JJ.?>*<N.*>+}           # Chunk sequences of DT or JJ followed by one or more nouns
   PP: {<IN><NP>}                            # Chunk prepositions followed by NP
-  VP: {<V.*><NP|PP>+}                # Chunk verbs and their arguments
+  VP: {<V.*><NP|PP>+}                       # Chunk verbs and their arguments
   """
 
 parser = nltk.RegexpParser(grammar2)
@@ -50,6 +50,27 @@ parser = nltk.RegexpParser(grammar2)
 #         print(tree)
 
 tree = parser.parse(tagged)
+#tree.draw()
+
+# print(tree)
+# print(tree.leaves)
+
+# for item in tree:
+#   print(item)  
+
+def traverse_tree(tree, parentLabel):
+    print("tree:", tree, "parent label:", parentLabel)
+    if len(tree) == 1:
+      print("this is a leaf")
+      #print(tree.leaves())
+    if (tree.label() == 'NP') & (parentLabel == 'PP'):
+      print("this is a condition")
+    for subtree in tree:
+        if type(subtree) == nltk.tree.Tree:
+            traverse_tree(subtree, tree.label())
+
+traverse_tree(tree, 'top')
+
 tree.draw()
 
 #Rules to write for initial voice query parsing:
