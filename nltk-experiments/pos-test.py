@@ -50,7 +50,7 @@ parser = nltk.RegexpParser(grammar2)
 #         print(tree)
 
 tree = parser.parse(tagged)
-#tree.draw()
+# tree.draw()
 
 # print(tree)
 # print(tree.leaves)
@@ -58,20 +58,37 @@ tree = parser.parse(tagged)
 # for item in tree:
 #   print(item)  
 
-def traverse_tree(tree, parentLabel):
-    print("tree:", tree, "parent label:", parentLabel)
+conditions = []
+subjects = []
+
+def traverse_tree(tree, parent):
+    print("tree:", tree, "parent label:", parent.label())
     if len(tree) == 1:
-      print("this is a leaf")
-      #print(tree.leaves())
-    if (tree.label() == 'NP') & (parentLabel == 'PP'):
-      print("this is a condition")
+        print("this is a leaf")
+        #print(tree.leaves())
+    if tree.label() == 'NP':
+        if parent.label() == 'PP':
+            print("this is a condition")
+            conditions.append(getWholePhrase(parent))
+        else:
+            print("this is a subject")
+            subjects.append(getWholePhrase(tree))
     for subtree in tree:
         if type(subtree) == nltk.tree.Tree:
-            traverse_tree(subtree, tree.label())
+            traverse_tree(subtree, tree)
 
-traverse_tree(tree, 'top')
+def getWholePhrase(tree):
+    phrase = ''
+    for leaf in tree.leaves():
+        if phrase == '':
+            phrase = leaf[0]
+        else:
+            phrase = phrase + ' ' + leaf[0]
+    return phrase
 
-tree.draw()
+traverse_tree(tree, tree)
+print("conditions:", conditions)
+print("subjects:", subjects)
 
 #Rules to write for initial voice query parsing:
 # highest-level NP is a subject
