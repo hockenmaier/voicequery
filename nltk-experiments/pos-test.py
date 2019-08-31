@@ -18,7 +18,9 @@ test8 = "I've already read that book"
 test9 = "I will walk to the store"
 test10 = "Would you like to go for a walk?"
 
-words = nltk.word_tokenize(test1a)
+inputQuery = test1a
+
+words = nltk.word_tokenize(inputQuery)
 tagged = nltk.pos_tag(words)
 print(tagged)
 
@@ -89,6 +91,23 @@ def getWholePhrase(tree):
 traverse_tree(tree, tree)
 print("conditions:", conditions)
 print("subjects:", subjects)
+
+outputQuery = inputQuery
+
+for condition in conditions:
+    replaceText = "{<span class=\\\"res-condition\\\">" + condition + "</span>}"
+    outputQuery = outputQuery.replace(condition,replaceText)
+
+for subject in subjects:
+    replaceText = '{<span class=\\\"res-subject\\\">' + subject + '</span>}'
+    outputQuery = outputQuery.replace(subject,replaceText)
+
+outputQuery = "<p>" + outputQuery + "</p>"
+
+print("Input:")
+print(inputQuery)
+print("Output:")
+print(outputQuery)
 
 #Rules to write for initial voice query parsing:
 # highest-level NP is a subject
