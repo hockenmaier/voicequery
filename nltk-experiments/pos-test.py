@@ -134,7 +134,7 @@ def packageJSON(outputQuery,conditions,subjects):
         bubble['bubbles'] = []
         bubbles.append(bubble)
     data['bubbles'] = bubbles
-    return json.dumps(data)
+    return json.dumps(data)   #.replace('\/', r'/')
 
 jsonData = packageJSON(outputQuery,conditions,subjects)
 print('JSON: ', jsonData)
