@@ -1,5 +1,6 @@
 import nltk
 from nltk.tokenize import word_tokenize
+import json
 
 test1a = "How many visitors came on campus during upfronts?"
 test1b = "How much did I spend on data storage services in Azure this year to date?"
@@ -17,8 +18,9 @@ test7 = "Do you know how to read"
 test8 = "I've already read that book"
 test9 = "I will walk to the store"
 test10 = "Would you like to go for a walk?"
+kaitlintest = "How many keys are there on a computer keyboard?"
 
-inputQuery = test1a
+inputQuery = kaitlintest
 
 words = nltk.word_tokenize(inputQuery)
 tagged = nltk.pos_tag(words)
@@ -92,22 +94,50 @@ traverse_tree(tree, tree)
 print("conditions:", conditions)
 print("subjects:", subjects)
 
-outputQuery = inputQuery
+def buildOutputQuery(inputQuery,conditions,subjects):
+    outputQuery = inputQuery
 
-for condition in conditions:
-    replaceText = "{<span class=\\\"res-condition\\\">" + condition + "</span>}"
-    outputQuery = outputQuery.replace(condition,replaceText)
+    for condition in conditions:
+        replaceText = "{<span class=\\\"res-condition\\\">" + condition + "</span>}"
+        outputQuery = outputQuery.replace(condition,replaceText)
 
-for subject in subjects:
-    replaceText = '{<span class=\\\"res-subject\\\">' + subject + '</span>}'
-    outputQuery = outputQuery.replace(subject,replaceText)
+    for subject in subjects:
+        replaceText = '{<span class=\\\"res-subject\\\">' + subject + '</span>}'
+        outputQuery = outputQuery.replace(subject,replaceText)
 
-outputQuery = "<p>" + outputQuery + "</p>"
+    return "<p>" + outputQuery + "</p>"
+
+outputQuery = buildOutputQuery(inputQuery,conditions,subjects)
 
 print("Input:")
 print(inputQuery)
 print("Output:")
 print(outputQuery)
+
+def packageJSON(outputQuery,conditions,subjects):
+    data = {}
+    data['version'] = "0.0.1"
+    data['htmlResponse'] = outputQuery
+    bubbles = []
+    for condition in conditions:
+        bubble = {}
+        bubble['internalID'] = ""
+        bubble['name'] = condition
+        bubble['type'] = "condition"
+        bubble['bubbles'] = []
+        bubbles.append(bubble)
+    for subject in subjects:
+        bubble = {}
+        bubble['internalID'] = ""
+        bubble['name'] = subject
+        bubble['type'] = "subject"
+        bubble['bubbles'] = []
+        bubbles.append(bubble)
+    data['bubbles'] = bubbles
+    return json.dumps(data)
+
+jsonData = packageJSON(outputQuery,conditions,subjects)
+print('JSON: ', jsonData)
 
 #Rules to write for initial voice query parsing:
 # highest-level NP is a subject
