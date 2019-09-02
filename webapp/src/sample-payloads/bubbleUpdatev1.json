@@ -1,1 +1,22 @@
-{"version": "0.0.1", "htmlResponse": "<p>How many {<span class=\\\"res-subject\\\">keys</span>} are there {<span class=\\\"res-condition\\\">on a computer keyboard</span>}?</p>", "bubbles": [{"internalID": "", "name": "on a computer keyboard", "type": "condition", "bubbles": []}, {"internalID": "", "name": "keys", "type": "subject", "bubbles": []}]}
+{
+  "version": "0.0.1",
+  "htmlResponse": "<p>How many {<span class=\"res-subject\">keys<\/span>} are there {<span class=\"res-condition\">on a computer keyboard<\/span>}?<\/p>",
+  "bubbles": [
+    {
+      "internalID": "",
+      "name": "on a computer keyboard",
+      "type": "condition",
+      "bubbles": [
+        
+      ]
+    },
+    {
+      "internalID": "",
+      "name": "keys",
+      "type": "subject",
+      "bubbles": [
+        
+      ]
+    }
+  ]
+}
