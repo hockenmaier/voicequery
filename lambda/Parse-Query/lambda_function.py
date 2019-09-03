@@ -9,14 +9,16 @@ def lambda_handler(event, context):
     str('/tmp/nltk_data')
     ]
     
-    print('nltk data paths:', nltk.data.path)
+    # print('nltk data paths:', nltk.data.path)
     nltk.download('punkt', download_dir='/tmp/nltk_data')
+    nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
     
-    inputQuery = "How many visitors came on the lot during the upfronts"
+    # inputQuery = "How many visitors came on the lot during the upfronts"
+    inputQuery = event['query']
     
     words = nltk.word_tokenize(inputQuery)
     tagged = nltk.pos_tag(words)
-    print(tagged)
+    # print(tagged)
     
     
     grammar = r"""
@@ -58,16 +60,16 @@ def lambda_handler(event, context):
     subjects = []
     
     def traverse_tree(tree, parent):
-        print("tree:", tree, "parent label:", parent.label())
-        if len(tree) == 1:
-            print("this is a leaf")
-            #print(tree.leaves())
+        # print("tree:", tree, "parent label:", parent.label())
+        # if len(tree) == 1:
+            # print("this is a leaf")
+            # print(tree.leaves())
         if tree.label() == 'NP':
             if parent.label() == 'PP':
-                print("this is a condition")
+                # print("this is a condition")
                 conditions.append(getWholePhrase(parent))
             else:
-                print("this is a subject")
+                # print("this is a subject")
                 subjects.append(getWholePhrase(tree))
         for subtree in tree:
             if type(subtree) == nltk.tree.Tree:
@@ -83,8 +85,8 @@ def lambda_handler(event, context):
         return phrase
     
     traverse_tree(tree, tree)
-    print("conditions:", conditions)
-    print("subjects:", subjects)
+    # print("conditions:", conditions)
+    # print("subjects:", subjects)
     
     def buildOutputQuery(inputQuery,conditions,subjects):
         outputQuery = inputQuery
@@ -101,10 +103,10 @@ def lambda_handler(event, context):
     
     outputQuery = buildOutputQuery(inputQuery,conditions,subjects)
     
-    print("Input:")
-    print(inputQuery)
-    print("Output:")
-    print(outputQuery)
+    # print("Input:")
+    # print(inputQuery)
+    # print("Output:")
+    # print(outputQuery)
     
     def packageJSON(outputQuery,conditions,subjects):
         data = {}
@@ -129,7 +131,7 @@ def lambda_handler(event, context):
         return json.dumps(data)   #.replace('\/', r'/')
     
     jsonData = packageJSON(outputQuery,conditions,subjects)
-    print('JSON: ', jsonData)
+    # print('JSON: ', jsonData)
     
     return {
         'statusCode': 200,
