@@ -4,11 +4,13 @@ from nltk.tokenize import word_tokenize
 
 def lambda_handler(event, context):
     
-    # nltk.data.path = [
-    # str('/nltk_data')
-    # ]
-    print(nltk.data.path)
-    nltk.download('punkt')
+    nltk.data.path += [
+    # str('home/ec2-user/environment/voicequery/lambda/Parse-Query/nltk_data')
+    str('/tmp/nltk_data')
+    ]
+    
+    print('nltk data paths:', nltk.data.path)
+    nltk.download('punkt', download_dir='/tmp/nltk_data')
     
     inputQuery = "How many visitors came on the lot during the upfronts"
     
