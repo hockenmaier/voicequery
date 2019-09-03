@@ -3,6 +3,11 @@ import nltk
 from nltk.tokenize import word_tokenize
 
 def lambda_handler(event, context):
+    
+    # nltk.data.path = [
+    # str('/nltk_data')
+    # ]
+    print(nltk.data.path)
     nltk.download('punkt')
     
     inputQuery = "How many visitors came on the lot during the upfronts"
