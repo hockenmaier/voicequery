@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import bubblesPayload from './sample-payloads/bubblesv2.json';
 import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
+import axios from 'axios'
 
 class layout{
     //properties are created in the initializeLayout() function below
@@ -325,8 +326,7 @@ class Space extends React.Component{
         console.log(newBubbles);
         this.setState({   // Have to refactor everywhere now since i am actually setting state directly by assigning an array to the state array
             bubbles: newBubbles
-        }, this.positionConceptBubbles(newConcept,newX,newY))
-        //return newConcept;        
+        }, this.positionConceptBubbles(newConcept,newX,newY))  //we need to pass positionConceptBubbles as a callback since setState is Async
     }
 
     addToConcept = (draggedChild,droppedConcept, e) => {
@@ -508,7 +508,18 @@ class Space extends React.Component{
         }
     }
 
-    handleQuerySubmit = () => {        
+    handleQuerySubmit = () => {
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
+            query: 'how many tests are in this test query?'
+        })
+        .then(function(response){
+            console.log('http successful')
+            console.log(response)
+        })
+        .catch(function (error) {
+            console.log('http ERROR')
+            console.log(error);
+        });
         window.setTimeout(this.handleQueryResponse,1200);
         //console.log('ask');
         const responseText = '<p>...</p>';
@@ -516,6 +527,11 @@ class Space extends React.Component{
         this.setState({
             queryResponseHTML: responseText,                
         })
+    }
+
+    handleHTTPQueryResponse = (response) => {
+        console.log('http successful')
+        console.log(response)
     }
 
     handleQueryResponse = () => {
