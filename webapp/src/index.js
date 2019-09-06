@@ -511,7 +511,15 @@ class Space extends React.Component{
     handleQuerySubmit = () => {
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
             query: 'how many tests are in this test query?'
-        })
+        },
+        // {
+        //     headers: {  'Content-Type': 'application/x-www-form-urlencoded',
+        //                 "Access-Control-Allow-Origin": "*", }
+        // },
+        // { 
+        //     useCredentails: true
+        // }
+        )
         .then(function(response){
             console.log('http successful')
             console.log(response)
@@ -527,11 +535,6 @@ class Space extends React.Component{
         this.setState({
             queryResponseHTML: responseText,                
         })
-    }
-
-    handleHTTPQueryResponse = (response) => {
-        console.log('http successful')
-        console.log(response)
     }
 
     handleQueryResponse = () => {
