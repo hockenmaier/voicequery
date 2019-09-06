@@ -82,6 +82,7 @@ def lambda_handler(event, context):
     
     def package_JSON(outputQuery,conditions,subjects):
         data = {}
+        data['statusCode'] = '200'
         data['version'] = "0.0.1"
         data['htmlResponse'] = outputQuery
         bubbles = []
@@ -100,7 +101,7 @@ def lambda_handler(event, context):
             bubble['bubbles'] = []
             bubbles.append(bubble)
         data['bubbles'] = bubbles
-        return json.dumps(data)   #.replace('\/', r'/')
+        return data   #.replace('\/', r'/')
     
     setup_nltk_data()
     
@@ -116,7 +117,4 @@ def lambda_handler(event, context):
     outputQuery = buildOutputQuery(inputQuery,conditions,subjects)
     jsonData = package_JSON(outputQuery,conditions,subjects)
     
-    return {
-        'statusCode': 200,
-        'body': jsonData
-    }
+    return jsonData
