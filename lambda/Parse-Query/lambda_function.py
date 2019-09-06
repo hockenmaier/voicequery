@@ -71,11 +71,11 @@ def lambda_handler(event, context):
         outputQuery = inputQuery
     
         for condition in conditions:
-            replaceText = "{<span class=\\\"res-condition\\\">" + condition + "</span>}"
+            replaceText = '{<span class=\"res-condition\">' + condition + '</span>}'
             outputQuery = outputQuery.replace(condition,replaceText)
     
         for subject in subjects:
-            replaceText = '{<span class=\\\"res-subject\\\">' + subject + '</span>}'
+            replaceText = '{<span class=\"res-subject\">' + subject + '</span>}'
             outputQuery = outputQuery.replace(subject,replaceText)
     
         return "<p>" + outputQuery + "</p>"
