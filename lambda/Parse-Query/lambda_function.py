@@ -102,7 +102,7 @@ def lambda_handler(event, context):
             bubbles.append(bubble)
         data['bubbles'] = bubbles
         return data   #.replace('\/', r'/')
-    
+    #test
     setup_nltk_data()
     
     inputQuery = event['query']
