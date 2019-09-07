@@ -18,6 +18,7 @@ function initializeLayout(){
     layout.queryWidth = 700;
     
     layout.queryParsedTop = layout.topbarHeight - 10;
+    layout.queryParsedWidth = 1000;
     layout.leftMargin = 30;
     layout.topMargin = layout.topbarHeight + 45;
     layout.rightMargin = 30;
@@ -509,12 +510,14 @@ class Space extends React.Component{
     }
 
     handleQuerySubmit = () => {
+        console.log('Sending http call with query: ' + this.state.queryInput)
+        var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
-            query: 'how many tests are in this test query?'
+            query: this.state.queryInput
         },
         // {
         //     headers: {  'Content-Type': 'application/x-www-form-urlencoded',
-        //                 "Access-Control-Allow-Origin": "*", }
+        //                 'Access-Control-Allow-Origin': '*', }
         // },
         // { 
         //     useCredentails: true
@@ -522,33 +525,38 @@ class Space extends React.Component{
         )
         .then(function(response){
             console.log('http successful')
-            console.log(response)
+            //console.log(response)
+            self.updateBubbles(response.data)
+            self.updateQueryResponse(response.data)
         })
-        .catch(function (error) {
-            console.log('http ERROR')
+        .catch(function(error){
+            console.log('http error')
             console.log(error);
         });
-        window.setTimeout(this.handleQueryResponse,1200);
+
+        
+        //window.setTimeout(this.handleQueryResponse,1200);
         //console.log('ask');
-        const responseText = '<p>...</p>';
+        const responseWaitingText = '<p>...</p>';
 
         this.setState({
-            queryResponseHTML: responseText,                
+            queryResponseHTML: responseWaitingText,                
         })
     }
 
-    handleQueryResponse = () => {
-        //console.log('respond');
-        if (mockBubbleUpdates < 1){
-            this.updateBubbles();
-            mockBubbleUpdates++;
-        }
-        this.updateQueryResponse();
-    }
+    // handleQueryResponse = () => {
+    //     //console.log('respond');
+    //     if (mockBubbleUpdates < 1){
+    //         this.updateBubbles();
+    //         mockBubbleUpdates++;
+    //     }
+    //     this.updateQueryResponse();
+    // }
 
-    updateBubbles = () => {
+    updateBubbles = (data) => {
+        console.log(data)
         const stateBubbles = this.state.bubbles.slice(0);
-        const newBubbles = this.createBubbleDeets(bubbleUpdatePayload.bubbles);
+        const newBubbles = this.createBubbleDeets(data.bubbles);
         const allBubbles = stateBubbles.concat(newBubbles);
         //console.log(bubbleUpdatePayload.bubbles);
         this.setState({
@@ -556,8 +564,8 @@ class Space extends React.Component{
         })
     }
 
-    updateQueryResponse = () => {
-        const responseText = bubbleUpdatePayload.htmlResponse;
+    updateQueryResponse = (data) => {
+        const responseText = data.htmlResponse;
 
         this.setState({
             queryResponseHTML: responseText,                
@@ -684,7 +692,7 @@ class Space extends React.Component{
                     <div
                         className="query-response"
                         style={{
-                            width: layout.queryWidth,
+                            width: layout.queryParsedWidth,
                             top: layout.queryParsedTop,
                             left: layout.queryLeft + 8,
                         }}
