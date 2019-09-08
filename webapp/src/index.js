@@ -533,9 +533,7 @@ class Space extends React.Component{
             console.log('http error')
             console.log(error);
         });
-
-        
-        //window.setTimeout(this.handleQueryResponse,1200);
+        window.setTimeout(this.detectLambdaBoot,1200);
         //console.log('ask');
         const responseWaitingText = '<p>...</p>';
 
@@ -544,14 +542,15 @@ class Space extends React.Component{
         })
     }
 
-    // handleQueryResponse = () => {
-    //     //console.log('respond');
-    //     if (mockBubbleUpdates < 1){
-    //         this.updateBubbles();
-    //         mockBubbleUpdates++;
-    //     }
-    //     this.updateQueryResponse();
-    // }
+    detectLambdaBoot = () => {
+        if(this.state.queryResponseHTML == '<p>...</p>'){
+            const responseWaitingText = '<p>Booting natural language processing server...</p>';
+
+            this.setState({
+                queryResponseHTML: responseWaitingText,
+            })
+        }
+    }
 
     updateBubbles = (data) => {
         console.log(data)
