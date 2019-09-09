@@ -138,6 +138,7 @@ def packageJSON(outputQuery,conditions,subjects):
 
 jsonData = packageJSON(outputQuery,conditions,subjects)
 print('JSON: ', jsonData)
+print('parse pretty print: ', tree.pretty_print())
 
 #Rules to write for initial voice query parsing:
 # highest-level NP is a subject

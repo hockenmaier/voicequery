@@ -3,7 +3,10 @@ import nltk
 from nltk.tokenize import word_tokenize
 
 def lambda_handler(event, context):
+    jsonData = parseQuery(event['query'])
+    return jsonData
     
+def parseQuery(query): 
     def setup_nltk_data():
         #Adding temporary directory:
         nltk.data.path += [str('/tmp/nltk_data')]
@@ -85,6 +88,7 @@ def lambda_handler(event, context):
         data['statusCode'] = '200'
         data['version'] = "0.0.1"
         data['htmlResponse'] = outputQuery
+        data['parseTree'] = str(parseTree.pretty_print())
         bubbles = []
         for condition in conditions:
             bubble = {}
@@ -102,12 +106,13 @@ def lambda_handler(event, context):
             bubbles.append(bubble)
         data['bubbles'] = bubbles
         return data   #.replace('\/', r'/')
-    #test
+        
     setup_nltk_data()
     
-    inputQuery = event['query']
+    inputQuery = query
     posTaggedQuery = get_pos_tagged_query()
     parseTree = get_parse_tree()
+    print(parseTree.pretty_print())
     
     conditions = []
     subjects = []
@@ -118,3 +123,5 @@ def lambda_handler(event, context):
     jsonData = package_JSON(outputQuery,conditions,subjects)
     
     return jsonData
+    
+parseQuery("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
