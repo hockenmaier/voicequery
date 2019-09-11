@@ -125,4 +125,4 @@ def parseQuery(query):
     return jsonData
     
 parseQuery("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-#test git date setting -this time used tzselect to set cloud9 local time to pacific
+#test git date setting -this time using pstcommit alias
