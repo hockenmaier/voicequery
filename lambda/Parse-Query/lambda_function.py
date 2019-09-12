@@ -10,6 +10,18 @@ def lambda_handler(event, context):
     return jsonData
     
 def parseQuery(query):
+    def initial_checks():
+        if (query == ""):
+            data = {}
+            data['statusCode'] = '422'
+            data['version'] = "0.0.1"
+            data['htmlResponse'] = ""
+            data['parseTree'] = ""
+            data['bubbles'] = []
+            return False, data
+        else:
+            data = {}
+            return True, data
     
     # print(uuid.uuid4())
     def setup_dynamo():
@@ -128,7 +140,11 @@ def parseQuery(query):
             }
         )
         print(put)
-        
+    
+    checks, errData = initial_checks()
+    if (checks == False):
+        return errData
+    
     table = setup_dynamo()
     setup_nltk_data()
     
@@ -152,6 +168,7 @@ def parseQuery(query):
     #with type(condition or subject), text, workspace, similar values?
     
     return jsonData
-    
+
+# parseQuery("")
 parseQuery("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 #test git date setting -this time using pstcommit alias
