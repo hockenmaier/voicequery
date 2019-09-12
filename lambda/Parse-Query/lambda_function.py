@@ -132,18 +132,48 @@ def parseQuery(query):
     def storeQuery(table):
         put = table.put_item(
             Item={
-                'item_id': str(uuid.uuid4()),
+                'item_id': queryID,
                 'text': inputQuery,
+                'query_id': queryID,
+                'query_part': 'query',
                 'parse_tree': str(parseTree),
-                'create_time':str(datetime.datetime.now()),
-                'workspace': '1',
+                'create_time': str(datetime.datetime.now()),
+                'workspace': currentWorkspace,
             }
         )
         print(put)
     
+    def storeNewTerms(table):
+        for condition in conditions:
+            # foundItems = table.get_item(
+                
+            # )
+            put = table.put_item(
+                Item={
+                    'item_id': str(uuid.uuid4()),
+                    'text': condition,
+                    'query_id': queryID,
+                    'query_part': 'condition',
+                    'create_time':str(datetime.datetime.now()),
+                    'workspace': currentWorkspace,
+                }
+            )
+        for subject in subjects:
+            put = table.put_item(
+                Item={
+                    'item_id': str(uuid.uuid4()),
+                    'text': subject,
+                    'query_id': queryID,
+                    'query_part': 'subject',
+                    'create_time':str(datetime.datetime.now()),
+                    'workspace': currentWorkspace,
+                }
+            )
+    
     checks, errData = initial_checks()
     if (checks == False):
         return errData
+    currentWorkspace = '1'
     
     table = setup_dynamo()
     setup_nltk_data()
@@ -161,14 +191,11 @@ def parseQuery(query):
     outputQuery = buildOutputQuery(inputQuery,conditions,subjects)
     jsonData = package_JSON(outputQuery,conditions,subjects)
     
+    queryID = str(uuid.uuid4())
     storeQuery(table)
-    
-    #TODO:
-    #Iterate through conditions and subjects and store them as lexicon entries
-    #with type(condition or subject), text, workspace, similar values?
+    storeNewTerms(table)
     
     return jsonData
 
 # parseQuery("")
-parseQuery("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-#test git date setting -this time using pstcommit alias
+# parseQuery("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
