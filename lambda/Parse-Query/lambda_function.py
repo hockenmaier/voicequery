@@ -2,6 +2,7 @@ import json
 import nltk
 from nltk.tokenize import word_tokenize
 import boto3
+from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 
@@ -105,21 +106,21 @@ def parseQuery(query):
     
         return "<p>" + outputQuery + "</p>"
     
-    def package_JSON(outputQuery,conditions,subjects):
+    def package_JSON(outputQuery,reducedConditions,reducedSubjects):
         data = {}
         data['statusCode'] = '200'
         data['version'] = "0.0.1"
         data['htmlResponse'] = outputQuery
         data['parseTree'] = prettyParseTree
         bubbles = []
-        for condition in conditions:
+        for condition in reducedConditions:
             bubble = {}
             bubble['internalID'] = ""
             bubble['name'] = condition
             bubble['type'] = "condition"
             bubble['bubbles'] = []
             bubbles.append(bubble)
-        for subject in subjects:
+        for subject in reducedSubjects:
             bubble = {}
             bubble['internalID'] = ""
             bubble['name'] = subject
@@ -143,12 +144,38 @@ def parseQuery(query):
         )
         print(put)
     
-    def storeNewTerms(table):
+    def storeAndDedupNewSubjects(table):
+        reducedSubjects = subjects[:]
+        for subject in subjects:
+            foundItems = table.scan(
+                FilterExpression=Key('text').eq(subject) & Key('workspace').eq(currentWorkspace) & Key('query_part').eq('subject')
+            )
+            if(foundItems['Items']): #check if subject already exists
+                # print('subject to reduce:' + foundItems['Items'][0]['text'])
+                reducedSubjects.remove(foundItems['Items'][0]['text'])
+            else:
+                put = table.put_item(
+                    Item={
+                        'item_id': str(uuid.uuid4()),
+                        'text': subject,
+                        'query_id': queryID,
+                        'query_part': 'subject',
+                        'create_time':str(datetime.datetime.now()),
+                        'workspace': currentWorkspace,
+                    }
+                )
+        return reducedSubjects
+            
+    def storeAndDedupNewConditions(table):
+        reducedConditions = conditions[:]
         for condition in conditions:
-            # foundItems = table.get_item(
-                
-            # )
-            put = table.put_item(
+            foundItems = table.scan(
+                FilterExpression=Key('text').eq(condition) & Key('workspace').eq(currentWorkspace) & Key('query_part').eq('condition')
+            )
+            if(foundItems['Items']):
+                reducedConditions.remove(foundItems['Items'][0]['text'])
+            else:
+                put = table.put_item(
                 Item={
                     'item_id': str(uuid.uuid4()),
                     'text': condition,
@@ -158,17 +185,7 @@ def parseQuery(query):
                     'workspace': currentWorkspace,
                 }
             )
-        for subject in subjects:
-            put = table.put_item(
-                Item={
-                    'item_id': str(uuid.uuid4()),
-                    'text': subject,
-                    'query_id': queryID,
-                    'query_part': 'subject',
-                    'create_time':str(datetime.datetime.now()),
-                    'workspace': currentWorkspace,
-                }
-            )
+        return reducedConditions
     
     checks, errData = initial_checks()
     if (checks == False):
@@ -188,12 +205,14 @@ def parseQuery(query):
     
     traverse_tree(parseTree, parseTree)
     
-    outputQuery = buildOutputQuery(inputQuery,conditions,subjects)
-    jsonData = package_JSON(outputQuery,conditions,subjects)
-    
     queryID = str(uuid.uuid4())
     storeQuery(table)
-    storeNewTerms(table)
+    
+    reducedConditions = storeAndDedupNewConditions(table)
+    reducedSubjects = storeAndDedupNewSubjects(table)
+    
+    outputQuery = buildOutputQuery(inputQuery, conditions, subjects)
+    jsonData = package_JSON(outputQuery, reducedConditions, reducedSubjects)
     
     return jsonData
 
