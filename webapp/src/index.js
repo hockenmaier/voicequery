@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import bubblesPayload from './sample-payloads/bubblesv2.json';
-import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
+import bubblesPayload from './sample-payloads/bubblesv3.json';
+//import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
 import axios from 'axios'
 
 class layout{
@@ -196,6 +196,7 @@ class Space extends React.Component{
             sampleQuery: randomSampleQuery(),
             queryInput: '',
             queryResponseHTML: '',
+            workspace: '1',
           };   
       }
 
@@ -213,9 +214,28 @@ class Space extends React.Component{
 
     initializeBubbles(bubbles){        
         const newBubbles = this.createBubbleDeets(bubbles);
+        this.getWorkspaceBubbles()
         this.setState({
             bubbles: newBubbles
         })
+    }
+
+    getWorkspaceBubbles = () => {
+        console.log('Sending populate http call with query: ' + this.state.workspace)
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/populate', {
+            workspace: this.state.workspace
+        },
+        )
+        .then(function(response){
+            console.log('populate http successful')
+            //console.log(response)
+            self.updateBubbles(response.data)
+        })
+        .catch(function(error){
+            console.log('populate http error')
+            console.log(error);
+        });
     }
 
     createBubbleDeets(bubbles){
@@ -510,18 +530,11 @@ class Space extends React.Component{
     }
 
     handleQuerySubmit = () => {
-        console.log('Sending http call with query: ' + this.state.queryInput)
+        console.log('Sending parse http call with query: ' + this.state.queryInput)
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
             query: this.state.queryInput
         },
-        // {
-        //     headers: {  'Content-Type': 'application/x-www-form-urlencoded',
-        //                 'Access-Control-Allow-Origin': '*', }
-        // },
-        // { 
-        //     useCredentails: true
-        // }
         )
         .then(function(response){
             console.log('http successful')

@@ -1,0 +1,137 @@
+[  
+  {
+    "internalID": "",
+    "name": "transaction_id",
+    "type": "info-field",
+    "bubbles": []
+  },
+  {
+    "internalID": "",
+    "name": "checkout_date",
+    "type": "info-field",
+    "bubbles": []
+  },
+  {
+    "internalID": "",
+    "name": "checkin_date",
+    "type": "info-field",
+    "bubbles": []
+  },
+  {
+    "internalID": "",
+    "name": "transaction_type",
+    "type": "info-field",
+    "bubbles": [
+      {
+        "internalID": "",
+        "name": "rental",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "sale",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "subrental",
+        "type": "info-value",
+        "bubbles": []
+      }
+    ]
+  },
+  {
+    "internalID": "",
+    "name": "last_update_date",
+    "type": "info-field",
+    "bubbles": []
+  },
+  {
+    "internalID": "",
+    "name": "asset_id",
+    "type": "info-field",
+    "bubbles": []
+  },
+  {
+    "internalID": "",
+    "name": "asset_name",
+    "type": "info-field",
+    "bubbles": []
+  },
+  {
+    "internalID": "",
+    "name": "asset_department",
+    "type": "info-field",
+    "bubbles": [
+      {
+        "internalID": "",
+        "name": "costume",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "property",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "lighting",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "grip",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "post production",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "production services",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "craft services",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "marketing",
+        "type": "info-value",
+        "bubbles": []
+      }
+    ]
+  },
+  {
+    "internalID": "",
+    "name": "loss_or_damage",
+    "type": "info-field",
+    "bubbles": [
+      {
+        "internalID": "",
+        "name": "yes",
+        "type": "info-value",
+        "bubbles": []
+      },
+      {
+        "internalID": "",
+        "name": "no",
+        "type": "info-value",
+        "bubbles": []
+      }
+    ]
+  }
+]
