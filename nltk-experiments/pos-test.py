@@ -179,3 +179,5 @@ print('parse pretty print: ', tree.pretty_print())
 # parser = nltk.ChartParser(chartGrammarReg)
 # for tree in parser.parse(tagged):
 #      print(tree)
+
+#Test for automated build
