@@ -1,9 +1,7 @@
 import React from 'react';
-import '../index.css';
-import {layout, initializeLayout, bubblesInitialized,lastDragStart, BubbleDeets, nextBubbleID, mockBubbleUpdates, randomSampleQuery} from './helpers.js';
 import Bubble from './bubble.js';
-
-import bubblesPayload from './sample-payloads/bubblesv3.json';
+import {lastDragStart, layout, initializeLayout} from './helpers.js';
+import bubblesPayload from '../sample-payloads/bubblesv3.json';
 //import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
 import axios from 'axios'
 
@@ -534,6 +532,106 @@ class Space extends React.Component{
                 </div>                
             </div>
         );
+    }    
+}
+
+let bubblesInitialized = false;
+
+class BubbleDeets{
+    constructor(internalId,text,typetext,bubbles,parentBubbleId, xLocation, yLocation,bubsInConcept){
+        this.internalID = internalId;
+        this.id = getNextBubbleID();
+        this.text = text;
+        this.type = typetext;        
+        this.bubbles = bubbles;
+        this.parentBubbleId = parentBubbleId;
+        this.atHome = true;
+        if (bubsInConcept){
+            this.bubsInConcept = bubsInConcept;
+        }else{
+            this.bubsInConcept = [];
+        }
+        if(xLocation){
+            this.xLocation = xLocation;
+        }else{
+            this.xLocation = nextXLocation(this.type,this.id,this.parentBubbleId);
+        }
+        if(xLocation){
+            this.yLocation = yLocation;
+        }else{
+            this.yLocation = nextYLocation(this.type,this.id,this.parentBubbleId);
+        }
+        
+    }
+}
+
+let nextBubbleID = 0;
+function getNextBubbleID(){
+    const next = nextBubbleID;
+    nextBubbleID++;
+    return next.toString();
+}
+
+function randomSampleQuery(){
+    let queries = [];
+    queries.push("What was my highest utilization edit bay last month?");
+    queries.push("How many visitors came on campus during upfronts?");
+    queries.push("What was the most popular week to visit the lot last year?");
+    queries.push("Which grip assets are most often part of a subrental?");
+    queries.push("What was my AWS spend last month?");
+    queries.push("How much did I spend on data storage services in Azure this year to date?");
+    queries.push("Which department has the highest AWS spend per user?");
+    queries.push("Which department has the lowest revenue per square foot?");
+    queries.push("How well are the props purchased in the last year renting?");
+    const randomInt = Math.floor(Math.random()*queries.length);
+    //console.log(queries[randomInt]);
+    return queries[randomInt];
+}
+
+let subjectCount = 0;
+let conditionCount = 0;
+let infoFieldCount = 0;
+const infoValueRows = 3;
+
+function nextXLocation(type,id,parentId){
+    if (type === 'subject' | type === 'condition'){
+        return layout.BubbleLeftMargin;
+    }else if (type === 'info-field'){
+        return layout.InfoBubbleLeft;
+    }else if (type === 'info-value'){
+        //console.log(((parseInt(id)-parseInt(parentId))%infoValueRows + 1)*105);
+        return layout.InfoBubbleLeft + 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
+    }else{
+    return 300;
+    }
+}
+
+function nextYLocation(type,id,parentId){
+    //console.log(type);
+    if (type === 'subject'){
+        const nextY =  layout.BubbleTopMargin + subjectCount*60;
+        subjectCount++;
+        return nextY;
+    }
+    else if (type === 'condition'){
+        const nextY = layout.conditionBubbleTopMargin + conditionCount*60;
+        conditionCount++;
+        return nextY;
+    }
+    else if (type === 'info-field'){
+        const nextY = layout.BubbleTopMargin + infoFieldCount*55;
+        infoFieldCount++;
+        return nextY;
+    }
+    else if (type === 'info-value'){
+        const nextY = layout.BubbleTopMargin + (infoFieldCount-1)*55 + 5;
+        if((parseInt(id)-parseInt(parentId)-1)%infoValueRows === 2){
+            infoFieldCount++;
+        }
+        return nextY;
+    }
+    else{
+        return 300;
     }    
 }
 

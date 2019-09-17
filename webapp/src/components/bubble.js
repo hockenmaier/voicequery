@@ -1,3 +1,6 @@
+import React from 'react';
+import {lastDragStart, layout} from './helpers.js';
+
 class Bubble extends React.Component{
     constructor(props){
         super(props);
