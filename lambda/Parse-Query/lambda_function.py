@@ -15,6 +15,17 @@ def parseQuery(query):
         if (query == ""):
             data = {}
             data['statusCode'] = '422'
+            data['statusMessage'] = 'No Query Received'
+            data['version'] = "0.0.1"
+            data['htmlResponse'] = ""
+            data['parseTree'] = ""
+            data['bubbles'] = []
+            return False, data
+        elif (query == "."):
+            setup_nltk_data()
+            data = {}
+            data['statusCode'] = '200'
+            data['statusMessage'] = 'Lambda Boot Message Received'
             data['version'] = "0.0.1"
             data['htmlResponse'] = ""
             data['parseTree'] = ""
@@ -109,6 +120,7 @@ def parseQuery(query):
     def package_JSON(outputQuery,reducedConditions,reducedSubjects):
         data = {}
         data['statusCode'] = '200'
+        data['statusMessage'] = 'Query Parsed Successfully'
         data['version'] = "0.0.1"
         data['htmlResponse'] = outputQuery
         data['parseTree'] = prettyParseTree
