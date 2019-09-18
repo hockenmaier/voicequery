@@ -27,7 +27,25 @@ class Space extends React.Component{
         // console.log(JSON.parse(stringifiedBubs));
         
         this.initializeBubbles(this.state.bubbles);
+        this.sendParseLambdaBootMessage()
         bubblesInitialized = true;
+    }
+
+    sendParseLambdaBootMessage = () => {
+        console.log('Sending lambda boot parse http call')
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
+            query: '.'
+        },
+        )
+        .then(function(response){
+            console.log('http successful')
+            console.log(response)
+        })
+        .catch(function(error){
+            console.log('http error')
+            console.log(error);
+        });
     }
 
     initializeBubbles(bubbles){        
