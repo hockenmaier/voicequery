@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  Read-Dataset:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Description: ''
+      Handler: read_dataset.lambda_handler
+      MemorySize: 128
+      Role: 'arn:aws:iam::009241727190:role/service-role/Read-Dataset-role-vqv583ta'
+      Runtime: python3.6
+      Timeout: 3
