@@ -43,3 +43,7 @@ print('similarity of "' + str(w1) + '" and "' + str(w2) + '":' + str(w1.wup_simi
 w1 = wordnet.synset("visitor.n.01")
 w2 = wordnet.synset("person.n.01")
 print('similarity of "' + str(w1) + '" and "' + str(w2) + '":' + str(w1.wup_similarity(w2)))
+
+w1 = wordnet.synset("visitor.n.01")
+w2 = wordnet.synset("person.n.01")
+print('similarity of "' + str(w1) + '" and "' + str(w2) + '":' + str(w1.wup_similarity(w2)))
