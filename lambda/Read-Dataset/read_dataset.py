@@ -12,9 +12,12 @@ def read_dataset():
     obj = bucket.Object(key=u'sample-data/HRData_QuickSightSample.csv')
     response = obj.get()
     
-    lines = response[u'Body'].read().split()
-    for row in DictReader(lines):
-        print(row)
+    # lines = response[u'Body'].read().split()
+    # print(response['Body'].
+    
+    reader = DictReader(response[u'Body'].read())
+    # for row in reader:
+    #     print(row)
     
     jsonData = package_JSON()
     return jsonData
