@@ -3,7 +3,6 @@
 __all__ = ["get_info","show"]
 
 
-
 import os
 import sys
 
@@ -13,13 +12,13 @@ if sys.platform == 'win32' and os.path.isdir(extra_dll_dir):
     os.environ.setdefault('PATH', '')
     os.environ['PATH'] += os.pathsep + extra_dll_dir
 
-lapack_opt_info={'libraries': ['openblas', 'openblas'], 'library_dirs': ['/usr/local/lib'], 'language': 'c', 'define_macros': [('HAVE_CBLAS', None)]}
-blas_opt_info={'libraries': ['openblas', 'openblas'], 'library_dirs': ['/usr/local/lib'], 'language': 'c', 'define_macros': [('HAVE_CBLAS', None)]}
+blas_mkl_info={}
 blis_info={}
 openblas_info={'libraries': ['openblas', 'openblas'], 'library_dirs': ['/usr/local/lib'], 'language': 'c', 'define_macros': [('HAVE_CBLAS', None)]}
-openblas_lapack_info={'libraries': ['openblas', 'openblas'], 'library_dirs': ['/usr/local/lib'], 'language': 'c', 'define_macros': [('HAVE_CBLAS', None)]}
+blas_opt_info={'libraries': ['openblas', 'openblas'], 'library_dirs': ['/usr/local/lib'], 'language': 'c', 'define_macros': [('HAVE_CBLAS', None)]}
 lapack_mkl_info={}
-blas_mkl_info={}
+openblas_lapack_info={'libraries': ['openblas', 'openblas'], 'library_dirs': ['/usr/local/lib'], 'language': 'c', 'define_macros': [('HAVE_CBLAS', None)]}
+lapack_opt_info={'libraries': ['openblas', 'openblas'], 'library_dirs': ['/usr/local/lib'], 'language': 'c', 'define_macros': [('HAVE_CBLAS', None)]}
 
 def get_info(name):
     g = globals()
@@ -36,4 +35,3 @@ def show():
             if k == "sources" and len(v) > 200:
                 v = v[:60] + " ...\n... " + v[-60:]
             print("    %s = %s" % (k,v))
-    
