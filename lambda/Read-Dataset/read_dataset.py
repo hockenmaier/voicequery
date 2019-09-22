@@ -10,7 +10,9 @@ def lambda_handler(event, context):
     
 def read_dataset():
     bucket = "voicequery-datasets"
-    file_name = "sample-data/HRData_QuickSightSample.csv"
+    # file_name = "sample-data/HRData_QuickSightSample.csv"
+    # file_name = "sample-data/RevenueData_QuickSightSample.csv"
+    file_name = "sample-data/index_2013.csv"
     
     s3 = boto3.client('s3') 
     # 's3' is a key word. create connection to S3 using default config and all buckets within S3
@@ -20,23 +22,27 @@ def read_dataset():
     
     hrdata = pd.read_csv(obj['Body']) # 'Body' is a key word
     
+    print('Analysis of file: ' + bucket + '/' + file_name)
+    
     print(hrdata[0:5])
     for i in range(3):
         print('.')
     print(hrdata[len(hrdata)-5:len(hrdata)])
-    
+    print('')
+    print('Columns:')
     columns = hrdata.columns
     #TODO: create bubble objects out of column names
     #print(hrdata['Tenure'].unique())
     
     for col in columns:
-        print('Column: ' + col)
+        print(col)
         print('Unique Values: ')
         unique = hrdata[col].unique()
-        if (len(unique) < 25):
+        if (len(unique) < 50):
             print(unique)
         else:
-            print('More that 25 distinct values')
+            print('More that 50 distinct values')
+        print('')
     
     
     jsonData = package_JSON()
