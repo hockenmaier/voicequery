@@ -45,11 +45,32 @@ def read_dataset():
         print('')
     
     
-    jsonData = package_JSON()
+    jsonData = package_JSON(hrdata)
     return jsonData
     
-def package_JSON():
+def package_JSON(hrdata):
     data = {}
+    data['statusCode'] = '200'
+    data['version'] = "0.0.1"
+    bubbles = []
+    
+    columns = hrdata.columns
+    
+    for col in columns:
+        bubble = {}
+        bubble['internalID'] = ""
+        bubble['name'] = col
+        bubble['type'] = 'info-field'  #TODO check name
+        bubble['bubbles'] = []
+        bubbles.append(bubble)
+        unique = hrdata[col].unique()
+        if (len(unique) < 15):
+            #TODO Create Sub-Bubbles
+            print(unique)
+        else:
+            print('More that 50 distinct values')
+        print('')
+    data['bubbles'] = bubbles
     return data
     
 read_dataset()
