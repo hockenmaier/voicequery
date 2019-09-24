@@ -20,31 +20,7 @@ def read_dataset():
     obj = s3.get_object(Bucket= bucket, Key= file_name) 
     # get object and file (key) from bucket
     
-    hrdata = pd.read_csv(obj['Body']) # 'Body' is a key word
-    
-    print('Analysis of file: ' + bucket + '/' + file_name)
-    
-    print(hrdata[0:5])
-    for i in range(3):
-        print('.')
-    print(hrdata[len(hrdata)-5:len(hrdata)])
-    print('')
-    print('Columns:')
-    columns = hrdata.columns
-    #TODO: create bubble objects out of column names
-    #print(hrdata['Tenure'].unique())
-    
-    for col in columns:
-        print(col)
-        print('Unique Values: ')
-        unique = hrdata[col].unique()
-        if (len(unique) < 50):
-            print(unique)
-        else:
-            print('More that 50 distinct values')
-        print('')
-    
-    
+    hrdata = pd.read_csv(obj['Body'])
     jsonData = package_JSON(hrdata)
     return jsonData
     
@@ -53,24 +29,27 @@ def package_JSON(hrdata):
     data['statusCode'] = '200'
     data['version'] = "0.0.1"
     bubbles = []
-    
     columns = hrdata.columns
     
     for col in columns:
         bubble = {}
         bubble['internalID'] = ""
         bubble['name'] = col
-        bubble['type'] = 'info-field'  #TODO check name
+        bubble['type'] = 'info-field'
         bubble['bubbles'] = []
-        bubbles.append(bubble)
+        
         unique = hrdata[col].unique()
         if (len(unique) < 15):
-            #TODO Create Sub-Bubbles
-            print(unique)
-        else:
-            print('More that 50 distinct values')
-        print('')
+            for value in unique:
+                subBubble = {}
+                subBubble['internalID'] = ""
+                subBubble['name'] = value
+                subBubble['type'] = 'info-value'
+                bubble['bubbles'] = []
+                bubble['bubbles'].append(subBubble)
+        bubbles.append(bubble)
     data['bubbles'] = bubbles
+    print(data)
     return data
     
-read_dataset()
+# read_dataset()
