@@ -1,7 +1,7 @@
 import React from 'react';
 import Bubble from './bubble.js';
 import {lastDragStart, layout, initializeLayout} from './helpers.js';
-import bubblesPayload from '../sample-payloads/bubblesv3.json';
+//import bubblesPayload from '../sample-payloads/bubblesv3.json';
 //import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
 import axios from 'axios'
 
@@ -10,7 +10,7 @@ class Space extends React.Component{
         super(props);
         initializeLayout();
         this.state = {
-            bubbles: bubblesPayload,
+            bubbles: [],
             sampleQuery: randomSampleQuery(),
             queryInput: '',
             queryResponseHTML: '',
@@ -49,14 +49,15 @@ class Space extends React.Component{
     }
 
     initializeBubbles(bubbles){        
-        const newBubbles = this.createBubbleDeets(bubbles);
-        this.getWorkspaceBubbles()
-        this.setState({
-            bubbles: newBubbles
-        })
+        // const newBubbles = this.createBubbleDeets(bubbles);
+        this.getWorkspaceLexiconBubbles()
+        this.getWorkspaceDataBubbles()
+        // this.setState({
+        //     bubbles: newBubbles
+        // })
     }
 
-    getWorkspaceBubbles = () => {
+    getWorkspaceLexiconBubbles = () => {
         console.log('Sending populate http call with query: ' + this.state.workspace)
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/populate', {
@@ -70,6 +71,24 @@ class Space extends React.Component{
         })
         .catch(function(error){
             console.log('populate http error')
+            console.log(error);
+        });
+    }
+
+    getWorkspaceDataBubbles = () => {
+        console.log('Sending read-dataset http call with query: ' + '')
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/read-dataset', {
+            key: ''
+        },
+        )
+        .then(function(response){
+            console.log('read-dataset http successful')
+            //console.log(response)
+            self.updateBubbles(response.data)
+        })
+        .catch(function(error){
+            console.log('read-dataset http error')
             console.log(error);
         });
     }
