@@ -10,9 +10,9 @@ def lambda_handler(event, context):
     
 def read_dataset():
     bucket = "voicequery-datasets"
-    # file_name = "sample-data/HRData_QuickSightSample.csv"
+    file_name = "sample-data/HRData_QuickSightSample.csv"
     # file_name = "sample-data/RevenueData_QuickSightSample.csv"
-    file_name = "sample-data/index_2013.csv"
+    # file_name = "sample-data/index_2013.csv"
     
     s3 = boto3.client('s3') 
     # 's3' is a key word. create connection to S3 using default config and all buckets within S3
@@ -32,24 +32,26 @@ def package_JSON(hrdata):
     columns = hrdata.columns
     
     for col in columns:
+        # print('column: ' + col)
         bubble = {}
         bubble['internalID'] = ""
-        bubble['name'] = col
+        bubble['name'] = str(col)
         bubble['type'] = 'info-field'
         bubble['bubbles'] = []
         
         unique = hrdata[col].unique()
         if (len(unique) < 15):
             for value in unique:
+                # print('unique value: ' + value)
                 subBubble = {}
                 subBubble['internalID'] = ""
-                subBubble['name'] = value
+                subBubble['name'] = str(value)
                 subBubble['type'] = 'info-value'
-                bubble['bubbles'] = []
+                subBubble['bubbles'] = []
                 bubble['bubbles'].append(subBubble)
         bubbles.append(bubble)
     data['bubbles'] = bubbles
-    print(data)
+    # print(data)
     return data
     
-# read_dataset()
+read_dataset()
