@@ -37,6 +37,7 @@ def package_JSON(hrdata):
         bubble['internalID'] = ""
         bubble['name'] = str(col)
         bubble['type'] = 'info-field'
+        bubble['dataType'] = map_numpy_datatypes(hrdata[col].dtype)
         bubble['bubbles'] = []
         
         unique = hrdata[col].unique()
@@ -51,7 +52,15 @@ def package_JSON(hrdata):
                 bubble['bubbles'].append(subBubble)
         bubbles.append(bubble)
     data['bubbles'] = bubbles
-    # print(data)
+    print(data)
     return data
     
+def map_numpy_datatypes(dtype):
+    stringedType = str(dtype)
+    if (stringedType == 'object'):
+        return 'string'
+    else:
+        return stringedType
+    
 read_dataset()
+
