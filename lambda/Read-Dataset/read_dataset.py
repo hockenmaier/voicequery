@@ -2,6 +2,7 @@ import numpy
 import pandas as pd
 import json
 import boto3
+from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 
@@ -12,9 +13,11 @@ def lambda_handler(event, context):
 def read_dataset(workspace):
     table = setup_dynamo()
     file_name = "sample-data/HRData_QuickSightSample.csv"
+    unique_value_limit = 15
     hrdata = setup_S3_source(workspace, file_name)
-    jsonData = package_JSON(hrdata)
-    storeFields(jsonData, table, workspace, file_name)
+    jsonData = package_JSON(hrdata, unique_value_limit)
+    deleteOldFields(table, workspace,file_name)
+    storeFields(jsonData, table, workspace, file_name, unique_value_limit)
     return jsonData
 
 def setup_S3_source(workspace, file_name):
@@ -33,23 +36,8 @@ def setup_S3_source(workspace, file_name):
 def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
-    
-def storeFields(jsonData, table, workspace, file_name):
-    for col in jsonData['bubbles']:
-        fieldID = str(uuid.uuid4())
-        put = table.put_item(
-            Item={
-                'item_id': fieldID,
-                'text': col['name'],
-                'data_type': col['dataType'],
-                'data_set': file_name,
-                'create_time': str(datetime.datetime.now()),
-                'workspace': workspace,
-                'unique_values': col['bubbles']
-            }
-        )
 
-def package_JSON(hrdata):
+def package_JSON(hrdata, unique_value_limit):
     data = {}
     data['statusCode'] = '200'
     data['version'] = "0.0.1"
@@ -64,9 +52,9 @@ def package_JSON(hrdata):
         bubble['type'] = 'info-field'
         bubble['dataType'] = map_numpy_datatypes(hrdata[col].dtype)
         bubble['bubbles'] = []
-        
         unique = hrdata[col].unique()
-        if (len(unique) < 15):
+        bubble['unique_value_count'] = len(unique)
+        if (len(unique) < unique_value_limit):
             for value in unique:
                 # print('unique value: ' + value)
                 subBubble = {}
@@ -77,7 +65,7 @@ def package_JSON(hrdata):
                 bubble['bubbles'].append(subBubble)
         bubbles.append(bubble)
     data['bubbles'] = bubbles
-    print(data)
+    #print(data)
     return data
     
 def map_numpy_datatypes(dtype):
@@ -86,6 +74,52 @@ def map_numpy_datatypes(dtype):
         return 'string'
     else:
         return stringedType
-    
+
+def storeFields(jsonData, table, workspace, file_name, unique_value_limit):
+    for col in jsonData['bubbles']:
+        fieldID = str(uuid.uuid4())
+        put = table.put_item(
+            Item={
+                'item_id': fieldID,
+                'field_id': fieldID,
+                'text': col['name'],
+                'storage_source': 'dataset',
+                'query_part': 'info-field',
+                'data_type': col['dataType'],
+                'data_set_name': file_name,
+                'unique_value_count': col['unique_value_count'],
+                'create_time': str(datetime.datetime.now()),
+                'workspace': workspace,
+                # 'unique_values': col['bubbles'] #if col['bubbles'] else 'More than ' + str(unique_value_limit) + ' unique values',
+            }
+        )
+        for value in col['bubbles']:
+            valueID = str(uuid.uuid4())
+            put = table.put_item(
+                Item={
+                    'item_id': valueID,
+                    'field_id': fieldID,
+                    'text': value['name'],
+                    'storage_source': 'dataset',
+                    'query_part': 'info-value',
+                    'data_set_name': file_name,
+                    'create_time': str(datetime.datetime.now()),
+                    'workspace': workspace,
+                }
+        )
+
+def deleteOldFields(table,workspace,file_name):
+    foundItems = table.scan(
+                FilterExpression=Key('workspace').eq(workspace) & Key('data_set_name').eq(file_name)
+            )
+    if(foundItems['Items']):
+        for item in foundItems['Items']:
+            table.delete_item(
+                Key={
+                    'item_id': item['item_id'],
+                    'text': item['text'],
+                }
+            )
+
 read_dataset('1')
 

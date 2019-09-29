@@ -147,6 +147,7 @@ def parseQuery(query):
             Item={
                 'item_id': queryID,
                 'text': inputQuery,
+                'storage_source': 'parse',
                 'query_id': queryID,
                 'query_part': 'query',
                 'parse_tree': str(parseTree),
@@ -170,6 +171,7 @@ def parseQuery(query):
                     Item={
                         'item_id': str(uuid.uuid4()),
                         'text': subject,
+                        'storage_source': 'parse',
                         'query_id': queryID,
                         'query_part': 'subject',
                         'create_time':str(datetime.datetime.now()),
@@ -191,6 +193,7 @@ def parseQuery(query):
                 Item={
                     'item_id': str(uuid.uuid4()),
                     'text': condition,
+                    'storage_source': 'parse',
                     'query_id': queryID,
                     'query_part': 'condition',
                     'create_time':str(datetime.datetime.now()),
