@@ -2,15 +2,23 @@ import numpy
 import pandas as pd
 import json
 import boto3
-# from csv import DictReader
+import uuid
+import datetime
 
 def lambda_handler(event, context):
-    jsonData = read_dataset()
+    jsonData = read_dataset(event['workspace'])
     return jsonData
     
-def read_dataset():
-    bucket = "voicequery-datasets"
+def read_dataset(workspace):
+    table = setup_dynamo()
     file_name = "sample-data/HRData_QuickSightSample.csv"
+    hrdata = setup_S3_source(workspace, file_name)
+    jsonData = package_JSON(hrdata)
+    storeFields(jsonData, table, workspace, file_name)
+    return jsonData
+
+def setup_S3_source(workspace, file_name):
+    bucket = "voicequery-datasets"
     # file_name = "sample-data/RevenueData_QuickSightSample.csv"
     # file_name = "sample-data/index_2013.csv"
     
@@ -20,10 +28,27 @@ def read_dataset():
     obj = s3.get_object(Bucket= bucket, Key= file_name) 
     # get object and file (key) from bucket
     
-    hrdata = pd.read_csv(obj['Body'])
-    jsonData = package_JSON(hrdata)
-    return jsonData
+    return pd.read_csv(obj['Body'])
+
+def setup_dynamo():
+    dynamodb = boto3.resource('dynamodb')
+    return dynamodb.Table('lexicon')
     
+def storeFields(jsonData, table, workspace, file_name):
+    for col in jsonData['bubbles']:
+        fieldID = str(uuid.uuid4())
+        put = table.put_item(
+            Item={
+                'item_id': fieldID,
+                'text': col['name'],
+                'data_type': col['dataType'],
+                'data_set': file_name,
+                'create_time': str(datetime.datetime.now()),
+                'workspace': workspace,
+                'unique_values': col['bubbles']
+            }
+        )
+
 def package_JSON(hrdata):
     data = {}
     data['statusCode'] = '200'
@@ -62,5 +87,5 @@ def map_numpy_datatypes(dtype):
     else:
         return stringedType
     
-read_dataset()
+read_dataset('1')
 
