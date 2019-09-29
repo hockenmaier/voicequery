@@ -79,7 +79,7 @@ class Space extends React.Component{
         console.log('Sending read-dataset http call with query: ' + '')
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/read-dataset', {
-            key: ''
+            workspace: this.state.workspace
         },
         )
         .then(function(response){
