@@ -7,10 +7,10 @@ import uuid
 import datetime
 
 def lambda_handler(event, context):
-    jsonData = parseQuery(event['query'])
+    jsonData = parse_query(event['query'])
     return jsonData
     
-def parseQuery(query):
+def parse_query(query):
     def initial_checks():
         if (query == ""):
             data = {}
@@ -40,6 +40,12 @@ def parseQuery(query):
         dynamodb = boto3.resource('dynamodb')
         return dynamodb.Table('lexicon')
         
+    def get_workspace_data(table, workspace):
+        foundItems = table.scan(
+            FilterExpression=Key('workspace').eq(workspace) & Key('storage_source').eq('dataset')
+        )
+        return foundItems['Items']
+        
     
     def setup_nltk_data():
         #Adding temporary directory:
@@ -55,11 +61,6 @@ def parseQuery(query):
         return nltk.pos_tag(words)
     
     def get_parse_tree():
-        # grammar = r"""
-        #   NP:
-        #     {<N.?>+}          # Chunk everything
-        #     }<VB.?|IN>+{      # Chink sequences of VBD and IN
-        #   """
         
         baseGrammar = r"""
           QueryType: {<W..*>+<JJ.?>?}               # Chunk "wh-words" including modifiers like "How many"
@@ -68,14 +69,6 @@ def parseQuery(query):
           VP: {<V.*><NP|PP|CLAUSE>+}                # Chunk verbs and their arguments
           CLAUSE: {<NP><VP>}                        # Chunk NP, VP
           """
-        
-        # grammar3 = r"""m
-        #   QueryType: {<W..*>+<JJ.?>?}               # Chunk "wh-words" including modifiers like "How many"
-        #   NP: {<DT>?<PR.*>?<JJ.?>*<N.*>+}           # Chunk sequences of DT or JJ followed by one or more nouns
-        #   PP: {<IN><NP>}                            # Chunk prepositions followed by NP
-        #   VP: {<V.*><NP|PP>+}                       # Chunk verbs and their arguments
-        #   """
-        
         parser = nltk.RegexpParser(baseGrammar)
         return parser.parse(posTaggedQuery)
     
@@ -152,7 +145,7 @@ def parseQuery(query):
                 'query_part': 'query',
                 'parse_tree': str(parseTree),
                 'create_time': str(datetime.datetime.now()),
-                'workspace': currentWorkspace,
+                'workspace': workspace,
             }
         )
         print(put)
@@ -161,7 +154,7 @@ def parseQuery(query):
         reducedSubjects = subjects[:]
         for subject in subjects:
             foundItems = table.scan(
-                FilterExpression=Key('text').eq(subject) & Key('workspace').eq(currentWorkspace) & Key('query_part').eq('subject')
+                FilterExpression=Key('text').eq(subject) & Key('workspace').eq(workspace) & Key('query_part').eq('subject')
             )
             if(foundItems['Items']): #check if subject already exists
                 # print('subject to reduce:' + foundItems['Items'][0]['text'])
@@ -175,7 +168,7 @@ def parseQuery(query):
                         'query_id': queryID,
                         'query_part': 'subject',
                         'create_time':str(datetime.datetime.now()),
-                        'workspace': currentWorkspace,
+                        'workspace': workspace,
                     }
                 )
         return reducedSubjects
@@ -184,7 +177,7 @@ def parseQuery(query):
         reducedConditions = conditions[:]
         for condition in conditions:
             foundItems = table.scan(
-                FilterExpression=Key('text').eq(condition) & Key('workspace').eq(currentWorkspace) & Key('query_part').eq('condition')
+                FilterExpression=Key('text').eq(condition) & Key('workspace').eq(workspace) & Key('query_part').eq('condition')
             )
             if(foundItems['Items']):
                 reducedConditions.remove(foundItems['Items'][0]['text'])
@@ -197,7 +190,7 @@ def parseQuery(query):
                     'query_id': queryID,
                     'query_part': 'condition',
                     'create_time':str(datetime.datetime.now()),
-                    'workspace': currentWorkspace,
+                    'workspace': workspace,
                 }
             )
         return reducedConditions
@@ -205,10 +198,11 @@ def parseQuery(query):
     checks, errData = initial_checks()
     if (checks == False):
         return errData
-    currentWorkspace = '1'
+    workspace = '1'
     
     table = setup_dynamo()
     setup_nltk_data()
+    available_data = get_workspace_data(table,workspace)
     
     inputQuery = query
     posTaggedQuery = get_pos_tagged_query()
@@ -232,4 +226,4 @@ def parseQuery(query):
     return jsonData
 
 # parseQuery("")
-# parseQuery("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
+# parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")

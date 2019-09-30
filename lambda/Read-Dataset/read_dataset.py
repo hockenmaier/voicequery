@@ -18,6 +18,7 @@ def read_dataset(workspace):
     jsonData = package_JSON(hrdata, unique_value_limit)
     deleteOldFields(table, workspace,file_name)
     storeFields(jsonData, table, workspace, file_name, unique_value_limit)
+    print(jsonData)
     return jsonData
 
 def setup_S3_source(workspace, file_name):
