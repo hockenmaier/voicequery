@@ -58,6 +58,7 @@ def parse_query(query):
         #Now downloading data to temporary directory
         nltk.download('punkt', download_dir='/tmp/nltk_data')
         nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
+        nltk.download('stopwords', download_dir='/tmp/nltk_data')
     
     def get_pos_tagged_query():
         words = nltk.word_tokenize(inputQuery)
