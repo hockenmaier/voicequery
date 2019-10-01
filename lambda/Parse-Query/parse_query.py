@@ -1,6 +1,9 @@
 import json
 import nltk
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.tokenize.treebank import TreebankWordDetokenizer
+# from nltk.stem import PorterStemmer
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
@@ -80,15 +83,15 @@ def parse_query(query):
         if tree.label() == 'NP':
             if parent.label() == 'PP':
                 # print("this is a condition")
-                conditions.append(getWholePhrase(parent))
+                conditions.append(get_parent_phrase(parent))
             else:
                 # print("this is a subject")
-                subjects.append(getWholePhrase(tree))
+                subjects.append(get_parent_phrase(tree))
         for subtree in tree:
             if type(subtree) == nltk.tree.Tree:
                 traverse_tree(subtree, tree)
     
-    def getWholePhrase(tree):
+    def get_parent_phrase(tree): #This function is like a "detokenizer" but for a parse tree instead of a list of words.  Replace if a better "unparser" is found
         phrase = ''
         for leaf in tree.leaves():
             if phrase == '':
@@ -96,6 +99,18 @@ def parse_query(query):
             else:
                 phrase = phrase + ' ' + leaf[0]
         return phrase
+    
+    def stop_lexicon(lexicon):
+        stoppedLexicon = []
+        for lex in lexicon:
+            stopWords = set(stopwords.words("english"))
+            words = word_tokenize(lex)
+            filteredLex = []
+            for w in words:
+                if w not in stopWords:
+                    filteredLex.append(w)
+            stoppedLexicon.append(TreebankWordDetokenizer().detokenize(filteredLex))
+        return stoppedLexicon
     
     def buildOutputQuery(inputQuery,conditions,subjects):
         outputQuery = inputQuery
@@ -211,9 +226,14 @@ def parse_query(query):
     
     conditions = []
     subjects = []
-    
     traverse_tree(parseTree, parseTree)
-    
+    print(conditions)
+    print(subjects)
+    stoppedConditions = stop_lexicon(conditions)
+    stoppedSubjects = stop_lexicon(subjects)
+    print(stoppedConditions)
+    print(stoppedSubjects)
+
     queryID = str(uuid.uuid4())
     storeQuery(table)
     
@@ -226,4 +246,5 @@ def parse_query(query):
     return jsonData
 
 # parseQuery("")
-# parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
+parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
+# parse_query("How many visitors came on the lot during the month of May 2019?")
