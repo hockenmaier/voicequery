@@ -113,14 +113,14 @@ def parse_query(query):
             stoppedLexicon.append(TreebankWordDetokenizer().detokenize(filteredLex))
         return stoppedLexicon
     
-    def buildOutputQuery(inputQuery,conditions,subjects):
+    def buildOutputQuery(inputQuery,stoppedConditions,stoppedSubjects):
         outputQuery = inputQuery
     
-        for condition in conditions:
+        for condition in stoppedConditions:
             replaceText = '{<span class=\"res-condition\">' + condition + '</span>}'
             outputQuery = outputQuery.replace(condition,replaceText)
     
-        for subject in subjects:
+        for subject in stoppedSubjects:
             replaceText = '{<span class=\"res-subject\">' + subject + '</span>}'
             outputQuery = outputQuery.replace(subject,replaceText)
     
@@ -166,9 +166,9 @@ def parse_query(query):
         )
         print(put)
     
-    def storeAndDedupNewSubjects(table):
-        reducedSubjects = subjects[:]
-        for subject in subjects:
+    def storeAndDedupNewSubjects(table,stoppedSubjects):
+        reducedSubjects = stoppedSubjects[:]
+        for subject in stoppedSubjects:
             foundItems = table.scan(
                 FilterExpression=Key('text').eq(subject) & Key('workspace').eq(workspace) & Key('query_part').eq('subject')
             )
@@ -189,9 +189,9 @@ def parse_query(query):
                 )
         return reducedSubjects
             
-    def storeAndDedupNewConditions(table):
-        reducedConditions = conditions[:]
-        for condition in conditions:
+    def storeAndDedupNewConditions(table, stoppedConditions):
+        reducedConditions = stoppedConditions[:]
+        for condition in stoppedConditions:
             foundItems = table.scan(
                 FilterExpression=Key('text').eq(condition) & Key('workspace').eq(workspace) & Key('query_part').eq('condition')
             )
@@ -238,10 +238,10 @@ def parse_query(query):
     queryID = str(uuid.uuid4())
     storeQuery(table)
     
-    reducedConditions = storeAndDedupNewConditions(table)
-    reducedSubjects = storeAndDedupNewSubjects(table)
+    reducedConditions = storeAndDedupNewConditions(table, stoppedConditions)
+    reducedSubjects = storeAndDedupNewSubjects(table, stoppedSubjects)
     
-    outputQuery = buildOutputQuery(inputQuery, conditions, subjects)
+    outputQuery = buildOutputQuery(inputQuery, stoppedConditions, stoppedSubjects)
     jsonData = package_JSON(outputQuery, reducedConditions, reducedSubjects)
     
     return jsonData
