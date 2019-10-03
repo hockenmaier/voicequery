@@ -3,7 +3,6 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.treebank import TreebankWordDetokenizer
-# from nltk.stem import PorterStemmer
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
@@ -14,31 +13,36 @@ def lambda_handler(event, context):
     return jsonData
     
 def parse_query(query):
+    
+    # Perform initial checks such as ensuring the query is not an empty string
     checks, errData = initial_checks(query)
     if (checks == False):
         return errData
     workspace = '1'
     
+    # Set up nltk data, dynamo connection, and get dataset values from dynamo
     table = setup_dynamo()
     setup_nltk_data()
     available_data = get_workspace_data(table,workspace)
 
+    # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
     posTaggedQuery = get_pos_tagged_query(query)
     parseTree = get_parse_tree(posTaggedQuery)
     prettyParseTree = str(parseTree.pretty_print())
     
-    #Create condition and subject arrays, populate them by traversing the parse tree, and filter out stop words
+    # Create condition and subject arrays, populate them by traversing the parse tree, and filter out stop words
     conditions, subjects = [],[]
     traverse_tree(parseTree, parseTree, conditions, subjects)
     stoppedConditions = stop_lexicon(conditions)
     stoppedSubjects = stop_lexicon(subjects)
 
+    # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
     storeQuery(table, queryID, query, parseTree, workspace)
-    
     reducedConditions = storeAndDedupNewConditions(table, stoppedConditions, workspace, queryID)
     reducedSubjects = storeAndDedupNewSubjects(table, stoppedSubjects, workspace, queryID)
     
+    # Build output Query to display in the console and the final JSON payload
     outputQuery = buildOutputQuery(query, stoppedConditions, stoppedSubjects)
     jsonData = package_JSON(outputQuery, reducedConditions, reducedSubjects, prettyParseTree)
     
