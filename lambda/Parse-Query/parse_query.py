@@ -3,6 +3,7 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.treebank import TreebankWordDetokenizer
+from nltk.corpus import wordnet
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
@@ -30,21 +31,26 @@ def parse_query(query):
     parseTree = get_parse_tree(posTaggedQuery)
     prettyParseTree = str(parseTree.pretty_print())
     
-    # Create condition and subject arrays, populate them by traversing the parse tree, and filter out stop words
+    # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
     conditions, subjects = [],[]
     traverse_tree(parseTree, parseTree, conditions, subjects)
     stoppedConditions = stop_lexicon(conditions)
     stoppedSubjects = stop_lexicon(subjects)
+    deduppedConditions = deduplicate_word_list(stoppedConditions)
+    deduppedSubjects = deduplicate_word_list(stoppedSubjects)
+    
+    # ConditionInfoPairings = get_most_similar_info(deduppedConditions, available_data)
+    get_most_similar_info(deduppedConditions, available_data)
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
     storeQuery(table, queryID, query, parseTree, workspace)
-    reducedConditions = storeAndDedupNewConditions(table, stoppedConditions, workspace, queryID)
-    reducedSubjects = storeAndDedupNewSubjects(table, stoppedSubjects, workspace, queryID)
+    reducedConditions = storeAndDedupNewConditions(table, deduppedConditions, workspace, queryID) #reduced arrays are different than dedupped because they may be empty if all items were previously stored to the db
+    reducedSubjects = storeAndDedupNewSubjects(table, deduppedSubjects, workspace, queryID)
     
     # Build output Query to display in the console and the final JSON payload
-    outputQuery = buildOutputQuery(query, stoppedConditions, stoppedSubjects)
-    jsonData = package_JSON(outputQuery, reducedConditions, reducedSubjects, prettyParseTree)
+    outputQuery = buildOutputQuery(query, deduppedConditions, deduppedSubjects) 
+    jsonData = package_JSON(outputQuery, reducedConditions, reducedSubjects, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
     
     return jsonData
     
@@ -147,6 +153,25 @@ def stop_lexicon(lexicon):
         stoppedLexicon.append(TreebankWordDetokenizer().detokenize(filteredLex))
     return stoppedLexicon
 
+def deduplicate_word_list(wordList):
+    uniqueList = []
+    for item in wordList:
+        if item not in uniqueList:
+            uniqueList.append(item)
+    return uniqueList
+
+def get_most_similar_info(wordList,data):
+    # print('data: ' + str(data))\
+    for word in wordList:
+        print('synsets for: ' + word)
+        print(str(wordnet.synsets(word)))
+        # for wordSynset in wordnet.synsets(word):
+    for dataValue in data:
+        print('synsets for: ' + dataValue['text'])
+        print(str(wordnet.synsets(dataValue['text'])))
+                # for dataSynset in wordnet.synsets(dataValue['text']):
+                #     print('similarity of "' + str(wordSynset) + '" and "' + str(dataSynset) + '":' + str(wordSynset.wup_similarity(dataSynset)))
+
 def buildOutputQuery(inputQuery,stoppedConditions,stoppedSubjects):
     outputQuery = inputQuery
 
@@ -246,5 +271,5 @@ def storeAndDedupNewConditions(table, stoppedConditions, workspace, queryID):
     return reducedConditions
 
 # parseQuery("")
-parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-# parse_query("How many visitors came on the lot during the month of May 2019?")
+# parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
+parse_query("How many visitors came on the lot during the month of May 2019?")
