@@ -27,12 +27,12 @@ def parse_query(query):
     available_data = get_workspace_data(table,workspace)
 
     # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
-    posTaggedQuery = get_pos_tagged_query(query)
+    posTaggedQuery = get_pos_tagged_phrase(query)
     parseTree = get_parse_tree(posTaggedQuery)
     prettyParseTree = str(parseTree.pretty_print())
     
     # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
-    conditions, subjects = [],[]
+    conditions, subjects, conditionsAndPOS, subjectsAndPOS = [],[],[],[]
     traverse_tree(parseTree, parseTree, conditions, subjects)
     stoppedConditions = stop_lexicon(conditions)
     stoppedSubjects = stop_lexicon(subjects)
@@ -100,7 +100,24 @@ def setup_nltk_data():
     nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
     nltk.download('stopwords', download_dir='/tmp/nltk_data')
 
-def get_pos_tagged_query(inputQuery):
+def convert_penn_to_morphy(penntag, returnNone=False):
+    morphy_tag = {'NN':wordnet.NOUN, 'JJ':wordnet.ADJ,
+                  'VB':wordnet.VERB, 'RB':wordnet.ADV}
+    try:
+        return morphy_tag[penntag[:2]]
+    except:
+        return None if returnNone else ''
+
+class PhraseAndPOS:
+    text = ''
+    posTags = []
+
+def create_phrase_and_pos(phrase):
+    c = PhraseAndPOS()
+    c.text = phrase
+    c.posTags = get_pos_tagged_phrase(phrase)
+
+def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
     return nltk.pos_tag(words)
 
