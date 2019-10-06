@@ -32,25 +32,16 @@ def parse_query(query):
     prettyParseTree = str(parseTree.pretty_print())
     
     # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
-    conditions, subjects, conditionsAndPOS, subjectsAndPOS = [],[],[],[]
-    traverse_tree(parseTree, parseTree, conditions, subjects, conditionsAndPOS, subjectsAndPOS)
+    conditionsAndPOS, subjectsAndPOS = [],[]
+    traverse_tree(parseTree, parseTree, conditionsAndPOS, subjectsAndPOS)
     
     stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
     stop_lexicon(subjectsAndPOS)
     conditionsAndPOS = deduplicate_word_list(conditionsAndPOS)
     subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
     
-    # uncomment this block to see the state of PraseAndPOS Objects at any time:
-    # for obj in conditionsAndPOS:
-    #     print(obj.text)
-    #     print(obj.lexType)
-    #     print(obj.posTags)
-    # print(conditions)
-    # for obj in subjectsAndPOS:
-    #     print(obj.text)
-    #     print(obj.lexType)
-    #     print(obj.posTags)
-    # print(subjects)
+    # uncomment this call to see the state of PraseAndPOS Objects at any time:
+    # printPraseObjState(conditionsAndPOS,subjectsAndPOS)
     
     # ConditionInfoPairings = get_most_similar_info(deduppedConditions, available_data)
     # get_most_similar_info(deduppedConditions, available_data)
@@ -65,9 +56,20 @@ def parse_query(query):
     outputQuery = buildOutputQuery(query, conditionsAndPOS, subjectsAndPOS) 
     jsonData = package_JSON(outputQuery, reducedConditionsAndPOS, reducedSubjectsAndPOS, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
     
-    return ''
-    # return jsonData
-    
+    return jsonData
+
+def printPraseObjState(conditionsAndPOS,subjectsAndPOS):
+    print('Conditions:')
+    for obj in conditionsAndPOS:
+        print(obj.text)
+        print(obj.lexType)
+        print(obj.posTags)
+    print('Subjects:')
+    for obj in subjectsAndPOS:
+        print(obj.text)
+        print(obj.lexType)
+        print(obj.posTags)
+
 def initial_checks(query):
     if (query == ""):
         data = {}
@@ -149,7 +151,7 @@ def get_parse_tree(posTaggedQuery):
     parser = nltk.RegexpParser(baseGrammar)
     return parser.parse(posTaggedQuery)
 
-def traverse_tree(tree, parent, conditions, subjects, conditionsAndPOS, subjectsAndPOS):
+def traverse_tree(tree, parent, conditionsAndPOS, subjectsAndPOS):
     # print("tree:", tree, "parent label:", parent.label())
     # if len(tree) == 1:
         # print("this is a leaf")
@@ -157,18 +159,17 @@ def traverse_tree(tree, parent, conditions, subjects, conditionsAndPOS, subjects
     if tree.label() == 'NP':
         if parent.label() == 'PP':
             # print("this is a condition")
-            conditions.append(rebuild_parent_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition'))
+            thisCondition = rebuild_parent_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition')
         else:
             # print("this is a subject")
-            subjects.append(rebuild_parent_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject'))
+            thisSubject = rebuild_parent_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject')
     for subtree in tree:
         if type(subtree) == nltk.tree.Tree:
-            traverse_tree(subtree, tree, conditions, subjects, conditionsAndPOS, subjectsAndPOS)
+            traverse_tree(subtree, tree, conditionsAndPOS, subjectsAndPOS)
 
 def rebuild_parent_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #This function is like a "detokenizer" but for a parse tree instead of a list of words.  Replace if a better "unparser" is found
     phrase = ''
     newPhraseInstance = PhraseAndPOS()
-    # newPhraseInstance.posTags = []
     for leaf in tree.leaves():
         if phrase == '':
             phrase = leaf[0]
