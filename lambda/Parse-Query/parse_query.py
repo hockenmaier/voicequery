@@ -33,14 +33,19 @@ def parse_query(query):
     
     # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
     conditions, subjects, conditionsAndPOS, subjectsAndPOS = [],[],[],[]
-    traverse_tree(parseTree, parseTree, conditions, subjects)
+    traverse_tree(parseTree, parseTree, conditions, subjects, conditionsAndPOS, subjectsAndPOS)
+    # for obj in conditionsAndPOS:
+    #     print(obj.text)
+    #     print(obj.lexType)
+    #     print(obj.posTags)
+    # print(conditions)
     stoppedConditions = stop_lexicon(conditions)
     stoppedSubjects = stop_lexicon(subjects)
     deduppedConditions = deduplicate_word_list(stoppedConditions)
     deduppedSubjects = deduplicate_word_list(stoppedSubjects)
     
     # ConditionInfoPairings = get_most_similar_info(deduppedConditions, available_data)
-    get_most_similar_info(deduppedConditions, available_data)
+    # get_most_similar_info(deduppedConditions, available_data)
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
@@ -109,8 +114,10 @@ def convert_penn_to_morphy(penntag, returnNone=False):
         return None if returnNone else ''
 
 class PhraseAndPOS:
-    text = ''
-    posTags = []
+    def __init__(self):
+        self.phraseType = ''
+        self.text = ''
+        self.posTags = []
 
 def create_phrase_and_pos(phrase):
     c = PhraseAndPOS()
@@ -133,7 +140,7 @@ def get_parse_tree(posTaggedQuery):
     parser = nltk.RegexpParser(baseGrammar)
     return parser.parse(posTaggedQuery)
 
-def traverse_tree(tree, parent, conditions, subjects):
+def traverse_tree(tree, parent, conditions, subjects, conditionsAndPOS, subjectsAndPOS):
     # print("tree:", tree, "parent label:", parent.label())
     # if len(tree) == 1:
         # print("this is a leaf")
@@ -141,21 +148,30 @@ def traverse_tree(tree, parent, conditions, subjects):
     if tree.label() == 'NP':
         if parent.label() == 'PP':
             # print("this is a condition")
-            conditions.append(get_parent_phrase(parent))
+            conditions.append(rebuild_parent_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition'))
         else:
             # print("this is a subject")
-            subjects.append(get_parent_phrase(tree))
+            subjects.append(rebuild_parent_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject'))
     for subtree in tree:
         if type(subtree) == nltk.tree.Tree:
-            traverse_tree(subtree, tree, conditions, subjects)
+            traverse_tree(subtree, tree, conditions, subjects, conditionsAndPOS, subjectsAndPOS)
 
-def get_parent_phrase(tree): #This function is like a "detokenizer" but for a parse tree instead of a list of words.  Replace if a better "unparser" is found
+def rebuild_parent_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #This function is like a "detokenizer" but for a parse tree instead of a list of words.  Replace if a better "unparser" is found
     phrase = ''
+    newPhraseInstance = PhraseAndPOS()
+    # newPhraseInstance.posTags = []
     for leaf in tree.leaves():
         if phrase == '':
             phrase = leaf[0]
         else:
             phrase = phrase + ' ' + leaf[0]
+        newPhraseInstance.posTags.append(leaf)
+    newPhraseInstance.text = phrase
+    newPhraseInstance.lexType = lexType
+    if lexType == 'condition':
+        conditionsAndPOS.append(newPhraseInstance)
+    elif lexType == 'subject':
+        subjectsAndPOS.append(newPhraseInstance)    
     return phrase
 
 def stop_lexicon(lexicon):
