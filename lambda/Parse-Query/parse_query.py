@@ -34,15 +34,23 @@ def parse_query(query):
     # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
     conditions, subjects, conditionsAndPOS, subjectsAndPOS = [],[],[],[]
     traverse_tree(parseTree, parseTree, conditions, subjects, conditionsAndPOS, subjectsAndPOS)
+    
+    stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
+    stop_lexicon(subjectsAndPOS)
+    conditionsAndPOS = deduplicate_word_list(conditionsAndPOS)
+    subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
+    
+    # uncomment this block to see the state of PraseAndPOS Objects at any time:
     # for obj in conditionsAndPOS:
     #     print(obj.text)
     #     print(obj.lexType)
     #     print(obj.posTags)
     # print(conditions)
-    stoppedConditions = stop_lexicon(conditions)
-    stoppedSubjects = stop_lexicon(subjects)
-    deduppedConditions = deduplicate_word_list(stoppedConditions)
-    deduppedSubjects = deduplicate_word_list(stoppedSubjects)
+    # for obj in subjectsAndPOS:
+    #     print(obj.text)
+    #     print(obj.lexType)
+    #     print(obj.posTags)
+    # print(subjects)
     
     # ConditionInfoPairings = get_most_similar_info(deduppedConditions, available_data)
     # get_most_similar_info(deduppedConditions, available_data)
@@ -50,14 +58,15 @@ def parse_query(query):
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
     storeQuery(table, queryID, query, parseTree, workspace)
-    reducedConditions = storeAndDedupNewConditions(table, deduppedConditions, workspace, queryID) #reduced arrays are different than dedupped because they may be empty if all items were previously stored to the db
-    reducedSubjects = storeAndDedupNewSubjects(table, deduppedSubjects, workspace, queryID)
+    reducedConditionsAndPOS = storeAndDedupNewConditions(table, conditionsAndPOS, workspace, queryID) #reduced arrays are different than dedupped because they may be empty if all items were previously stored to the db
+    reducedSubjectsAndPOS = storeAndDedupNewSubjects(table, subjectsAndPOS, workspace, queryID)
     
     # Build output Query to display in the console and the final JSON payload
-    outputQuery = buildOutputQuery(query, deduppedConditions, deduppedSubjects) 
-    jsonData = package_JSON(outputQuery, reducedConditions, reducedSubjects, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
+    outputQuery = buildOutputQuery(query, conditionsAndPOS, subjectsAndPOS) 
+    jsonData = package_JSON(outputQuery, reducedConditionsAndPOS, reducedSubjectsAndPOS, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
     
-    return jsonData
+    return ''
+    # return jsonData
     
 def initial_checks(query):
     if (query == ""):
@@ -174,24 +183,37 @@ def rebuild_parent_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #Thi
         subjectsAndPOS.append(newPhraseInstance)    
     return phrase
 
-def stop_lexicon(lexicon):
-    stoppedLexicon = []
-    for lex in lexicon:
+def stop_lexicon(lexObjects):
+    for lex in lexObjects:
         stopWords = set(stopwords.words("english"))
-        words = word_tokenize(lex)
+        words = word_tokenize(lex.text)
         filteredLex = []
         for w in words:
             if w not in stopWords:
                 filteredLex.append(w)
-        stoppedLexicon.append(TreebankWordDetokenizer().detokenize(filteredLex))
-    return stoppedLexicon
+        lex.text = TreebankWordDetokenizer().detokenize(filteredLex)
+        filteredLexTags = []
+        for w in lex.posTags:
+            if w[0] not in stopWords:
+                filteredLexTags.append(w)
+        lex.posTags = filteredLexTags
 
-def deduplicate_word_list(wordList):
-    uniqueList = []
-    for item in wordList:
-        if item not in uniqueList:
-            uniqueList.append(item)
-    return uniqueList
+# def deduplicate_word_list(lexObjects):
+#     foundList = []
+#     for item in lexObjects:
+#         if item.text in foundList:
+#             lexObjects.remove(item)
+#         else:    
+#             foundList.append(item)
+            
+def deduplicate_word_list(lexObjects):
+    uniqueTextList = []
+    uniqueObjList = []
+    for item in lexObjects:
+        if item.text not in uniqueTextList:
+            uniqueObjList.append(item)
+            uniqueTextList.append(item.text)
+    return uniqueObjList
 
 def get_most_similar_info(wordList,data):
     # print('data: ' + str(data))\
@@ -205,20 +227,20 @@ def get_most_similar_info(wordList,data):
                 # for dataSynset in wordnet.synsets(dataValue['text']):
                 #     print('similarity of "' + str(wordSynset) + '" and "' + str(dataSynset) + '":' + str(wordSynset.wup_similarity(dataSynset)))
 
-def buildOutputQuery(inputQuery,stoppedConditions,stoppedSubjects):
+def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS):
     outputQuery = inputQuery
 
-    for condition in stoppedConditions:
-        replaceText = '{<span class=\"res-condition\">' + condition + '</span>}'
-        outputQuery = outputQuery.replace(condition,replaceText)
+    for condition in conditionsAndPOS:
+        replaceText = '{<span class=\"res-condition\">' + condition.text + '</span>}'
+        outputQuery = outputQuery.replace(condition.text,replaceText)
 
-    for subject in stoppedSubjects:
-        replaceText = '{<span class=\"res-subject\">' + subject + '</span>}'
-        outputQuery = outputQuery.replace(subject,replaceText)
+    for subject in subjectsAndPOS:
+        replaceText = '{<span class=\"res-subject\">' + subject.text + '</span>}'
+        outputQuery = outputQuery.replace(subject.text,replaceText)
 
     return "<p>" + outputQuery + "</p>"
 
-def package_JSON(outputQuery,reducedConditions,reducedSubjects, prettyParseTree):
+def package_JSON(outputQuery,reducedConditionsAndPOS,reducedSubjectsAndPOS, prettyParseTree):
     data = {}
     data['statusCode'] = '200'
     data['statusMessage'] = 'Query Parsed Successfully'
@@ -226,17 +248,17 @@ def package_JSON(outputQuery,reducedConditions,reducedSubjects, prettyParseTree)
     data['htmlResponse'] = outputQuery
     data['parseTree'] = prettyParseTree
     bubbles = []
-    for condition in reducedConditions:
+    for condition in reducedConditionsAndPOS:
         bubble = {}
         bubble['internalID'] = ""
-        bubble['name'] = condition
+        bubble['name'] = condition.text
         bubble['type'] = "condition"
         bubble['bubbles'] = []
         bubbles.append(bubble)
-    for subject in reducedSubjects:
+    for subject in reducedSubjectsAndPOS:
         bubble = {}
         bubble['internalID'] = ""
-        bubble['name'] = subject
+        bubble['name'] = subject.text
         bubble['type'] = "subject"
         bubble['bubbles'] = []
         bubbles.append(bubble)
@@ -258,20 +280,18 @@ def storeQuery(table, queryID, query, parseTree, workspace):
     )
     print(put)
 
-def storeAndDedupNewSubjects(table,stoppedSubjects, workspace, queryID):
-    reducedSubjects = stoppedSubjects[:]
-    for subject in stoppedSubjects:
+def storeAndDedupNewSubjects(table,phraseAndPOSList, workspace, queryID):
+    reducedSubjects = []
+    for subject in phraseAndPOSList:
         foundItems = table.scan(
-            FilterExpression=Key('text').eq(subject) & Key('workspace').eq(workspace) & Key('query_part').eq('subject')
+            FilterExpression=Key('text').eq(subject.text) & Key('workspace').eq(workspace) & Key('query_part').eq('subject')
         )
-        if(foundItems['Items']): #check if subject already exists
-            # print('subject to reduce:' + foundItems['Items'][0]['text'])
-            reducedSubjects.remove(foundItems['Items'][0]['text'])
-        else:
+        if not(foundItems['Items']): #check if subject already exists
+            reducedSubjects.append(subject)
             put = table.put_item(
                 Item={
                     'item_id': str(uuid.uuid4()),
-                    'text': subject,
+                    'text': subject.text,
                     'storage_source': 'parse',
                     'query_id': queryID,
                     'query_part': 'subject',
@@ -281,19 +301,18 @@ def storeAndDedupNewSubjects(table,stoppedSubjects, workspace, queryID):
             )
     return reducedSubjects
         
-def storeAndDedupNewConditions(table, stoppedConditions, workspace, queryID):
-    reducedConditions = stoppedConditions[:]
-    for condition in stoppedConditions:
+def storeAndDedupNewConditions(table, phraseAndPOSList, workspace, queryID):
+    reducedConditions = []
+    for condition in phraseAndPOSList:
         foundItems = table.scan(
-            FilterExpression=Key('text').eq(condition) & Key('workspace').eq(workspace) & Key('query_part').eq('condition')
+            FilterExpression=Key('text').eq(condition.text) & Key('workspace').eq(workspace) & Key('query_part').eq('condition')
         )
-        if(foundItems['Items']):
-            reducedConditions.remove(foundItems['Items'][0]['text'])
-        else:
+        if not(foundItems['Items']):
+            reducedConditions.append(condition)
             put = table.put_item(
             Item={
                 'item_id': str(uuid.uuid4()),
-                'text': condition,
+                'text': condition.text,
                 'storage_source': 'parse',
                 'query_id': queryID,
                 'query_part': 'condition',
@@ -304,5 +323,5 @@ def storeAndDedupNewConditions(table, stoppedConditions, workspace, queryID):
     return reducedConditions
 
 # parseQuery("")
-# parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-parse_query("How many visitors came on the lot during the month of May 2019?")
+parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
+# parse_query("How many visitors came on the lot during the month of May 2019?")
