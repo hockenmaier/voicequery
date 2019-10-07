@@ -35,8 +35,8 @@ def parse_query(query):
     conditionsAndPOS, subjectsAndPOS = [],[]
     traverse_tree(parseTree, parseTree, conditionsAndPOS, subjectsAndPOS)
     
-    stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
-    stop_lexicon(subjectsAndPOS)
+    # stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
+    # stop_lexicon(subjectsAndPOS)
     conditionsAndPOS = deduplicate_word_list(conditionsAndPOS)
     subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
     
@@ -44,7 +44,7 @@ def parse_query(query):
     # printPraseObjState(conditionsAndPOS,subjectsAndPOS)
     
     # ConditionInfoPairings = get_most_similar_info(deduppedConditions, available_data)
-    # get_most_similar_info(deduppedConditions, available_data)
+    get_most_similar_info(conditionsAndPOS, available_data)
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
@@ -129,11 +129,13 @@ class PhraseAndPOS:
         self.phraseType = ''
         self.text = ''
         self.posTags = []
+        self.synsets = []
 
 def create_phrase_and_pos(phrase):
-    c = PhraseAndPOS()
-    c.text = phrase
-    c.posTags = get_pos_tagged_phrase(phrase)
+    newPhraseAndPOS = PhraseAndPOS()
+    newPhraseAndPOS.text = phrase
+    newPhraseAndPOS.posTags = get_pos_tagged_phrase(phrase)
+    return newPhraseAndPOS
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
@@ -216,17 +218,38 @@ def deduplicate_word_list(lexObjects):
             uniqueTextList.append(item.text)
     return uniqueObjList
 
-def get_most_similar_info(wordList,data):
+def get_most_similar_info(lexObjects,data):
     # print('data: ' + str(data))\
-    for word in wordList:
-        print('synsets for: ' + word)
-        print(str(wordnet.synsets(word)))
+    dataSynsetPacks = get_data_synset_pack(data)
+    for lex in lexObjects:
+        print('[LEXICON] synsets for: ' + lex.text)
+        for word in lex.posTags:
+            print('word: ' + word[0])
+            print('Pos: ' + word[1])
+            wordnetPOS = convert_penn_to_morphy(word[1])
+            print('conversion: ' + str(wordnetPOS))
+            synset = wordnet.synsets(word[0], wordnetPOS)
+            print(str(synset))
+            for syn in synset:
+                print('syn (with pos): ' + str(syn))
         # for wordSynset in wordnet.synsets(word):
-    for dataValue in data:
-        print('synsets for: ' + dataValue['text'])
-        print(str(wordnet.synsets(dataValue['text'])))
+    
                 # for dataSynset in wordnet.synsets(dataValue['text']):
                 #     print('similarity of "' + str(wordSynset) + '" and "' + str(dataSynset) + '":' + str(wordSynset.wup_similarity(dataSynset)))
+
+def get_data_synset_pack(data):
+    pack = []
+    for dataValue in data:
+        dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'])
+        for word in dataPhraseAndPOS.posTags:
+            dataPhraseAndPOS.synsets = get_synsets(word)
+            pack.append(dataPhraseAndPOS)
+    return pack
+
+def get_synsets(wordAndTag):
+    wordnetPOS = convert_penn_to_morphy(wordAndTag[1])
+    synset = wordnet.synsets(wordAndTag[0], wordnetPOS)
+    return synset
 
 def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS):
     outputQuery = inputQuery
@@ -324,5 +347,5 @@ def storeAndDedupNewConditions(table, phraseAndPOSList, workspace, queryID):
     return reducedConditions
 
 # parseQuery("")
-parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-# parse_query("How many visitors came on the lot during the month of May 2019?")
+# parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
+parse_query("How many visitors came on the lot during the month of May 2019?")
