@@ -35,22 +35,24 @@ def parse_query(query):
     conditionsAndPOS, subjectsAndPOS = [],[]
     traverse_tree(parseTree, parseTree, conditionsAndPOS, subjectsAndPOS)
     
-    # stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
-    # stop_lexicon(subjectsAndPOS)
+    stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
+    stop_lexicon(subjectsAndPOS)
     conditionsAndPOS = deduplicate_word_list(conditionsAndPOS)
     subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
     
     # uncomment this call to see the state of PraseAndPOS Objects at any time:
-    # printPraseObjState(conditionsAndPOS,subjectsAndPOS)
+    # printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
     
     # ConditionInfoPairings = get_most_similar_info(deduppedConditions, available_data)
     get_most_similar_info(conditionsAndPOS, available_data)
+    get_most_similar_info(subjectsAndPOS, available_data)
+    printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
     storeQuery(table, queryID, query, parseTree, workspace)
-    reducedConditionsAndPOS = storeAndDedupNewConditions(table, conditionsAndPOS, workspace, queryID) #reduced arrays are different than dedupped because they may be empty if all items were previously stored to the db
-    reducedSubjectsAndPOS = storeAndDedupNewSubjects(table, subjectsAndPOS, workspace, queryID)
+    reducedConditionsAndPOS = storeAndDedupPhrases(table, conditionsAndPOS, workspace, queryID, 'condition') #reduced arrays are different than dedupped because they may be empty if all items were previously stored to the db
+    reducedSubjectsAndPOS = storeAndDedupPhrases(table, subjectsAndPOS, workspace, queryID, 'subject')
     
     # Build output Query to display in the console and the final JSON payload
     outputQuery = buildOutputQuery(query, conditionsAndPOS, subjectsAndPOS) 
@@ -58,17 +60,27 @@ def parse_query(query):
     
     return jsonData
 
-def printPraseObjState(conditionsAndPOS,subjectsAndPOS):
+def printConditionAndSubjectState(conditionsAndPOS, subjectsAndPOS):
     print('Conditions:')
-    for obj in conditionsAndPOS:
-        print(obj.text)
-        print(obj.lexType)
-        print(obj.posTags)
+    printPhraseObjState(conditionsAndPOS)
     print('Subjects:')
-    for obj in subjectsAndPOS:
+    printPhraseObjState(subjectsAndPOS)
+
+def printPhraseObjState(phraseAndPOSList):
+    for obj in phraseAndPOSList:
+        print('')
         print(obj.text)
-        print(obj.lexType)
+        print(obj.phraseType)
         print(obj.posTags)
+        print(obj.synsets)
+        print('Closest Match Found:')
+        if obj.closestMatch:
+            closest = obj.closestMatch
+            print(closest.text)
+            print('similarity: ' + str(obj.closestMatchSimilarity))
+        print('Great Matches Found:')
+        for match in obj.greatMatches:
+            print(match.text)
 
 def initial_checks(query):
     if (query == ""):
@@ -115,27 +127,6 @@ def setup_nltk_data():
     nltk.download('punkt', download_dir='/tmp/nltk_data')
     nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
     nltk.download('stopwords', download_dir='/tmp/nltk_data')
-
-def convert_penn_to_morphy(penntag, returnNone=False):
-    morphy_tag = {'NN':wordnet.NOUN, 'JJ':wordnet.ADJ,
-                  'VB':wordnet.VERB, 'RB':wordnet.ADV}
-    try:
-        return morphy_tag[penntag[:2]]
-    except:
-        return None if returnNone else ''
-
-class PhraseAndPOS:
-    def __init__(self):
-        self.phraseType = ''
-        self.text = ''
-        self.posTags = []
-        self.synsets = []
-
-def create_phrase_and_pos(phrase):
-    newPhraseAndPOS = PhraseAndPOS()
-    newPhraseAndPOS.text = phrase
-    newPhraseAndPOS.posTags = get_pos_tagged_phrase(phrase)
-    return newPhraseAndPOS
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
@@ -219,37 +210,80 @@ def deduplicate_word_list(lexObjects):
     return uniqueObjList
 
 def get_most_similar_info(lexObjects,data):
-    # print('data: ' + str(data))\
     dataSynsetPacks = get_data_synset_pack(data)
-    for lex in lexObjects:
-        print('[LEXICON] synsets for: ' + lex.text)
-        for word in lex.posTags:
-            print('word: ' + word[0])
-            print('Pos: ' + word[1])
-            wordnetPOS = convert_penn_to_morphy(word[1])
-            print('conversion: ' + str(wordnetPOS))
-            synset = wordnet.synsets(word[0], wordnetPOS)
-            print(str(synset))
-            for syn in synset:
-                print('syn (with pos): ' + str(syn))
-        # for wordSynset in wordnet.synsets(word):
-    
-                # for dataSynset in wordnet.synsets(dataValue['text']):
-                #     print('similarity of "' + str(wordSynset) + '" and "' + str(dataSynset) + '":' + str(wordSynset.wup_similarity(dataSynset)))
+    # printPhraseObjState(dataSynsetPacks)
+    for lex in lexObjects: #---Iterate through condition or subject phrases
+        # print('[LEXICON] finding field value similarities for: ' + lex.text)
+        maxSimilarity = 0
+        closestMatch = {}
+        for word in lex.posTags: #---Iterate through words in the condition or subject phrase
+            lex.synsets = get_synsets(word, True)
+            for lexSyn in lex.synsets: #---Iterate through each synonym of the word at hand
+                for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
+                    # print('Comparing to: ' + dataPack.text)
+                    if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
+                        matchStringLenth = min(len(dataPack.text),len(lex.text))
+                        if matchStringLenth > maxSimilarity:
+                            lex.closestMatch = dataPack
+                            lex.closestMatchSimilarity = matchStringLenth
+                            maxSimilarity = matchStringLenth
+                        print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
+                    for dataSynList in dataPack.synsets: #---Iterate through the list of synset lists (each list pertaining to the word in the field value, if multiple words)
+                        for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
+                            # print(str(dataSyn))
+                            similarity = lexSyn.wup_similarity(dataSyn)
+                            # if dataPack.text == 'Female':
+                            #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
+                            if similarity:
+                                if similarity > maxSimilarity:
+                                    lex.closestMatch = dataPack
+                                    lex.closestMatchSimilarity = similarity
+                                    maxSimilarity = similarity
+                                if similarity > .9:
+                                    if dataPack not in lex.greatMatches:
+                                        lex.greatMatches.append(dataPack)
+
+class PhraseAndPOS:
+    def __init__(self):
+        self.phraseType = ''
+        self.text = ''
+        self.posTags = []
+        self.synsets = []
+        self.closestMatch = None
+        self.closestMatchSimilarity = 0
+        self.greatMatches = []
 
 def get_data_synset_pack(data):
     pack = []
     for dataValue in data:
-        dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'])
+        dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'], 'data phrase')
         for word in dataPhraseAndPOS.posTags:
-            dataPhraseAndPOS.synsets = get_synsets(word)
+            dataPhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
             pack.append(dataPhraseAndPOS)
     return pack
+    
+def create_phrase_and_pos(phrase, phraseType):
+    newPhraseAndPOS = PhraseAndPOS()
+    newPhraseAndPOS.text = phrase
+    newPhraseAndPOS.posTags = get_pos_tagged_phrase(phrase)
+    newPhraseAndPOS.phraseType = phraseType
+    return newPhraseAndPOS
 
-def get_synsets(wordAndTag):
-    wordnetPOS = convert_penn_to_morphy(wordAndTag[1])
-    synset = wordnet.synsets(wordAndTag[0], wordnetPOS)
+def get_synsets(wordAndTag, usePOS):
+    if usePOS:
+        wordnetPOS = convert_penn_to_morphy(wordAndTag[1])
+        synset = wordnet.synsets(wordAndTag[0], wordnetPOS)
+    else:
+        synset = wordnet.synsets(wordAndTag[0])
     return synset
+    
+def convert_penn_to_morphy(penntag, returnNone=False):
+    morphy_tag = {'NN':wordnet.NOUN, 'JJ':wordnet.ADJ,
+                  'VB':wordnet.VERB, 'RB':wordnet.ADV}
+    try:
+        return morphy_tag[penntag[:2]]
+    except:
+        return None if returnNone else ''
 
 def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS):
     outputQuery = inputQuery
@@ -304,48 +338,28 @@ def storeQuery(table, queryID, query, parseTree, workspace):
     )
     print(put)
 
-def storeAndDedupNewSubjects(table,phraseAndPOSList, workspace, queryID):
-    reducedSubjects = []
-    for subject in phraseAndPOSList:
+def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
+    reducedPhraseList = []
+    for phrase in phraseAndPOSList:
         foundItems = table.scan(
-            FilterExpression=Key('text').eq(subject.text) & Key('workspace').eq(workspace) & Key('query_part').eq('subject')
-        )
-        if not(foundItems['Items']): #check if subject already exists
-            reducedSubjects.append(subject)
-            put = table.put_item(
-                Item={
-                    'item_id': str(uuid.uuid4()),
-                    'text': subject.text,
-                    'storage_source': 'parse',
-                    'query_id': queryID,
-                    'query_part': 'subject',
-                    'create_time':str(datetime.datetime.now()),
-                    'workspace': workspace,
-                }
-            )
-    return reducedSubjects
-        
-def storeAndDedupNewConditions(table, phraseAndPOSList, workspace, queryID):
-    reducedConditions = []
-    for condition in phraseAndPOSList:
-        foundItems = table.scan(
-            FilterExpression=Key('text').eq(condition.text) & Key('workspace').eq(workspace) & Key('query_part').eq('condition')
+            FilterExpression=Key('text').eq(phrase.text) & Key('workspace').eq(workspace) & Key('query_part').eq(lexType)
         )
         if not(foundItems['Items']):
-            reducedConditions.append(condition)
+            reducedPhraseList.append(phrase)
             put = table.put_item(
             Item={
                 'item_id': str(uuid.uuid4()),
-                'text': condition.text,
+                'text': phrase.text,
                 'storage_source': 'parse',
                 'query_id': queryID,
-                'query_part': 'condition',
+                'query_part': lexType,
                 'create_time':str(datetime.datetime.now()),
                 'workspace': workspace,
             }
         )
-    return reducedConditions
+    return reducedPhraseList
 
 # parseQuery("")
 # parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-parse_query("How many visitors came on the lot during the month of May 2019?")
+# parse_query("How many visitors came on the lot during the month of May 2019?")
+parse_query("What is the average pay of our female employees with BS degrees?")
