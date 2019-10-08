@@ -217,7 +217,7 @@ def get_most_similar_info(lexObjects,data):
         maxSimilarity = 0
         closestMatch = {}
         for word in lex.posTags: #---Iterate through words in the condition or subject phrase
-            lex.synsets = get_synsets(word, True)
+            lex.synsets = get_synsets(word, False)
             for lexSyn in lex.synsets: #---Iterate through each synonym of the word at hand
                 for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
                     # print('Comparing to: ' + dataPack.text)
@@ -362,4 +362,6 @@ def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
 # parseQuery("")
 # parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 # parse_query("How many visitors came on the lot during the month of May 2019?")
-parse_query("What is the average pay of our female employees with BS degrees?")
+# parse_query("What is the average pay of our female employees with BS degrees?")
+# parse_query('How many engineers did we hire in 2018?')
+parse_query('How many people in the operations division have their doctorates?')
