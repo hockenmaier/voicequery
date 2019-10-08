@@ -136,10 +136,11 @@ def get_parse_tree(posTaggedQuery):
     
     baseGrammar = r"""
       QueryType: {<W..*>+<JJ.?>?}               # Chunk "wh-words" including modifiers like "How many"
-      NP: {<DT>?<PR.*>?<JJ.?>*<N.*>+}           # Chunk sequences of DT or JJ followed by one or more nouns
-      PP: {<IN><NP>}                            # Chunk prepositions followed by NP
-      VP: {<V.*><NP|PP|CLAUSE>+}                # Chunk verbs and their arguments
-      CLAUSE: {<NP><VP>}                        # Chunk NP, VP
+      NP: {<DT>?<PR.*>?<N.*>+}                                      # Chunk sequences of DT or JJ followed by one or more nouns
+      PP: {<IN><NP>}                                                # Chunk prepositions followed by NP
+      JP: {<JJ.?><NP>}                                              # Chunk adjectives followed by NP
+      VP: {<V.*><NP|PP|CLAUSE>+}                                    # Chunk verbs and their arguments
+      CLAUSE: {<NP><VP>}                                            # Chunk NP, VP
       """
     parser = nltk.RegexpParser(baseGrammar)
     return parser.parse(posTaggedQuery)
@@ -149,32 +150,44 @@ def traverse_tree(tree, parent, conditionsAndPOS, subjectsAndPOS):
     # if len(tree) == 1:
         # print("this is a leaf")
         # print(tree.leaves())
+    print(tree.label() + ' and parent is: ' + parent.label())
     if tree.label() == 'NP':
         if parent.label() == 'PP':
-            # print("this is a condition")
-            thisCondition = rebuild_parent_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition')
+            thisCondition = build_lexicon_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition')
+        elif parent.label() == 'JP':
+            thisCondition = build_lexicon_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition')
+            thisSubject = build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject')
         else:
-            # print("this is a subject")
-            thisSubject = rebuild_parent_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject')
+            thisSubject = build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject') #Noun phrases outside of other phrases are considered subjects
+    elif tree.label() == 'VP':
+            thisSubject = build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject')
     for subtree in tree:
         if type(subtree) == nltk.tree.Tree:
             traverse_tree(subtree, tree, conditionsAndPOS, subjectsAndPOS)
 
-def rebuild_parent_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #This function is like a "detokenizer" but for a parse tree instead of a list of words.  Replace if a better "unparser" is found
+def build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #This function is like a "detokenizer" but for a parse tree instead of a list of words.  Replace if a better "unparser" is found
     phrase = ''
     newPhraseInstance = PhraseAndPOS()
     for leaf in tree.leaves():
-        if phrase == '':
-            phrase = leaf[0]
+        if (tree.label() == 'JP'):
+            if (leaf[1] == 'JJ') | (leaf[1] == 'JJS'):
+                phrase = appendLeaf(leaf,newPhraseInstance,phrase) #For Adjective phrases, only use the adjective words
         else:
-            phrase = phrase + ' ' + leaf[0]
-        newPhraseInstance.posTags.append(leaf)
+            phrase = appendLeaf(leaf,newPhraseInstance,phrase) #for Preposition phrases, use the whole phrase
     newPhraseInstance.text = phrase
     newPhraseInstance.lexType = lexType
     if lexType == 'condition':
-        conditionsAndPOS.append(newPhraseInstance)
+            conditionsAndPOS.append(newPhraseInstance)
     elif lexType == 'subject':
         subjectsAndPOS.append(newPhraseInstance)    
+    return phrase
+    
+def appendLeaf(leaf,phraseInstance,phrase):
+    if phrase == '':
+        phrase = leaf[0]
+    else:
+        phrase = phrase + ' ' + leaf[0]
+    phraseInstance.posTags.append(leaf)
     return phrase
 
 def stop_lexicon(lexObjects):
@@ -227,7 +240,7 @@ def get_most_similar_info(lexObjects,data):
                             lex.closestMatch = dataPack
                             lex.closestMatchSimilarity = matchStringLenth
                             maxSimilarity = matchStringLenth
-                        print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
+                        # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
                     for dataSynList in dataPack.synsets: #---Iterate through the list of synset lists (each list pertaining to the word in the field value, if multiple words)
                         for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
                             # print(str(dataSyn))
@@ -364,4 +377,7 @@ def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
 # parse_query("How many visitors came on the lot during the month of May 2019?")
 # parse_query("What is the average pay of our female employees with BS degrees?")
 # parse_query('How many engineers did we hire in 2018?')
-parse_query('How many people in the operations division have their doctorates?')
+# parse_query('How many people in the operations division have their doctorates?')
+parse_query('Tell me the count of female managers in the engineering organization')
+# parse_query('How many of the managers in engineering are women?')
+
