@@ -34,11 +34,14 @@ def parse_query(query):
     # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
     conditionsAndPOS, subjectsAndPOS = [],[]
     traverse_tree(parseTree, parseTree, conditionsAndPOS, subjectsAndPOS)
-    
     stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
     stop_lexicon(subjectsAndPOS)
     conditionsAndPOS = deduplicate_word_list(conditionsAndPOS)
     subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
+    
+    #Detect Query Type and remove query type trigger words from lexicon:
+    queryType = findAndFilterQueryTerms(query,conditionsAndPOS,subjectsAndPOS)
+    print('Query Type: ' + queryType['type'] + ', specifically: ' + queryType['term'])
     
     # uncomment this call to see the state of PraseAndPOS Objects at any time:
     # printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
@@ -146,11 +149,6 @@ def get_parse_tree(posTaggedQuery):
     return parser.parse(posTaggedQuery)
 
 def traverse_tree(tree, parent, conditionsAndPOS, subjectsAndPOS):
-    # print("tree:", tree, "parent label:", parent.label())
-    # if len(tree) == 1:
-        # print("this is a leaf")
-        # print(tree.leaves())
-    print(tree.label() + ' and parent is: ' + parent.label())
     if tree.label() == 'NP':
         if parent.label() == 'PP':
             thisCondition = build_lexicon_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition')
@@ -181,7 +179,42 @@ def build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #This
     elif lexType == 'subject':
         subjectsAndPOS.append(newPhraseInstance)    
     return phrase
+
+def findAndFilterQueryTerms(query, conditions, subjects):
+    query = query.lower()
+    queryType = {
+        'type':'Not Found',
+        'term':''
+        }
+    countQueryTerms = ['how many','count','number']
+    mathQueryTerms = ['average','sum','add','maximum','max','minimum','min']
     
+    # if any(string in query for string in countQueryTerms):
+    
+    # TODO remove subjects and conditions that are query terms
+    # allTerms = []
+    # allTerms = countQueryTerms[:].extend(mathQueryTerms[:])
+    # for con in conditions:
+    #     for term in allTerms:
+    #         if term in con:
+    #             conditions.remove(con)
+    # for sub in subjects:
+    #     for term in allTerms:
+    #         if term in sub:
+    #             subjects.remove(sub)
+                
+    for term in countQueryTerms:
+        if term in query:
+            queryType['type'] = 'Count'
+            queryType['term'] = term
+            return queryType
+    for term in mathQueryTerms:
+        if term in query:
+            queryType['type'] = 'Math'
+            queryType['term'] = term
+            return queryType
+    
+
 def appendLeaf(leaf,phraseInstance,phrase):
     if phrase == '':
         phrase = leaf[0]
@@ -378,6 +411,7 @@ def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
 # parse_query("What is the average pay of our female employees with BS degrees?")
 # parse_query('How many engineers did we hire in 2018?')
 # parse_query('How many people in the operations division have their doctorates?')
-parse_query('Tell me the count of female managers in the engineering organization')
+# parse_query('Tell me the count of female managers in the engineering organization')
 # parse_query('How many of the managers in engineering are women?')
+parse_query('Count the number of employees with more than 10 years with the company')
 
