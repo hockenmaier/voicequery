@@ -13,8 +13,8 @@ def lambda_handler(event, context):
     jsonData = parse_query(event['query'])
     return jsonData
     
-def parse_query(query):
-    
+def parse_query(inputQuery):
+    query = inputQuery.lower()
     # Perform initial checks such as ensuring the query is not an empty string
     checks, errData = initial_checks(query)
     if (checks == False):
@@ -40,7 +40,7 @@ def parse_query(query):
     subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
     
     #Detect Query Type and remove query type trigger words from lexicon:
-    queryType = findAndFilterQueryTerms(query,conditionsAndPOS,subjectsAndPOS)
+    queryType = findAndFilterQueryTerms(query, posTaggedQuery, conditionsAndPOS,subjectsAndPOS)
     print('Query Type: ' + queryType['type'] + ', specifically: ' + queryType['term'])
     
     # uncomment this call to see the state of PraseAndPOS Objects at any time:
@@ -153,7 +153,7 @@ def traverse_tree(tree, parent, conditionsAndPOS, subjectsAndPOS):
         if parent.label() == 'PP':
             thisCondition = build_lexicon_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition')
         elif parent.label() == 'JP':
-            thisCondition = build_lexicon_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition')
+            thisCondition = build_lexicon_phrase(parent, conditionsAndPOS, subjectsAndPOS, 'condition') #We add both adjective and target noun as lexicon in the case of adjective phrases.  For the adjective portion, we remove the noun-phrase in the "build_lexicon_phrase" function
             thisSubject = build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject')
         else:
             thisSubject = build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, 'subject') #Noun phrases outside of other phrases are considered subjects
@@ -171,50 +171,15 @@ def build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #This
             if (leaf[1] == 'JJ') | (leaf[1] == 'JJS'):
                 phrase = appendLeaf(leaf,newPhraseInstance,phrase) #For Adjective phrases, only use the adjective words
         else:
-            phrase = appendLeaf(leaf,newPhraseInstance,phrase) #for Preposition phrases, use the whole phrase
+            phrase = appendLeaf(leaf,newPhraseInstance,phrase) #for Non-Adjective phrases, use the whole phrase
     newPhraseInstance.text = phrase
     newPhraseInstance.lexType = lexType
     if lexType == 'condition':
-            conditionsAndPOS.append(newPhraseInstance)
+        conditionsAndPOS.append(newPhraseInstance)
     elif lexType == 'subject':
         subjectsAndPOS.append(newPhraseInstance)    
     return phrase
-
-def findAndFilterQueryTerms(query, conditions, subjects):
-    query = query.lower()
-    queryType = {
-        'type':'Not Found',
-        'term':''
-        }
-    countQueryTerms = ['how many','count','number']
-    mathQueryTerms = ['average','sum','add','maximum','max','minimum','min']
     
-    # if any(string in query for string in countQueryTerms):
-    
-    # TODO remove subjects and conditions that are query terms
-    # allTerms = []
-    # allTerms = countQueryTerms[:].extend(mathQueryTerms[:])
-    # for con in conditions:
-    #     for term in allTerms:
-    #         if term in con:
-    #             conditions.remove(con)
-    # for sub in subjects:
-    #     for term in allTerms:
-    #         if term in sub:
-    #             subjects.remove(sub)
-                
-    for term in countQueryTerms:
-        if term in query:
-            queryType['type'] = 'Count'
-            queryType['term'] = term
-            return queryType
-    for term in mathQueryTerms:
-        if term in query:
-            queryType['type'] = 'Math'
-            queryType['term'] = term
-            return queryType
-    
-
 def appendLeaf(leaf,phraseInstance,phrase):
     if phrase == '':
         phrase = leaf[0]
@@ -222,6 +187,37 @@ def appendLeaf(leaf,phraseInstance,phrase):
         phrase = phrase + ' ' + leaf[0]
     phraseInstance.posTags.append(leaf)
     return phrase
+
+def findAndFilterQueryTerms(query, posTaggedQuery, conditions, subjects):
+    queryType = {
+        'type':'Not Found',
+        'term':''
+        }
+    countQueryTerms = ['number','count','how many']
+    mathQueryTerms = ['min','max','sum','add','maximum','minimum','average']
+    #Priority of these lists is later list higher priority, later word higher priority
+    
+    for term in countQueryTerms:
+        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'Count')
+    for term in mathQueryTerms:
+        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'Math')
+    return queryType
+                
+def setQueryType(query, posTaggedQuery, queryType, term, queryTypeText):
+    wordCount = len(word_tokenize(term))
+    print('term is ' + str(term) + ' and wordCount is: ' + str(wordCount))
+    if wordCount > 1:
+        if term in query:
+            queryType['type'] = queryTypeText
+            queryType['term'] = term
+            return queryType
+    else:
+        for posTag in posTaggedQuery:
+            if term in posTag:
+                queryType['type'] = queryTypeText
+                queryType['term'] = term
+                return queryType
+    return queryType
 
 def stop_lexicon(lexObjects):
     for lex in lexObjects:
