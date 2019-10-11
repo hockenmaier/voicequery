@@ -34,7 +34,7 @@ def parse_query(inputQuery):
     # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
     conditionsAndPOS, subjectsAndPOS = [],[]
     traverse_tree(parseTree, parseTree, conditionsAndPOS, subjectsAndPOS)
-    stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
+    # stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
     stop_lexicon(subjectsAndPOS)
     conditionsAndPOS = deduplicate_word_list(conditionsAndPOS)
     subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
@@ -195,17 +195,28 @@ def findAndFilterQueryTerms(query, posTaggedQuery, conditions, subjects):
         }
     countQueryTerms = ['number','count','how many']
     mathQueryTerms = ['min','max','sum','add','maximum','minimum','average']
+    allQueryTerms = countQueryTerms + mathQueryTerms
     #Priority of these lists is later list higher priority, later word higher priority
     
     for term in countQueryTerms:
         queryType = setQueryType(query, posTaggedQuery, queryType, term, 'Count')
     for term in mathQueryTerms:
         queryType = setQueryType(query, posTaggedQuery, queryType, term, 'Math')
+    
+    lockedCons = conditions[:]
+    lockedSubs = subjects[:]
+    for condition in lockedCons:
+        if (condition.text in allQueryTerms):
+            conditions.remove(condition)
+    for subject in lockedSubs:
+        if (subject.text in allQueryTerms):
+            subjects.remove(subject)
+    
     return queryType
                 
 def setQueryType(query, posTaggedQuery, queryType, term, queryTypeText):
     wordCount = len(word_tokenize(term))
-    print('term is ' + str(term) + ' and wordCount is: ' + str(wordCount))
+    # print('term is ' + str(term) + ' and wordCount is: ' + str(wordCount))
     if wordCount > 1:
         if term in query:
             queryType['type'] = queryTypeText
@@ -221,6 +232,7 @@ def setQueryType(query, posTaggedQuery, queryType, term, queryTypeText):
 
 def stop_lexicon(lexObjects):
     for lex in lexObjects:
+        lex.unStoppedText = lex.text
         stopWords = set(stopwords.words("english"))
         words = word_tokenize(lex.text)
         filteredLex = []
@@ -294,6 +306,7 @@ class PhraseAndPOS:
         self.closestMatch = None
         self.closestMatchSimilarity = 0
         self.greatMatches = []
+        self.unStoppedText = ''
 
 def get_data_synset_pack(data):
     pack = []
@@ -410,4 +423,5 @@ def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
 # parse_query('Tell me the count of female managers in the engineering organization')
 # parse_query('How many of the managers in engineering are women?')
 parse_query('Count the number of employees with more than 10 years with the company')
+# parse_query('What is the average salary for employees with a BS degree?')
 
