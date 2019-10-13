@@ -130,6 +130,7 @@ def setup_nltk_data():
     nltk.download('punkt', download_dir='/tmp/nltk_data')
     nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
     nltk.download('stopwords', download_dir='/tmp/nltk_data')
+    nltk.download('wordnet', download_dir='/tmp/nltk_data')
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
@@ -138,11 +139,11 @@ def get_pos_tagged_phrase(inputQuery):
 def get_parse_tree(posTaggedQuery):
     
     baseGrammar = r"""
-      QueryType: {<W..*>+<JJ.?>?}               # Chunk "wh-words" including modifiers like "How many"
       NP: {<DT>?<PR.*>?<N.*>+}                                      # Chunk sequences of DT or JJ followed by one or more nouns
       PP: {<IN><NP>}                                                # Chunk prepositions followed by NP
       JP: {<JJ.?><NP>}                                              # Chunk adjectives followed by NP
       VP: {<V.*><NP|PP|CLAUSE>+}                                    # Chunk verbs and their arguments
+      WP: {<W..*><JP>?<PP>?<NP>?}                                   # Chunk "wh-words" and their arguments
       CLAUSE: {<NP><VP>}                                            # Chunk NP, VP
       """
     parser = nltk.RegexpParser(baseGrammar)
