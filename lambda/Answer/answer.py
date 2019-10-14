@@ -13,13 +13,14 @@ def lambda_handler(event, context):
 def answer(workspace):
     table = setup_dynamo()
     file_name = "sample-data/HRData_QuickSightSample.csv"
-    unique_value_limit = 15
     hrdata = setup_S3_source(workspace, file_name)
     
     columns = hrdata.columns
     for col in columns:
         print(col)
-    return 'ok'
+    
+    jsonData = package_JSON(workspace)
+    return jsonData
 
 def setup_S3_source(workspace, file_name):
     bucket = "voicequery-datasets"
@@ -30,6 +31,13 @@ def setup_S3_source(workspace, file_name):
 def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
+    
+def package_JSON(workspace):
+    data = {}
+    data['statusCode'] = '200'
+    data['statusMessage'] = 'Answer Called Successfully'
+    data['workspace'] = workspace
+    return data
 
 answer('1')
 

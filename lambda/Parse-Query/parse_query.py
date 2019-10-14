@@ -25,7 +25,7 @@ def parse_query(inputQuery):
     table = setup_dynamo()
     setup_nltk_data()
     available_data = get_workspace_data(table,workspace)
-
+    
     # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
     posTaggedQuery = get_pos_tagged_phrase(query)
     parseTree = get_parse_tree(posTaggedQuery)
@@ -43,13 +43,16 @@ def parse_query(inputQuery):
     queryType = findAndFilterQueryTerms(query, posTaggedQuery, conditionsAndPOS,subjectsAndPOS)
     print('Query Type: ' + queryType['type'] + ', specifically: ' + queryType['term'])
     
+    # Pair each condition and subject with similar field names and values found from stored dataset info
+    get_most_similar_info(conditionsAndPOS, available_data)
+    get_most_similar_info(subjectsAndPOS, available_data)
+    
     # uncomment this call to see the state of PraseAndPOS Objects at any time:
     # printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
     
-    # ConditionInfoPairings = get_most_similar_info(deduppedConditions, available_data)
-    get_most_similar_info(conditionsAndPOS, available_data)
-    get_most_similar_info(subjectsAndPOS, available_data)
-    printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
+    # Call Answer Lambda
+    answerResponse = callAnswer(workspace)
+    print(answerResponse)
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
@@ -341,6 +344,16 @@ def convert_penn_to_morphy(penntag, returnNone=False):
     except:
         return None if returnNone else ''
 
+def callAnswer(workspace):
+    answerLambda = boto3.client('lambda', region_name='us-west-2')
+    data = {}
+    data['workspace'] = workspace
+    answerResponse = answerLambda.invoke(FunctionName = 'Answer', InvocationType = 'RequestResponse', Payload = json.dumps(data))
+    # print(str(answerResponse))
+    # print(dir(answerResponse['Payload'])) #show directory of boto object
+    
+    return answerResponse['Payload'].read()
+
 def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS):
     outputQuery = inputQuery
 
@@ -392,7 +405,7 @@ def storeQuery(table, queryID, query, parseTree, workspace):
             'workspace': workspace,
         }
     )
-    print(put)
+    # print(put)
 
 def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
     reducedPhraseList = []
