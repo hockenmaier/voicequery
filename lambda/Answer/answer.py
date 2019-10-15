@@ -7,19 +7,20 @@ import uuid
 import datetime
 
 def lambda_handler(event, context):
-    jsonData = answer(event['workspace'])
+    jsonData = answer(event)
     return jsonData
     
-def answer(workspace):
+def answer(parseObject):
+    workspace = parseObject['workspace']
+    
+    
     table = setup_dynamo()
     file_name = "sample-data/HRData_QuickSightSample.csv"
-    hrdata = setup_S3_source(workspace, file_name)
+    dataset = setup_S3_source(workspace, file_name)
     
-    columns = hrdata.columns
-    for col in columns:
-        print(col)
+    answer = call_query_operation(parseObject,dataset)
     
-    jsonData = package_JSON(workspace)
+    jsonData = package_JSON(workspace, answer)
     return jsonData
 
 def setup_S3_source(workspace, file_name):
@@ -32,12 +33,52 @@ def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
     
-def package_JSON(workspace):
+def package_JSON(workspace, answer):
     data = {}
     data['statusCode'] = '200'
     data['statusMessage'] = 'Answer Called Successfully'
     data['workspace'] = workspace
+    data['answer'] = answer
     return data
+    
+def call_query_operation(parseObject,dataset):
+    queryType = parseObject['queryType'][0]
+    if (queryType == 'count'):
+        answer = count(parseObject,dataset)
+    elif (queryType == 'average'):
+        answer = average(parseObject,dataset)
+    elif (queryType == 'maximum'):
+        answer = maximum(parseObject,dataset)
+    elif (queryType == 'minimum'):
+        answer = minimum(parseObject,dataset)
+    elif (queryType == 'summation'):
+        answer = summation(parseObject,dataset)
+    elif (queryType == 'median'):
+        answer = median(parseObject,dataset)
+    return answer
+        
+def count(parseObject,dataset):
+    # lexicon = parseObject['conditions'] + parseObject['subjects']
+    # for lex in lexicon:
+    #     if (lex.closestMatchSimilarity > .85):
+            
+    return 1
+
+def average(parseObject,dataset):
+    return 2
+    
+def minimum(parseObject,dataset):
+    return 3
+
+def maximum(parseObject,dataset):
+    return 4
+    
+def summation(parseObject,dataset):
+    return 5
+
+def median(parseObject,dataset):
+    return 6
+    
 
 answer('1')
 

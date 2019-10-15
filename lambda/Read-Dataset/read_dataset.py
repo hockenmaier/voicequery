@@ -14,8 +14,8 @@ def read_dataset(workspace):
     table = setup_dynamo()
     file_name = "sample-data/HRData_QuickSightSample.csv"
     unique_value_limit = 15
-    hrdata = setup_S3_source(workspace, file_name)
-    jsonData = package_JSON(hrdata, unique_value_limit)
+    dataset = setup_S3_source(workspace, file_name)
+    jsonData = package_JSON(dataset, unique_value_limit)
     deleteOldFields(table, workspace,file_name)
     storeFields(jsonData, table, workspace, file_name, unique_value_limit)
     print(jsonData)
@@ -38,12 +38,12 @@ def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
 
-def package_JSON(hrdata, unique_value_limit):
+def package_JSON(dataset, unique_value_limit):
     data = {}
     data['statusCode'] = '200'
     data['version'] = "0.0.1"
     bubbles = []
-    columns = hrdata.columns
+    columns = dataset.columns
     
     for col in columns:
         # print('column: ' + col)
@@ -51,9 +51,9 @@ def package_JSON(hrdata, unique_value_limit):
         bubble['internalID'] = ""
         bubble['name'] = str(col)
         bubble['type'] = 'info-field'
-        bubble['dataType'] = map_numpy_datatypes(hrdata[col].dtype)
+        bubble['dataType'] = map_numpy_datatypes(dataset[col].dtype)
         bubble['bubbles'] = []
-        unique = hrdata[col].unique()
+        unique = dataset[col].unique()
         bubble['unique_value_count'] = len(unique)
         if (len(unique) < unique_value_limit):
             for value in unique:

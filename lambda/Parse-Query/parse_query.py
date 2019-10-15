@@ -8,6 +8,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
+import jsonpickle
 
 def lambda_handler(event, context):
     jsonData = parse_query(event['query'])
@@ -51,7 +52,7 @@ def parse_query(inputQuery):
     # printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
     
     # Call Answer Lambda
-    answerResponse = callAnswer(workspace)
+    answerResponse = callAnswer(workspace, query, parseTree, conditionsAndPOS, subjectsAndPOS, queryType)
     print(answerResponse)
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
@@ -197,15 +198,30 @@ def findAndFilterQueryTerms(query, posTaggedQuery, conditions, subjects):
         'type':'Not Found',
         'term':''
         }
+    
+    medianQueryTerms = ['median']
+    sumQueryTerms = ['add', 'sum', 'total']
+    maxQueryTerms = ['biggest', 'largest', 'max','maximum']
+    minQueryTerms = ['min', 'minimum', 'smallest']
+    aveQueryTerms = ['mean', 'average']
     countQueryTerms = ['number','count','how many']
-    mathQueryTerms = ['min','max','sum','add','maximum','minimum','average']
-    allQueryTerms = countQueryTerms + mathQueryTerms
+    allQueryTerms = medianQueryTerms + sumQueryTerms + maxQueryTerms + minQueryTerms + aveQueryTerms + countQueryTerms
     #Priority of these lists is later list higher priority, later word higher priority
     
+    
+    for term in medianQueryTerms:
+        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'median')
+    for term in sumQueryTerms:
+        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'summation')
+    for term in maxQueryTerms:
+        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'maximum')
+    for term in minQueryTerms:
+        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'minimum')
+    for term in aveQueryTerms:
+        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'average')
     for term in countQueryTerms:
-        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'Count')
-    for term in mathQueryTerms:
-        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'Math')
+        queryType = setQueryType(query, posTaggedQuery, queryType, term, 'count')
+    
     
     lockedCons = conditions[:]
     lockedSubs = subjects[:]
@@ -311,6 +327,9 @@ class PhraseAndPOS:
         self.closestMatchSimilarity = 0
         self.greatMatches = []
         self.unStoppedText = ''
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
 
 def get_data_synset_pack(data):
     pack = []
@@ -344,10 +363,19 @@ def convert_penn_to_morphy(penntag, returnNone=False):
     except:
         return None if returnNone else ''
 
-def callAnswer(workspace):
+def callAnswer(workspace, query, parseTree, conditions, subjects, queryType):
     answerLambda = boto3.client('lambda', region_name='us-west-2')
     data = {}
     data['workspace'] = workspace
+    data['query'] = query
+    data['parseTree'] = parseTree
+    data['conditions'] = []
+    data['subjects'] = []
+    for con in conditions:
+        data['conditions'].append(jsonpickle.encode(con))
+    for sub in subjects:
+        data['conditions'].append(jsonpickle.encode(sub))
+    data['queryType'] = queryType
     answerResponse = answerLambda.invoke(FunctionName = 'Answer', InvocationType = 'RequestResponse', Payload = json.dumps(data))
     # print(str(answerResponse))
     # print(dir(answerResponse['Payload'])) #show directory of boto object
@@ -433,9 +461,9 @@ def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
 # parse_query("How many visitors came on the lot during the month of May 2019?")
 # parse_query("What is the average pay of our female employees with BS degrees?")
 # parse_query('How many engineers did we hire in 2018?')
-# parse_query('How many people in the operations division have their doctorates?')
+parse_query('How many people in the operations division have their doctorates?')
 # parse_query('Tell me the count of female managers in the engineering organization')
 # parse_query('How many of the managers in engineering are women?')
-parse_query('Count the number of employees with more than 10 years with the company')
+# parse_query('Count the number of employees with more than 10 years with the company')
 # parse_query('What is the average salary for employees with a BS degree?')
 
