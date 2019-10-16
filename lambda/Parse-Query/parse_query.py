@@ -8,8 +8,8 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
-import jsonpickle
-import copy
+# import jsonpickle
+# import copy
 
 def lambda_handler(event, context):
     jsonData = parse_query(event['query'])
@@ -381,17 +381,24 @@ def callAnswer(workspace, query, parseTree, conditions, subjects, queryType):
     data['conditions'] = []
     data['subjects'] = []
     for con in conditions:
-        copyCon = copy.copy(con)
-        copyCon.posTags = []
-        copyCon.synsets = []
-        print('printing copy')
-        printPhraseObj(copyCon)
-        data['conditions'].append(jsonpickle.encode(copyCon))
-        # data['conditions'].append(copyCon.toJSON())
+        lexData = {}
+        lexData['phraseType'] = con.phraseType
+        lexData['text'] = con.text
+        lexData['posTags'] = con.posTags
+        lexData['closestMatch'] = con.closestMatch
+        lexData['closestMatchPhraseType'] = con.closestMatchPhraseType
+        lexData['closestMatchSimilarity'] = con.closestMatchSimilarity
+        lexData['greatMatches'] = []
+        for match in con.greatMatches:
+            lexData['greatMatches'].append(match.text)
+        lexData['unStoppedText'] = con.unStoppedText
+        # data['conditions'].append(jsonpickle.encode(copyCon))
+        data['conditions'].append(lexData)
         # print(jsonpickle.encode(copyCon))
     # for sub in subjects:
     #     data['conditions'].append(jsonpickle.encode(sub))
     data['queryType'] = queryType
+    print(str(data))
     answerResponse = answerLambda.invoke(FunctionName = 'Answer', InvocationType = 'RequestResponse', Payload = json.dumps(data))
     # print(str(answerResponse))
     # print(dir(answerResponse['Payload'])) #show directory of boto object
