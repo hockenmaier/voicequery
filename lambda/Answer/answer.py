@@ -7,7 +7,8 @@ import uuid
 import datetime
 
 def lambda_handler(event, context):
-    jsonData = answer(event)
+    parseObject = event
+    jsonData = answer(parseObject)
     return jsonData
     
 def answer(parseObject):
