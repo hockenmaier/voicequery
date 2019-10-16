@@ -9,6 +9,7 @@ from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 import jsonpickle
+import copy
 
 def lambda_handler(event, context):
     jsonData = parse_query(event['query'])
@@ -35,7 +36,7 @@ def parse_query(inputQuery):
     # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
     conditionsAndPOS, subjectsAndPOS = [],[]
     traverse_tree(parseTree, parseTree, conditionsAndPOS, subjectsAndPOS)
-    # stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
+    stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
     stop_lexicon(subjectsAndPOS)
     conditionsAndPOS = deduplicate_word_list(conditionsAndPOS)
     subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
@@ -49,7 +50,7 @@ def parse_query(inputQuery):
     get_most_similar_info(subjectsAndPOS, available_data)
     
     # uncomment this call to see the state of PraseAndPOS Objects at any time:
-    # printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
+    printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
     
     # Call Answer Lambda
     answerResponse = callAnswer(workspace, query, parseTree, conditionsAndPOS, subjectsAndPOS, queryType)
@@ -75,19 +76,22 @@ def printConditionAndSubjectState(conditionsAndPOS, subjectsAndPOS):
 
 def printPhraseObjState(phraseAndPOSList):
     for obj in phraseAndPOSList:
-        print('')
-        print(obj.text)
-        print(obj.phraseType)
-        print(obj.posTags)
-        print(obj.synsets)
-        print('Closest Match Found:')
-        if obj.closestMatch:
-            closest = obj.closestMatch
-            print(closest.text)
-            print('similarity: ' + str(obj.closestMatchSimilarity))
-        print('Great Matches Found:')
-        for match in obj.greatMatches:
-            print(match.text)
+        printPhraseObj(obj)
+
+def printPhraseObj(obj):
+    print('')
+    print(obj.text)
+    print(obj.phraseType)
+    print(obj.posTags)
+    print(obj.synsets)
+    print('Closest Match Found:')
+    print(obj.closestMatch)
+    print(obj.closestMatchPhraseType)
+    print('similarity: ' + str(obj.closestMatchSimilarity))
+    print('Great Matches Found:')
+    for match in obj.greatMatches:
+        print(match.text)
+    print(obj.unStoppedText)
 
 def initial_checks(query):
     if (query == ""):
@@ -289,7 +293,7 @@ def get_most_similar_info(lexObjects,data):
     for lex in lexObjects: #---Iterate through condition or subject phrases
         # print('[LEXICON] finding field value similarities for: ' + lex.text)
         maxSimilarity = 0
-        closestMatch = {}
+        # closestMatch = {}
         for word in lex.posTags: #---Iterate through words in the condition or subject phrase
             lex.synsets = get_synsets(word, False)
             for lexSyn in lex.synsets: #---Iterate through each synonym of the word at hand
@@ -298,7 +302,8 @@ def get_most_similar_info(lexObjects,data):
                     if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
                         matchStringLenth = min(len(dataPack.text),len(lex.text))
                         if matchStringLenth > maxSimilarity:
-                            lex.closestMatch = dataPack
+                            lex.closestMatch = dataPack.text
+                            lex.closestMatchPhraseType = dataPack.phraseType
                             lex.closestMatchSimilarity = matchStringLenth
                             maxSimilarity = matchStringLenth
                         # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
@@ -310,7 +315,8 @@ def get_most_similar_info(lexObjects,data):
                             #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
                             if similarity:
                                 if similarity > maxSimilarity:
-                                    lex.closestMatch = dataPack
+                                    lex.closestMatch = dataPack.text
+                                    lex.closestMatchPhraseType = dataPack.phraseType
                                     lex.closestMatchSimilarity = similarity
                                     maxSimilarity = similarity
                                 if similarity > .9:
@@ -323,7 +329,8 @@ class PhraseAndPOS:
         self.text = ''
         self.posTags = []
         self.synsets = []
-        self.closestMatch = None
+        self.closestMatch = ''
+        self.closestMatchPhraseType = ''
         self.closestMatchSimilarity = 0
         self.greatMatches = []
         self.unStoppedText = ''
@@ -334,10 +341,12 @@ class PhraseAndPOS:
 def get_data_synset_pack(data):
     pack = []
     for dataValue in data:
-        dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'], 'data phrase')
+        dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'], dataValue['query_part'])
         for word in dataPhraseAndPOS.posTags:
             dataPhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
             pack.append(dataPhraseAndPOS)
+        # print('field is:' + dataValue['text'])
+        # printPhraseObj(dataPhraseAndPOS)
     return pack
     
 def create_phrase_and_pos(phrase, phraseType):
@@ -372,9 +381,16 @@ def callAnswer(workspace, query, parseTree, conditions, subjects, queryType):
     data['conditions'] = []
     data['subjects'] = []
     for con in conditions:
-        data['conditions'].append(jsonpickle.encode(con))
-    for sub in subjects:
-        data['conditions'].append(jsonpickle.encode(sub))
+        copyCon = copy.copy(con)
+        copyCon.posTags = []
+        copyCon.synsets = []
+        print('printing copy')
+        printPhraseObj(copyCon)
+        data['conditions'].append(jsonpickle.encode(copyCon))
+        # data['conditions'].append(copyCon.toJSON())
+        # print(jsonpickle.encode(copyCon))
+    # for sub in subjects:
+    #     data['conditions'].append(jsonpickle.encode(sub))
     data['queryType'] = queryType
     answerResponse = answerLambda.invoke(FunctionName = 'Answer', InvocationType = 'RequestResponse', Payload = json.dumps(data))
     # print(str(answerResponse))
