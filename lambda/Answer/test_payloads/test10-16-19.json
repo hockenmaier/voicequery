@@ -1,0 +1,240 @@
+{
+  "workspace": "1",
+  "query": "how many people in the operations division have their doctorates?",
+  "parseTree": [
+    [
+      [
+        "how",
+        "WRB"
+      ],
+      [
+        [
+          "many",
+          "JJ"
+        ],
+        [
+          [
+            "people",
+            "NNS"
+          ]
+        ]
+      ],
+      [
+        [
+          "in",
+          "IN"
+        ],
+        [
+          [
+            "the",
+            "DT"
+          ],
+          [
+            "operations",
+            "NNS"
+          ],
+          [
+            "division",
+            "NN"
+          ]
+        ]
+      ]
+    ],
+    [
+      [
+        "have",
+        "VBP"
+      ],
+      [
+        [
+          "their",
+          "PRP$"
+        ],
+        [
+          "doctorates",
+          "NNS"
+        ]
+      ]
+    ],
+    [
+      "?",
+      "."
+    ]
+  ],
+  "conditions": [
+    {
+      "phraseType": "",
+      "text": "many",
+      "posTags": [
+        [
+          "many",
+          "JJ"
+        ]
+      ],
+      "closestMatch": null,
+      "closestMatchSimilarity": 0,
+      "greatMatches": [],
+      "unStoppedText": "many"
+    },
+    {
+      "phraseType": "",
+      "text": "operations division",
+      "posTags": [
+        [
+          "operations",
+          "NNS"
+        ],
+        [
+          "division",
+          "NN"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "Operations",
+        "posTags": [
+          [
+            "Operations",
+            "NNS"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": ""
+      },
+      "closestMatchSimilarity": 10,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "Operations",
+          "posTags": [
+            [
+              "Operations",
+              "NNS"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": ""
+        },
+        {
+          "phraseType": "info-field",
+          "text": "Business Function",
+          "posTags": [
+            [
+              "Business",
+              "NN"
+            ],
+            [
+              "Function",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": ""
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Support",
+          "posTags": [
+            [
+              "Support",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": ""
+        }
+      ],
+      "unStoppedText": "in the operations division"
+    },
+    {
+      "phraseType": "",
+      "text": "people",
+      "posTags": [
+        [
+          "people",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-field",
+        "text": "Job Family",
+        "posTags": [
+          [
+            "Job",
+            "NNP"
+          ],
+          [
+            "Family",
+            "NNP"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": ""
+      },
+      "closestMatchSimilarity": 0.9411764705882353,
+      "greatMatches": [
+        {
+          "phraseType": "info-field",
+          "text": "Job Family",
+          "posTags": [
+            [
+              "Job",
+              "NNP"
+            ],
+            [
+              "Family",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": ""
+        }
+      ],
+      "unStoppedText": "people"
+    },
+    {
+      "phraseType": "",
+      "text": "doctorates",
+      "posTags": [
+        [
+          "doctorates",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "PhD",
+        "posTags": [
+          [
+            "PhD",
+            "NN"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": ""
+      },
+      "closestMatchSimilarity": 0.8888888888888888,
+      "greatMatches": [],
+      "unStoppedText": "have their doctorates"
+    }
+  ],
+  "subjects": [],
+  "queryType": {
+    "type": "count",
+    "term": "how many"
+  }
+}

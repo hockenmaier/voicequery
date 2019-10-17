@@ -6,7 +6,9 @@ from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 
+
 def lambda_handler(event, context):
+    # parseObject = json.loads(event)
     parseObject = event
     jsonData = answer(parseObject)
     return jsonData
@@ -43,7 +45,8 @@ def package_JSON(workspace, answer):
     return data
     
 def call_query_operation(parseObject,dataset):
-    queryType = parseObject['queryType'][0]
+    print(parseObject['queryType'])
+    queryType = parseObject['queryType']['type']
     if (queryType == 'count'):
         answer = count(parseObject,dataset)
     elif (queryType == 'average'):
@@ -80,6 +83,7 @@ def summation(parseObject,dataset):
 def median(parseObject,dataset):
     return 6
     
-
-answer('1')
+with open('test_payloads/test10-16-19.json') as f:
+    data = json.load(f)
+    answer(data)
 
