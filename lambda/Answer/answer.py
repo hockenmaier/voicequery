@@ -15,15 +15,15 @@ def lambda_handler(event, context):
     
 def answer(parseObject):
     workspace = parseObject['workspace']
-    
+    query = parseObject['query']
     
     table = setup_dynamo()
-    file_name = "sample-data/HRData_QuickSightSample.csv"
-    dataset = setup_S3_source(workspace, file_name)
+    datafile = "sample-data/HRData_QuickSightSample.csv"
+    dataset = setup_S3_source(workspace, datafile)
     
-    answer = call_query_operation(parseObject,dataset)
+    answer = call_query_operation(parseObject, dataset)
     
-    jsonData = package_JSON(workspace, answer)
+    jsonData = package_JSON(workspace, answer, query, datafile)
     return jsonData
 
 def setup_S3_source(workspace, file_name):
@@ -36,11 +36,13 @@ def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
     
-def package_JSON(workspace, answer):
+def package_JSON(workspace, answer, query, datafile):
     data = {}
     data['statusCode'] = '200'
     data['statusMessage'] = 'Answer Called Successfully'
     data['workspace'] = workspace
+    data['dataFile'] = datafile
+    data['query'] = query
     data['answer'] = answer
     return data
     
@@ -62,10 +64,12 @@ def call_query_operation(parseObject,dataset):
     return answer
         
 def count(parseObject,dataset):
-    # lexicon = parseObject['conditions'] + parseObject['subjects']
-    # for lex in lexicon:
-    #     if (lex.closestMatchSimilarity > .85):
-            
+    lexicon = parseObject['conditions'] + parseObject['subjects']
+    for lex in lexicon:
+        if (lex['closestMatchSimilarity'] > .85):
+            print('found a good enough match for filtering: ' + lex['text'] + ': ' + lex['closestMatch']['text'] + ': ' + str(lex['closestMatchSimilarity']))
+        else:
+            print('this one didnt find anything decent: ' + lex['text'] + ': ' + str(lex['closestMatchSimilarity']))
     return 1
 
 def average(parseObject,dataset):

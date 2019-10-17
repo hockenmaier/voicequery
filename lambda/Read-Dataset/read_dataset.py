@@ -99,7 +99,8 @@ def storeFields(jsonData, table, workspace, file_name, unique_value_limit):
             put = table.put_item(
                 Item={
                     'item_id': valueID,
-                    'field_id': fieldID,
+                    'parent_field_id': fieldID,
+                    'parent_field_name': col['name'],
                     'text': value['name'],
                     'storage_source': 'dataset',
                     'query_part': 'info-value',

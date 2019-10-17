@@ -1,240 +1,263 @@
 {
   "workspace": "1",
-  "query": "how many people in the operations division have their doctorates?",
+  "query": "tell me the count of female managers in the engineering organization",
   "parseTree": [
     [
-      [
-        "how",
-        "WRB"
-      ],
-      [
-        [
-          "many",
-          "JJ"
-        ],
-        [
-          [
-            "people",
-            "NNS"
-          ]
-        ]
-      ],
-      [
-        [
-          "in",
-          "IN"
-        ],
-        [
-          [
-            "the",
-            "DT"
-          ],
-          [
-            "operations",
-            "NNS"
-          ],
-          [
-            "division",
-            "NN"
-          ]
-        ]
-      ]
+      "tell",
+      "VB"
+    ],
+    [
+      "me",
+      "PRP"
     ],
     [
       [
-        "have",
-        "VBP"
+        "the",
+        "DT"
+      ],
+      [
+        "count",
+        "NN"
+      ]
+    ],
+    [
+      "of",
+      "IN"
+    ],
+    [
+      [
+        "female",
+        "JJ"
       ],
       [
         [
-          "their",
-          "PRP$"
-        ],
-        [
-          "doctorates",
+          "managers",
           "NNS"
         ]
       ]
     ],
     [
-      "?",
-      "."
+      [
+        "in",
+        "IN"
+      ],
+      [
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "engineering",
+          "NN"
+        ],
+        [
+          "organization",
+          "NN"
+        ]
+      ]
     ]
   ],
   "conditions": [
     {
       "phraseType": "",
-      "text": "many",
+      "text": "female",
       "posTags": [
         [
-          "many",
+          "female",
           "JJ"
         ]
       ],
-      "closestMatch": null,
-      "closestMatchSimilarity": 0,
-      "greatMatches": [],
-      "unStoppedText": "many"
-    },
-    {
-      "phraseType": "",
-      "text": "operations division",
-      "posTags": [
-        [
-          "operations",
-          "NNS"
-        ],
-        [
-          "division",
-          "NN"
-        ]
-      ],
       "closestMatch": {
         "phraseType": "info-value",
-        "text": "Operations",
+        "text": "Female",
         "posTags": [
           [
-            "Operations",
-            "NNS"
-          ]
-        ],
-        "closestMatch": null,
-        "closestMatchSimilarity": 0,
-        "greatMatches": [],
-        "unStoppedText": ""
-      },
-      "closestMatchSimilarity": 10,
-      "greatMatches": [
-        {
-          "phraseType": "info-value",
-          "text": "Operations",
-          "posTags": [
-            [
-              "Operations",
-              "NNS"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": ""
-        },
-        {
-          "phraseType": "info-field",
-          "text": "Business Function",
-          "posTags": [
-            [
-              "Business",
-              "NN"
-            ],
-            [
-              "Function",
-              "NN"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": ""
-        },
-        {
-          "phraseType": "info-value",
-          "text": "Support",
-          "posTags": [
-            [
-              "Support",
-              "NN"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": ""
-        }
-      ],
-      "unStoppedText": "in the operations division"
-    },
-    {
-      "phraseType": "",
-      "text": "people",
-      "posTags": [
-        [
-          "people",
-          "NNS"
-        ]
-      ],
-      "closestMatch": {
-        "phraseType": "info-field",
-        "text": "Job Family",
-        "posTags": [
-          [
-            "Job",
-            "NNP"
-          ],
-          [
-            "Family",
-            "NNP"
-          ]
-        ],
-        "closestMatch": null,
-        "closestMatchSimilarity": 0,
-        "greatMatches": [],
-        "unStoppedText": ""
-      },
-      "closestMatchSimilarity": 0.9411764705882353,
-      "greatMatches": [
-        {
-          "phraseType": "info-field",
-          "text": "Job Family",
-          "posTags": [
-            [
-              "Job",
-              "NNP"
-            ],
-            [
-              "Family",
-              "NNP"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": ""
-        }
-      ],
-      "unStoppedText": "people"
-    },
-    {
-      "phraseType": "",
-      "text": "doctorates",
-      "posTags": [
-        [
-          "doctorates",
-          "NNS"
-        ]
-      ],
-      "closestMatch": {
-        "phraseType": "info-value",
-        "text": "PhD",
-        "posTags": [
-          [
-            "PhD",
+            "Female",
             "NN"
           ]
         ],
         "closestMatch": null,
         "closestMatchSimilarity": 0,
         "greatMatches": [],
-        "unStoppedText": ""
+        "unStoppedText": "",
+        "parentFieldName": "Gender"
       },
-      "closestMatchSimilarity": 0.8888888888888888,
-      "greatMatches": [],
-      "unStoppedText": "have their doctorates"
+      "closestMatchSimilarity": 6,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "Female",
+          "posTags": [
+            [
+              "Female",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Gender"
+        }
+      ],
+      "unStoppedText": "female",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "",
+      "text": "engineering organization",
+      "posTags": [
+        [
+          "engineering",
+          "NN"
+        ],
+        [
+          "organization",
+          "NN"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "Engineering",
+        "posTags": [
+          [
+            "Engineering",
+            "VBG"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": "Job Family"
+      },
+      "closestMatchSimilarity": 11,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "Engineering",
+          "posTags": [
+            [
+              "Engineering",
+              "VBG"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Job Family"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Product Management",
+          "posTags": [
+            [
+              "Product",
+              "NNP"
+            ],
+            [
+              "Management",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Job Family"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Executive Team",
+          "posTags": [
+            [
+              "Executive",
+              "NN"
+            ],
+            [
+              "Team",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Job Family"
+        }
+      ],
+      "unStoppedText": "in the engineering organization",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "",
+      "text": "managers",
+      "posTags": [
+        [
+          "managers",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "Manager",
+        "posTags": [
+          [
+            "Manager",
+            "NN"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": "Job Level"
+      },
+      "closestMatchSimilarity": 7,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "Manager",
+          "posTags": [
+            [
+              "Manager",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Job Level"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Executive Team",
+          "posTags": [
+            [
+              "Executive",
+              "NN"
+            ],
+            [
+              "Team",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Job Family"
+        }
+      ],
+      "unStoppedText": "managers",
+      "parentFieldName": ""
     }
   ],
   "subjects": [],
   "queryType": {
     "type": "count",
-    "term": "how many"
+    "term": "count"
   }
 }

@@ -212,7 +212,6 @@ def findAndFilterQueryTerms(query, posTaggedQuery, conditions, subjects):
     allQueryTerms = medianQueryTerms + sumQueryTerms + maxQueryTerms + minQueryTerms + aveQueryTerms + countQueryTerms
     #Priority of these lists is later list higher priority, later word higher priority
     
-    
     for term in medianQueryTerms:
         queryType = setQueryType(query, posTaggedQuery, queryType, term, 'median')
     for term in sumQueryTerms:
@@ -225,7 +224,6 @@ def findAndFilterQueryTerms(query, posTaggedQuery, conditions, subjects):
         queryType = setQueryType(query, posTaggedQuery, queryType, term, 'average')
     for term in countQueryTerms:
         queryType = setQueryType(query, posTaggedQuery, queryType, term, 'count')
-    
     
     lockedCons = conditions[:]
     lockedSubs = subjects[:]
@@ -288,12 +286,11 @@ def deduplicate_word_list(lexObjects):
     return uniqueObjList
 
 def get_most_similar_info(lexObjects,data):
-    dataSynsetPacks = get_data_synset_pack(data)
+    dataSynsetPacks = get_data_synset_pack(data) #All of the field and field synonym is gathered in this list first so that we don't have to keep generating them later
     # printPhraseObjState(dataSynsetPacks)
     for lex in lexObjects: #---Iterate through condition or subject phrases
         # print('[LEXICON] finding field value similarities for: ' + lex.text)
         maxSimilarity = 0
-        # closestMatch = {}
         for word in lex.posTags: #---Iterate through words in the condition or subject phrase
             lex.synsets = get_synsets(word, False)
             for lexSyn in lex.synsets: #---Iterate through each synonym of the word at hand
@@ -331,6 +328,7 @@ class PhraseAndPOS:
         self.closestMatchSimilarity = 0
         self.greatMatches = []
         self.unStoppedText = ''
+        self.parentFieldName = ''
     def toJSON(self):
         data = {}
         data['phraseType'] = self.phraseType
@@ -344,6 +342,7 @@ class PhraseAndPOS:
         for match in self.greatMatches:
             data['greatMatches'].append(match.toJSON())
         data['unStoppedText'] = self.unStoppedText
+        data['parentFieldName'] = self.parentFieldName
         # data['conditions'].append(jsonpickle.encode(copyCon))
         return data
 
@@ -351,6 +350,8 @@ def get_data_synset_pack(data):
     pack = []
     for dataValue in data:
         dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'], dataValue['query_part'])
+        if 'parent_field_name'in dataValue:
+            dataPhraseAndPOS.parentFieldName = dataValue['parent_field_name']
         for word in dataPhraseAndPOS.posTags:
             dataPhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
             pack.append(dataPhraseAndPOS)
@@ -363,6 +364,7 @@ def create_phrase_and_pos(phrase, phraseType):
     newPhraseAndPOS.text = phrase
     newPhraseAndPOS.posTags = get_pos_tagged_phrase(phrase)
     newPhraseAndPOS.phraseType = phraseType
+    
     return newPhraseAndPOS
 
 def get_synsets(wordAndTag, usePOS):
@@ -482,10 +484,10 @@ def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
 # parseQuery("")
 # parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 # parse_query("How many visitors came on the lot during the month of May 2019?")
-parse_query("What is the average pay of our female employees with BS degrees?")
+# parse_query("What is the average pay of our female employees with BS degrees?")
 # parse_query('How many engineers did we hire in 2018?')
 # parse_query('How many people in the operations division have their doctorates?')
-# parse_query('Tell me the count of female managers in the engineering organization')
+parse_query('Tell me the count of female managers in the engineering organization')
 # parse_query('How many of the managers in engineering are women?')
 # parse_query('Count the number of employees with more than 10 years with the company')
 # parse_query('What is the average salary for employees with a BS degree?')
