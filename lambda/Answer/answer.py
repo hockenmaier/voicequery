@@ -44,6 +44,7 @@ def package_JSON(workspace, answer, query, datafile):
     data['dataFile'] = datafile
     data['query'] = query
     data['answer'] = answer
+    # return json.dumps(data)
     return data
     
 def call_query_operation(parseObject,dataset):

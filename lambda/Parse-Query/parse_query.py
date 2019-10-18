@@ -55,6 +55,7 @@ def parse_query(inputQuery):
     # Call Answer Lambda
     answerResponse = callAnswer(workspace, query, parseTree, conditionsAndPOS, subjectsAndPOS, queryType)
     print(answerResponse)
+    answerResponse = json.loads(answerResponse)
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
@@ -63,7 +64,8 @@ def parse_query(inputQuery):
     reducedSubjectsAndPOS = storeAndDedupPhrases(table, subjectsAndPOS, workspace, queryID, 'subject')
     
     # Build output Query to display in the console and the final JSON payload
-    outputQuery = buildOutputQuery(query, conditionsAndPOS, subjectsAndPOS) 
+    outputQuery = buildOutputQuery(query, conditionsAndPOS, subjectsAndPOS, answerResponse)
+    print(outputQuery)
     jsonData = package_JSON(outputQuery, reducedConditionsAndPOS, reducedSubjectsAndPOS, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
     
     return jsonData
@@ -150,7 +152,7 @@ def get_parse_tree(posTaggedQuery):
       NP: {<DT>?<PR.*>?<N.*>+}                                      # Chunk sequences of DT or JJ followed by one or more nouns
       PP: {<IN><NP>}                                                # Chunk prepositions followed by NP
       JP: {<JJ.?><NP>}                                              # Chunk adjectives followed by NP
-      VP: {<V.*><NP|PP|CLAUSE>+}                                    # Chunk verbs and their arguments
+      VP: {<V.*><NP|PP|JJ|CLAUSE>+}                                    # Chunk verbs and their arguments
       WP: {<W..*><JP>?<PP>?<NP>?}                                   # Chunk "wh-words" and their arguments
       CLAUSE: {<NP><VP>}                                            # Chunk NP, VP
       """
@@ -407,7 +409,7 @@ def callAnswer(workspace, query, parseTree, conditions, subjects, queryType):
     
     return answerResponse['Payload'].read()
 
-def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS):
+def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS, answerResponse):
     outputQuery = inputQuery
 
     for condition in conditionsAndPOS:
@@ -417,6 +419,9 @@ def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS):
     for subject in subjectsAndPOS:
         replaceText = '{<span class=\"res-subject\">' + subject.text + '</span>}'
         outputQuery = outputQuery.replace(subject.text,replaceText)
+        
+    outputQuery = outputQuery + '\n'
+    outputQuery = outputQuery + str(answerResponse['answer'])
 
     return "<p>" + outputQuery + "</p>"
 
@@ -491,4 +496,5 @@ parse_query('Tell me the count of female managers in the engineering organizatio
 # parse_query('How many of the managers in engineering are women?')
 # parse_query('Count the number of employees with more than 10 years with the company')
 # parse_query('What is the average salary for employees with a BS degree?')
+# parse_query('How many employees are male?')
 
