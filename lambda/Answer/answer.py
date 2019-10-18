@@ -63,14 +63,24 @@ def call_query_operation(parseObject,dataset):
         answer = median(parseObject,dataset)
     return answer
         
-def count(parseObject,dataset):
+def count(parseObject,df):
     lexicon = parseObject['conditions'] + parseObject['subjects']
     for lex in lexicon:
         if (lex['closestMatchSimilarity'] > .85):
             print('found a good enough match for filtering: ' + lex['text'] + ': ' + lex['closestMatch']['text'] + ': ' + str(lex['closestMatchSimilarity']))
+            print('length before filter = ' + str(len(df)))
+            closestMatch = lex['closestMatch']
+            if (closestMatch['phraseType'] == 'info-value'): #phrase type in the case of fields s info-field or info-value
+                fieldName = closestMatch['parentFieldName']
+                fieldValue = closestMatch['text']
+                print('value = ' + fieldValue)
+                isValue =  df[fieldName]==fieldValue
+                df = df[isValue]
+                print('length after filter = ' + str(len(df)))
+            
         else:
             print('this one didnt find anything decent: ' + lex['text'] + ': ' + str(lex['closestMatchSimilarity']))
-    return 1
+    return len(df)
 
 def average(parseObject,dataset):
     return 2
