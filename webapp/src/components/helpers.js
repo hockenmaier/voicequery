@@ -17,22 +17,24 @@ export function initializeLayout(){
     layout.topbarY = 0;
     layout.topbarHeight = 50;
     layout.queryTop = 15;
-    layout.queryLeft = 30;
+    layout.queryLeft = 30;    
     layout.queryWidth = 700;
     
-    layout.queryParsedTop = layout.topbarHeight - 10;
-    layout.queryParsedWidth = 1000;
+    layout.queryResponseTop = layout.topbarHeight - 1;
+    layout.queryResponseWidth = 1000;
     layout.leftMargin = 30;
-    layout.topMargin = layout.topbarHeight + 45;
+    layout.topMargin = layout.topbarHeight + 15;
     layout.rightMargin = 30;
 
     layout.subjectHeight = 380;
-    layout.subjectWidth = 300;
+    layout.subjectWidth = 165;
+
+    layout.queryResponseLeft = layout.leftMargin + layout.subjectWidth + 15;
 
     layout.roomBuffer = 20;
     layout.conditionTop = layout.topMargin + layout.subjectHeight + layout.roomBuffer;
     layout.conditionHeight = 380;
-    layout.conditionWidth = 300;
+    layout.conditionWidth = 165;
 
     layout.infoHeight = layout.conditionHeight + layout.subjectHeight + layout.roomBuffer;
     layout.infoWidth = 500;

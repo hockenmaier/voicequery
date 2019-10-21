@@ -559,9 +559,9 @@ class Space extends React.Component{
                     <div
                         className="query-response"
                         style={{
-                            width: layout.queryParsedWidth,
-                            top: layout.queryParsedTop,
-                            left: layout.queryLeft + 8,
+                            width: layout.queryResponseWidth,
+                            top: layout.queryResponseTop,
+                            left: layout.queryResponseLeft,
                         }}
                         dangerouslySetInnerHTML={ {__html: this.state.queryResponseHTML} }
                     >
