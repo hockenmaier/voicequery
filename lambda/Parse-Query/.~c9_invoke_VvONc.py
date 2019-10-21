@@ -8,6 +8,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
+# import os
 # import jsonpickle
 # import copy
 
@@ -420,9 +421,14 @@ def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS, answerResponse)
     for subject in subjectsAndPOS:
         replaceText = '{<span class=\"res-subject\">' + subject.text + '</span>}'
         outputQuery = outputQuery.replace(subject.text,replaceText)
-        
-    outputQuery = outputQuery + '\n'
-    outputQuery = outputQuery + str(answerResponse['answer'])
+    
+    outputQuery = outputQuery + "</p><p>"
+    outputQuery = outputQuery + str(answerResponse['shownWork'])
+    outputQuery = outputQuery + "</p><p>"
+    outputQuery = outputQuery + "Answer: " + str(answerResponse['answer'])
+    
+    print('outputQuery:')
+    print(outputQuery)
 
     return "<p>" + outputQuery + "</p>"
 
