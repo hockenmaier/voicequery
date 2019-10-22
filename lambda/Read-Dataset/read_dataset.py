@@ -16,8 +16,8 @@ def read_dataset(workspace):
     unique_value_limit = 15
     dataset = setup_S3_source(workspace, file_name)
     jsonData = package_JSON(dataset, unique_value_limit)
-    deleteOldFields(table, workspace,file_name)
-    storeFields(jsonData, table, workspace, file_name, unique_value_limit)
+    delete_old_fields(table, workspace,file_name)
+    store_fields(jsonData, table, workspace, file_name, unique_value_limit)
     print(jsonData)
     return jsonData
 
@@ -76,7 +76,7 @@ def map_numpy_datatypes(dtype):
     else:
         return stringedType
 
-def storeFields(jsonData, table, workspace, file_name, unique_value_limit):
+def store_fields(jsonData, table, workspace, file_name, unique_value_limit):
     for col in jsonData['bubbles']:
         fieldID = str(uuid.uuid4())
         put = table.put_item(
@@ -110,7 +110,7 @@ def storeFields(jsonData, table, workspace, file_name, unique_value_limit):
                 }
         )
 
-def deleteOldFields(table,workspace,file_name):
+def delete_old_fields(table,workspace,file_name):
     foundItems = table.scan(
                 FilterExpression=Key('workspace').eq(workspace) & Key('data_set_name').eq(file_name)
             )

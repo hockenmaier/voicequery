@@ -51,27 +51,27 @@ def parse_query(inputQuery):
     get_most_similar_info(subjectsAndPOS, available_data)
     
     # uncomment this call to see the state of PraseAndPOS Objects at any time:
-    printConditionAndSubjectState(conditionsAndPOS,subjectsAndPOS)
+    print_condition_and_subject_state(conditionsAndPOS,subjectsAndPOS)
     
     # Call Answer Lambda
-    answerResponse = callAnswer(workspace, query, parseTree, conditionsAndPOS, subjectsAndPOS, queryType)
+    answerResponse = call_answer(workspace, query, parseTree, conditionsAndPOS, subjectsAndPOS, queryType)
     print(answerResponse)
     answerResponse = json.loads(answerResponse)
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
     storeQuery(table, queryID, query, parseTree, workspace)
-    reducedConditionsAndPOS = storeAndDedupPhrases(table, conditionsAndPOS, workspace, queryID, 'condition') #reduced arrays are different than dedupped because they may be empty if all items were previously stored to the db
-    reducedSubjectsAndPOS = storeAndDedupPhrases(table, subjectsAndPOS, workspace, queryID, 'subject')
+    reducedConditionsAndPOS = store_and_dedup_phrases(table, conditionsAndPOS, workspace, queryID, 'condition') #reduced arrays are different than dedupped because they may be empty if all items were previously stored to the db
+    reducedSubjectsAndPOS = store_and_dedup_phrases(table, subjectsAndPOS, workspace, queryID, 'subject')
     
     # Build output Query to display in the console and the final JSON payload
-    outputQuery = buildOutputQuery(query, conditionsAndPOS, subjectsAndPOS, answerResponse)
+    outputQuery = build_output_query(query, conditionsAndPOS, subjectsAndPOS, answerResponse)
     print(outputQuery)
     jsonData = package_JSON(outputQuery, reducedConditionsAndPOS, reducedSubjectsAndPOS, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
     
     return jsonData
 
-def printConditionAndSubjectState(conditionsAndPOS, subjectsAndPOS):
+def print_condition_and_subject_state(conditionsAndPOS, subjectsAndPOS):
     print('Conditions:')
     printPhraseObjState(conditionsAndPOS)
     print('Subjects:')
@@ -387,7 +387,7 @@ def convert_penn_to_morphy(penntag, returnNone=False):
     except:
         return None if returnNone else ''
 
-def callAnswer(workspace, query, parseTree, conditions, subjects, queryType):
+def call_answer(workspace, query, parseTree, conditions, subjects, queryType):
     answerLambda = boto3.client('lambda', region_name='us-west-2')
     data = {}
     data['workspace'] = workspace
@@ -401,7 +401,7 @@ def callAnswer(workspace, query, parseTree, conditions, subjects, queryType):
         # print(jsonpickle.encode(copyCon))
     for sub in subjects:
         lexData = sub.toJSON()
-        data['conditions'].append(lexData)
+        data['subjects'].append(lexData)
     #     data['conditions'].append(jsonpickle.encode(sub))
     data['queryType'] = queryType
     print(json.dumps(data))
@@ -411,7 +411,7 @@ def callAnswer(workspace, query, parseTree, conditions, subjects, queryType):
     
     return answerResponse['Payload'].read()
 
-def buildOutputQuery(inputQuery,conditionsAndPOS,subjectsAndPOS, answerResponse):
+def build_output_query(inputQuery,conditionsAndPOS,subjectsAndPOS, answerResponse):
     outputQuery = inputQuery
 
     for condition in conditionsAndPOS:
@@ -472,7 +472,7 @@ def storeQuery(table, queryID, query, parseTree, workspace):
     )
     # print(put)
 
-def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
+def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType):
     reducedPhraseList = []
     for phrase in phraseAndPOSList:
         foundItems = table.scan(
@@ -502,7 +502,7 @@ def storeAndDedupPhrases(table, phraseAndPOSList, workspace, queryID, lexType):
 # parse_query('Tell me the count of female managers in the engineering organization')
 # parse_query('How many of the managers in engineering are women?')
 # parse_query('Count the number of employees with more than 10 years with the company')
-# parse_query('What is the average salary for employees with a BS degree?')
+parse_query('What is the average salary for employees with a BS degree?')
 # parse_query('How many employees are male?')
-parse_query('How many entry-level employees are in the engineering department?')
+# parse_query('How many entry-level employees are in the engineering department?')
 
