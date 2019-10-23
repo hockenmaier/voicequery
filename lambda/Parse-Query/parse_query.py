@@ -423,7 +423,7 @@ def build_output_query(inputQuery,conditionsAndPOS,subjectsAndPOS, answerRespons
         outputQuery = outputQuery.replace(subject.text,replaceText)
     
     outputQuery = outputQuery + "</p><p>"
-    outputQuery = outputQuery + str(answerResponse['shownWork'])
+    outputQuery = outputQuery + str(answerResponse['workToShow'])
     outputQuery = outputQuery + "</p><p>"
     outputQuery = outputQuery + "Answer: " + str(answerResponse['answer'])
     
@@ -502,7 +502,8 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query('Tell me the count of female managers in the engineering organization')
 # parse_query('How many of the managers in engineering are women?')
 # parse_query('Count the number of employees with more than 10 years with the company')
-parse_query('What is the average salary for employees with a BS degree?')
+# parse_query('What is the average salary for employees with a BS degree?')
+parse_query('What is the average tenure of female managers?')
 # parse_query('How many employees are male?')
 # parse_query('How many entry-level employees are in the engineering department?')
 
