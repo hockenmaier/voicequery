@@ -21,14 +21,11 @@ def lambda_handler(event, context):
 def answer(parseObject):
     workspace = parseObject['workspace']
     query = parseObject['query']
-    table = setup_dynamo()
+    # table = setup_dynamo()
     sourceDataFile = "sample-data/HRData_QuickSightSample.csv"
     df = setup_S3_source(workspace, sourceDataFile)
     
-    context = contextObject()
-    context.df = df
-    context.parseObject = parseObject
-    context.workToShow = ''
+    context = create_context(df,parseObject)
     
     answer = call_query_operation(context)
     print('shown work:')
@@ -36,6 +33,13 @@ def answer(parseObject):
     
     jsonData = package_JSON(workspace, answer, query, sourceDataFile, context.workToShow)
     return jsonData
+    
+def create_context(df,parseObject):
+    newContext = contextObject()
+    newContext.df = df
+    newContext.parseObject = parseObject
+    newContext.workToShow = ''
+    return newContext
 
 def setup_S3_source(workspace, file_name):
     bucket = "voicequery-datasets"
@@ -113,18 +117,24 @@ def filter_by_lex(context, lexicon):
             # print('this one didnt find anything decent: ' + lex['text'] + ': ' + str(lex['closestMatchSimilarity']))
     
 def average(context):
+    chosenSub = prepareForMath(context)
+    if isinstance(chosenSub, str):
+        return chosenSub
+    return context.df[chosenSub['closestMatch']['text']].mean()
+
+def prepareForMath(context):
     conditions = context.parseObject['conditions']
-    filter_by_lex(context,conditions)
+    filter_by_lex(context,conditions) #filter by conditions
     subjects = context.parseObject['subjects']
     numericSubs = get_numeric_lex(context,subjects)
     if numericSubs:
         chosenSub = numericSubs[0] #the first numberic subject is the one we will do math on
     else:
         return "I can't find any numeric subjects in your question to average"
-    context.workToShow += show_work("The numeric subject chosen for averaging math is: " + chosenSub['text'] + " with column: " + chosenSub['closestMatch']['text'])
+    context.workToShow += show_work("The numeric subject chosen for math is: " + chosenSub['text'] + " with column: " + chosenSub['closestMatch']['text'])
     subjects.remove(chosenSub)
     filter_by_lex(context,subjects) #all other subjects than the first treated as filters
-    return context.df[chosenSub['closestMatch']['text']].mean()
+    return chosenSub
 
 def get_numeric_lex(context,lexicon):
     numericLex = []
@@ -149,7 +159,10 @@ def summation(context):
     return 5
 
 def median(context):
-    return 6
+    chosenSub = prepareForMath(context)
+    if isinstance(chosenSub, str):
+        return chosenSub
+    return context.df[chosenSub['closestMatch']['text']].median()
     
 with open('test_payloads/test_average10-21-19.json') as f:
     data = json.load(f)
