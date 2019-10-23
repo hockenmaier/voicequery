@@ -100,7 +100,7 @@ def filter_by_lex(context, lexicon):
         if (lex['closestMatchSimilarity'] > .85):
             # print('found a good enough match for filtering: ' + lex['text'] + ': ' + lex['closestMatch']['text'] + ': ' + str(lex['closestMatchSimilarity']))
             # print('length before filter = ' + str(len(df)))
-            context.workToShow += show_work(str(lex['closestMatchSimilarity']) + " similar match found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + lex['closestMatch']['text'])
+            context.workToShow += show_work("Similar match (" + str(lex['closestMatchSimilarity']) + ") found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + lex['closestMatch']['text'])
             print('shown work:')
             print(context.workToShow)
             closestMatch = lex['closestMatch']
@@ -150,13 +150,22 @@ def get_numeric_lex(context,lexicon):
     return numericLex
 
 def minimum(context):
-    return 3
+    chosenSub = prepareForMath(context)
+    if isinstance(chosenSub, str):
+        return chosenSub
+    return context.df[chosenSub['closestMatch']['text']].min()
 
 def maximum(context):
-    return 4
+    chosenSub = prepareForMath(context)
+    if isinstance(chosenSub, str):
+        return chosenSub
+    return context.df[chosenSub['closestMatch']['text']].max()
     
 def summation(context):
-    return 5
+    chosenSub = prepareForMath(context)
+    if isinstance(chosenSub, str):
+        return chosenSub
+    return context.df[chosenSub['closestMatch']['text']].sum()
 
 def median(context):
     chosenSub = prepareForMath(context)
