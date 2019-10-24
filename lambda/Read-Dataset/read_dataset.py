@@ -13,6 +13,7 @@ def lambda_handler(event, context):
 def read_dataset(workspace):
     table = setup_dynamo()
     file_name = "sample-data/HRData_QuickSightSample.csv"
+    # file_name = "sample-data/index_2013.csv"
     unique_value_limit = 15
     dataset = setup_S3_source(workspace, file_name)
     jsonData = package_JSON(dataset, unique_value_limit)
@@ -23,9 +24,6 @@ def read_dataset(workspace):
 
 def setup_S3_source(workspace, file_name):
     bucket = "voicequery-datasets"
-    # file_name = "sample-data/RevenueData_QuickSightSample.csv"
-    # file_name = "sample-data/index_2013.csv"
-    
     s3 = boto3.client('s3') 
     # 's3' is a key word. create connection to S3 using default config and all buckets within S3
     

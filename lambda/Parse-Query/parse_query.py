@@ -13,10 +13,11 @@ import datetime
 # import copy
 
 def lambda_handler(event, context):
-    jsonData = parse_query(event['query'])
+    jsonData = parse_query(event, event['query'])
     return jsonData
-    
-def parse_query(inputQuery):
+
+def parse_query(parseObject, inputQuery):
+    context = create_context(parseObject)
     query = inputQuery.lower()
     # Perform initial checks such as ensuring the query is not an empty string
     checks, errData = initial_checks(query)
@@ -32,7 +33,9 @@ def parse_query(inputQuery):
     # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
     posTaggedQuery = get_pos_tagged_phrase(query)
     parseTree = get_parse_tree(posTaggedQuery)
-    prettyParseTree = str(parseTree.pretty_print())
+    prettyParseTree = parseTree.pretty_print()
+    # print(parseTree.pretty_print())
+    # context.workToShow = parseTree.pretty_print()
     
     # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
     conditionsAndPOS, subjectsAndPOS = [],[]
@@ -65,11 +68,27 @@ def parse_query(inputQuery):
     reducedSubjectsAndPOS = store_and_dedup_phrases(table, subjectsAndPOS, workspace, queryID, 'subject')
     
     # Build output Query to display in the console and the final JSON payload
-    outputQuery = build_output_query(query, conditionsAndPOS, subjectsAndPOS, answerResponse)
+    outputQuery = build_output_query(context, query, conditionsAndPOS, subjectsAndPOS, answerResponse)
     print(outputQuery)
     jsonData = package_JSON(outputQuery, reducedConditionsAndPOS, reducedSubjectsAndPOS, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
     
     return jsonData
+
+class contextObject:
+    def __init__(self):
+        self.workToShow = ''
+        self.parseObject = None
+        
+def create_context(parseObject):
+    newContext = contextObject()
+    newContext.parseObject = parseObject
+    newContext.workToShow = ''
+    return newContext
+        
+def show_work(text):
+    newText = "</p><p>"
+    newText += text
+    return newText
 
 def print_condition_and_subject_state(conditionsAndPOS, subjectsAndPOS):
     print('Conditions:')
@@ -411,7 +430,7 @@ def call_answer(workspace, query, parseTree, conditions, subjects, queryType):
     
     return answerResponse['Payload'].read()
 
-def build_output_query(inputQuery,conditionsAndPOS,subjectsAndPOS, answerResponse):
+def build_output_query(context, inputQuery,conditionsAndPOS,subjectsAndPOS, answerResponse):
     outputQuery = inputQuery
 
     for condition in conditionsAndPOS:
@@ -423,7 +442,7 @@ def build_output_query(inputQuery,conditionsAndPOS,subjectsAndPOS, answerRespons
         outputQuery = outputQuery.replace(subject.text,replaceText)
     
     outputQuery = outputQuery + "</p><p>"
-    outputQuery = outputQuery + str(answerResponse['workToShow'])
+    outputQuery = outputQuery + context.workToShow + str(answerResponse['workToShow'])
     outputQuery = outputQuery + "</p><p>"
     outputQuery = outputQuery + "Answer: " + str(answerResponse['answer'])
     
@@ -493,17 +512,17 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
         )
     return reducedPhraseList
 
-# parseQuery("")
-# parse_query("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-# parse_query("How many visitors came on the lot during the month of May 2019?")
-# parse_query("What is the average pay of our female employees with BS degrees?")
-# parse_query('How many engineers did we hire in 2018?')
-# parse_query('How many people in the operations division have their doctorates?')
-# parse_query('Tell me the count of female managers in the engineering organization')
-# parse_query('How many of the managers in engineering are women?')
-# parse_query('Count the number of employees with more than 10 years with the company')
-# parse_query('What is the average salary for employees with a BS degree?')
-parse_query('What is the average tenure of female managers?')
-# parse_query('How many employees are male?')
-# parse_query('How many entry-level employees are in the engineering department?')
+# parse_query(None,"What is the median tenure for female VPs who have MS degrees?")
+# parse_query(None,"How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
+# parse_query(None,"How many visitors came on the lot during the month of May 2019?")
+# parse_query(None,"What is the average pay of our female employees with BS degrees?")
+# parse_query(None,'How many engineers did we hire in 2018?')
+# parse_query(None,'How many people in the operations division have their doctorates?')
+# parse_query(None,'Tell me the count of female managers in the engineering organization')
+parse_query(None,'How many of the managers in engineering are women?')
+# parse_query(None,'Count the number of employees with more than 10 years with the company')
+# parse_query(None,'What is the average salary for employees with a BS degree?')
+# parse_query(None,'What is the average tenure of female managers?')
+# parse_query(None,'How many employees are male?')
+# parse_query(None,'How many entry-level employees are in the engineering department?')
 

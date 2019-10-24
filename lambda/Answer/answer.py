@@ -6,12 +6,6 @@ from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 
-class contextObject:
-    def __init__(self):
-        self.workToShow = ''
-        self.df = None
-        self.parseObject = None
-
 def lambda_handler(event, context):
     # parseObject = json.loads(event)
     parseObject = event
@@ -33,7 +27,13 @@ def answer(parseObject):
     
     jsonData = package_JSON(workspace, answer, query, sourceDataFile, context.workToShow)
     return jsonData
-    
+
+class contextObject:
+    def __init__(self):
+        self.workToShow = ''
+        self.df = None
+        self.parseObject = None
+
 def create_context(df,parseObject):
     newContext = contextObject()
     newContext.df = df
@@ -81,13 +81,13 @@ def call_query_operation(context):
         answer = summation(context)
     elif (queryType == 'median'):
         answer = median(context)
+    else:
+        return 'I\'m not sure how to answer that yet'
     return answer
         
 def show_work(text):
     newText = "</p><p>"
     newText += text
-    # print('shown work:')
-    # print(newText)
     return newText
 
 def count(context):
@@ -174,6 +174,7 @@ def median(context):
     return context.df[chosenSub['closestMatch']['text']].median()
     
 with open('test_payloads/test_average10-21-19.json') as f:
+# with open('test_payloads/test3.json') as f:
     data = json.load(f)
     answer(data)
 

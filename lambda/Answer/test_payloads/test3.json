@@ -1,0 +1,436 @@
+{
+  "workspace": "1",
+  "query": "what is the median tenure for female vps who have ms degrees?",
+  "parseTree": [
+    [
+      [
+        "what",
+        "WP"
+      ]
+    ],
+    [
+      "is",
+      "VBZ"
+    ],
+    [
+      "the",
+      "DT"
+    ],
+    [
+      [
+        "median",
+        "JJ"
+      ],
+      [
+        [
+          "tenure",
+          "NN"
+        ]
+      ]
+    ],
+    [
+      "for",
+      "IN"
+    ],
+    [
+      [
+        "female",
+        "JJ"
+      ],
+      [
+        [
+          "vps",
+          "NN"
+        ]
+      ]
+    ],
+    [
+      [
+        "who",
+        "WP"
+      ]
+    ],
+    [
+      "have",
+      "VBP"
+    ],
+    [
+      [
+        "ms",
+        "VBN"
+      ],
+      [
+        [
+          "degrees",
+          "NNS"
+        ]
+      ]
+    ],
+    [
+      "?",
+      "."
+    ]
+  ],
+  "conditions": [
+    {
+      "phraseType": "",
+      "text": "female",
+      "posTags": [
+        [
+          "female",
+          "JJ"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "Female",
+        "posTags": [
+          [
+            "Female",
+            "NN"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": "Gender"
+      },
+      "closestMatchSimilarity": 6,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "Female",
+          "posTags": [
+            [
+              "Female",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Gender"
+        }
+      ],
+      "unStoppedText": "female",
+      "parentFieldName": ""
+    }
+  ],
+  "subjects": [
+    {
+      "phraseType": "",
+      "text": "tenure",
+      "posTags": [
+        [
+          "tenure",
+          "NN"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-field",
+        "text": "Tenure",
+        "posTags": [
+          [
+            "Tenure",
+            "NN"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": ""
+      },
+      "closestMatchSimilarity": 6,
+      "greatMatches": [
+        {
+          "phraseType": "info-field",
+          "text": "Tenure",
+          "posTags": [
+            [
+              "Tenure",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        }
+      ],
+      "unStoppedText": "tenure",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "",
+      "text": "vps",
+      "posTags": [
+        [
+          "vps",
+          "NN"
+        ]
+      ],
+      "closestMatch": null,
+      "closestMatchSimilarity": 0,
+      "greatMatches": [],
+      "unStoppedText": "vps",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "",
+      "text": "ms degrees",
+      "posTags": [
+        [
+          "ms",
+          "VBN"
+        ],
+        [
+          "degrees",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "MS",
+        "posTags": [
+          [
+            "MS",
+            "NN"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": "Education"
+      },
+      "closestMatchSimilarity": 2,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "MS",
+          "posTags": [
+            [
+              "MS",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        },
+        {
+          "phraseType": "info-field",
+          "text": "Job Level",
+          "posTags": [
+            [
+              "Job",
+              "NNP"
+            ],
+            [
+              "Level",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        },
+        {
+          "phraseType": "info-value",
+          "text": "High School",
+          "posTags": [
+            [
+              "High",
+              "JJ"
+            ],
+            [
+              "School",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Quality",
+          "posTags": [
+            [
+              "Quality",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Job Family"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "ASSOCIATE",
+          "posTags": [
+            [
+              "ASSOCIATE",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Associate",
+          "posTags": [
+            [
+              "Associate",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        }
+      ],
+      "unStoppedText": "ms degrees",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "",
+      "text": "degrees",
+      "posTags": [
+        [
+          "degrees",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-field",
+        "text": "Job Level",
+        "posTags": [
+          [
+            "Job",
+            "NNP"
+          ],
+          [
+            "Level",
+            "NNP"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": ""
+      },
+      "closestMatchSimilarity": 1,
+      "greatMatches": [
+        {
+          "phraseType": "info-field",
+          "text": "Job Level",
+          "posTags": [
+            [
+              "Job",
+              "NNP"
+            ],
+            [
+              "Level",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        },
+        {
+          "phraseType": "info-value",
+          "text": "High School",
+          "posTags": [
+            [
+              "High",
+              "JJ"
+            ],
+            [
+              "School",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Quality",
+          "posTags": [
+            [
+              "Quality",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Job Family"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "ASSOCIATE",
+          "posTags": [
+            [
+              "ASSOCIATE",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Associate",
+          "posTags": [
+            [
+              "Associate",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        }
+      ],
+      "unStoppedText": "degrees",
+      "parentFieldName": ""
+    }
+  ],
+  "queryType": {
+    "type": "median",
+    "term": "median"
+  }
+}
