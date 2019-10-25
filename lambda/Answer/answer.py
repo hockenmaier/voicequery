@@ -22,8 +22,8 @@ def answer(parseObject):
     context = create_context(df,parseObject)
     
     answer = call_query_operation(context)
-    print('shown work:')
-    print(context.workToShow)
+    # print('shown work:')
+    # print(context.workToShow)
     
     jsonData = package_JSON(workspace, answer, query, sourceDataFile, context.workToShow)
     return jsonData
@@ -64,7 +64,7 @@ def package_JSON(workspace, answer, query, datafile, workToShow):
     return data
     
 def call_query_operation(context):
-    print(context.parseObject['queryType'])
+    # print(context.parseObject['queryType'])
     queryType = context.parseObject['queryType']['type']
     context.workToShow += show_work("Query type detected: " + queryType)
     # print('shown work:')
@@ -101,8 +101,8 @@ def filter_by_lex(context, lexicon):
             # print('found a good enough match for filtering: ' + lex['text'] + ': ' + lex['closestMatch']['text'] + ': ' + str(lex['closestMatchSimilarity']))
             # print('length before filter = ' + str(len(df)))
             context.workToShow += show_work("Similar match (" + str(lex['closestMatchSimilarity']) + ") found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + lex['closestMatch']['text'])
-            print('shown work:')
-            print(context.workToShow)
+            # print('shown work:')
+            # print(context.workToShow)
             closestMatch = lex['closestMatch']
             if (closestMatch['phraseType'] == 'info-value'): #phrase type in the case of fields s info-field or info-value
                 fieldName = closestMatch['parentFieldName']
@@ -139,14 +139,17 @@ def prepareForMath(context):
 def get_numeric_lex(context,lexicon):
     numericLex = []
     print('getting numeric text')
-    print(str(lexicon))
+    # print(str(lexicon))
     for lex in lexicon:
-        print(lex['text'])
+        # print(lex['text'])
         if (lex['closestMatch']):
-            print(context.df[lex['closestMatch']['text']].dtype)
-            if np.issubdtype(context.df[lex['closestMatch']['text']].dtype, np.number): #check if column is numeric
-                context.workToShow += show_work("Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
-                numericLex.append(lex)
+            if (lex['closestMatch']['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
+                # print(lex['closestMatch']['text'])
+                # print(context.df[lex['closestMatch']['text']])
+                # print(context.df[lex['closestMatch']['text']].dtype)
+                if np.issubdtype(context.df[lex['closestMatch']['text']].dtype, np.number): #check if column is numeric
+                    context.workToShow += show_work("Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
+                    numericLex.append(lex)
     return numericLex
 
 def minimum(context):
@@ -173,8 +176,8 @@ def median(context):
         return chosenSub
     return context.df[chosenSub['closestMatch']['text']].median()
     
-with open('test_payloads/test_average10-21-19.json') as f:
-# with open('test_payloads/test3.json') as f:
+# with open('test_payloads/test_average10-21-19.json') as f:
+with open('test_payloads/test3.json') as f:
     data = json.load(f)
     answer(data)
 

@@ -520,14 +520,14 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
         )
     return reducedPhraseList
 
-# parse_query(None,"What is the median tenure for female VPs who have MS degrees?")
+parse_query(None,"What is the median tenure for female VPs who have MS degrees?")
 # parse_query(None,"How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 # parse_query(None,"How many visitors came on the lot during the month of May 2019?")
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
 # parse_query(None,'How many engineers did we hire in 2018?')
 # parse_query(None,'How many people in the operations division have their doctorates?')
 # parse_query(None,'Tell me the count of female managers in the engineering organization')
-parse_query(None,'How many of the managers in engineering are women?')
+# parse_query(None,'How many of the managers in engineering are women?')
 # parse_query(None,'Count the number of employees with more than 10 years with the company')
 # parse_query(None,'What is the average salary for employees with a BS degree?')
 # parse_query(None,'What is the average tenure of female managers?')
