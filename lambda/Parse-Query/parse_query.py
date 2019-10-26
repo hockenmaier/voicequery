@@ -9,11 +9,12 @@ from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 import contextlib, io
-
-
 # import os
 # import jsonpickle
 # import copy
+
+from nltk.tag.stanford import StanfordPOSTagger
+from nltk.tag.senna import SennaTagger
 
 def lambda_handler(event, context):
     jsonData = parse_query(event, event['query'])
@@ -174,7 +175,6 @@ def get_workspace_data(table, workspace):
         FilterExpression=Key('workspace').eq(workspace) & Key('storage_source').eq('dataset')
     )
     return foundItems['Items']
-    
 
 def setup_nltk_data():
     #Adding temporary directory:
@@ -190,6 +190,10 @@ def setup_nltk_data():
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
     return nltk.pos_tag(words)
+    # senna = SennaTagger('nltk/tag')
+    # return senna.tag(words)
+    # standford = StanfordPOSTagger('stanford-postagger', 'stanford-postagger/stanford-postagger-3.9.2.jar')
+    # return standford.tag(words)
 
 def get_parse_tree(posTaggedQuery):
     
