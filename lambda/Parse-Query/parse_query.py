@@ -20,8 +20,10 @@ def lambda_handler(event, context):
     return jsonData
 
 def parse_query(parseObject, inputQuery):
+    #Create initial context variables
     context = create_context(parseObject)
     query = inputQuery.lower()
+    
     # Perform initial checks such as ensuring the query is not an empty string
     checks, errData = initial_checks(query)
     if (checks == False):
@@ -34,6 +36,8 @@ def parse_query(parseObject, inputQuery):
     available_data = get_workspace_data(table,workspace)
     
     # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
+    print('')
+    print('query: ' + query)
     posTaggedQuery = get_pos_tagged_phrase(query)
     parseTree = get_parse_tree(posTaggedQuery)
     prettyParseTree = prettyPrintToString(parseTree)
@@ -71,7 +75,6 @@ def parse_query(parseObject, inputQuery):
     
     # Build output Query to display in the console and the final JSON payload
     outputQuery = build_output_query(context, query, conditionsAndPOS, subjectsAndPOS, answerResponse)
-    # print(outputQuery)
     jsonData = package_JSON(outputQuery, reducedConditionsAndPOS, reducedSubjectsAndPOS, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
     
     return jsonData
@@ -93,15 +96,18 @@ def show_work(text):
     return newText
         
 def prettyPrintToString(parseTree):
+    parseTree.pretty_print()
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         parseTree.pretty_print()
     return f.getvalue()
 
 def print_condition_and_subject_state(conditionsAndPOS, subjectsAndPOS):
-    print('Conditions:')
+    print('')
+    print('-------------------------------------Conditions-------------------------------------')
     printPhraseObjState(conditionsAndPOS)
-    print('Subjects:')
+    print('')
+    print('-------------------------------------Subjects-------------------------------------')
     printPhraseObjState(subjectsAndPOS)
 
 def printPhraseObjState(phraseAndPOSList):
@@ -110,18 +116,27 @@ def printPhraseObjState(phraseAndPOSList):
 
 def printPhraseObj(obj):
     print('')
-    print(obj.text)
-    print(obj.phraseType)
-    print(obj.posTags)
-    print(obj.synsets)
+    if (obj.phraseType == 'condition')|(obj.phraseType == 'subject'):
+        print('v------------------NEW LEXICON------------------v')
+    else:
+        print('v------NEW SUB-PHRASE------v')
+    print('Phrase Text: ' + obj.text)
+    print('Phrase Type: ' + str(obj.phraseType))
+    print('POS Tags: ' + str(obj.posTags))
+    print('Synsets: ' + str(obj.synsets))
     if obj.closestMatch:
-        print('Closest Match Found:')
+        print('--------Closest Match Found--------')
         printPhraseObj(obj.closestMatch)
     print('similarity: ' + str(obj.closestMatchSimilarity))
     print('Great Matches Found:')
     for match in obj.greatMatches:
-        print(match.text)
-    print(obj.unStoppedText)
+        print('Great Match: ' + match.text)
+    print('Unstopped Text: ' + str(obj.unStoppedText))
+    if (obj.phraseType == 'condition')|(obj.phraseType == 'subject'):
+        print('^------------------END LEXICON------------------^')
+    else:
+        print('^------END SUB-PHRASE------^')
+    
 
 def initial_checks(query):
     if (query == ""):
@@ -205,6 +220,7 @@ def traverse_tree(tree, parent, conditionsAndPOS, subjectsAndPOS):
 def build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #This function is like a "detokenizer" but for a parse tree instead of a list of words.  Replace if a better "unparser" is found
     phrase = ''
     newPhraseInstance = PhraseAndPOS()
+    newPhraseInstance.phraseType = lexType
     for leaf in tree.leaves():
         if (tree.label() == 'JP'):
             if (leaf[1] == 'JJ') | (leaf[1] == 'JJS'):
@@ -212,7 +228,6 @@ def build_lexicon_phrase(tree, conditionsAndPOS, subjectsAndPOS, lexType): #This
         else:
             phrase = appendLeaf(leaf,newPhraseInstance,phrase) #for Non-Adjective phrases, use the whole phrase
     newPhraseInstance.text = phrase
-    newPhraseInstance.lexType = lexType
     if lexType == 'condition':
         conditionsAndPOS.append(newPhraseInstance)
     elif lexType == 'subject':
@@ -431,7 +446,7 @@ def call_answer(workspace, query, parseTree, conditions, subjects, queryType):
         data['subjects'].append(lexData)
     #     data['conditions'].append(jsonpickle.encode(sub))
     data['queryType'] = queryType
-    print(json.dumps(data))
+    # print(json.dumps(data))
     answerResponse = answerLambda.invoke(FunctionName = 'Answer', InvocationType = 'RequestResponse', Payload = json.dumps(data))
     # print(str(answerResponse))
     # print(dir(answerResponse['Payload'])) #show directory of boto object
