@@ -64,8 +64,9 @@ def parse_query(parseObject, inputQuery):
     
     # Call Answer Lambda
     answerResponse = call_answer(workspace, query, parseTree, conditionsAndPOS, subjectsAndPOS, queryType)
-    print(answerResponse)
     answerResponse = json.loads(answerResponse)
+    print('Answer Response: ' + str(answerResponse))
+    print('Answer: ' + str(answerResponse['answer']))
 
     # Generate a unique ID for the query and store it and the discovered conditions and subjects to Dynamo
     queryID = str(uuid.uuid4())
@@ -75,6 +76,7 @@ def parse_query(parseObject, inputQuery):
     
     # Build output Query to display in the console and the final JSON payload
     outputQuery = build_output_query(context, query, conditionsAndPOS, subjectsAndPOS, answerResponse)
+    # print('outputQuery:' + outputQuery)
     jsonData = package_JSON(outputQuery, reducedConditionsAndPOS, reducedSubjectsAndPOS, prettyParseTree) #use reduce conditions so that bubble aready on screen aren't added
     
     return jsonData
@@ -468,9 +470,6 @@ def build_output_query(context, inputQuery,conditionsAndPOS,subjectsAndPOS, answ
     outputQuery = outputQuery + context.workToShow + str(answerResponse['workToShow'])
     outputQuery = outputQuery + "</p><p>"
     outputQuery = outputQuery + "Answer: " + str(answerResponse['answer'])
-    
-    print('outputQuery:')
-    print(outputQuery)
 
     return "<p>" + outputQuery + "</p>"
 
@@ -535,7 +534,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
         )
     return reducedPhraseList
 
-parse_query(None,"What is the median tenure for female VPs who have MS degrees?")
+# parse_query(None,"What is the median tenure for female VPs who have MS degrees?")
 # parse_query(None,"How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 # parse_query(None,"How many visitors came on the lot during the month of May 2019?")
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
@@ -545,7 +544,7 @@ parse_query(None,"What is the median tenure for female VPs who have MS degrees?"
 # parse_query(None,'How many of the managers in engineering are women?')
 # parse_query(None,'Count the number of employees with more than 10 years with the company')
 # parse_query(None,'What is the average salary for employees with a BS degree?')
-# parse_query(None,'What is the average tenure of female managers?')
+parse_query(None,'What is the average tenure of female managers?')
 # parse_query(None,'How many employees are male?')
 # parse_query(None,'How many entry-level employees are in the engineering department?')
 
