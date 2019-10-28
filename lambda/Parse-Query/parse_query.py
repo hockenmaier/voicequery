@@ -12,9 +12,9 @@ import contextlib, io
 # import os
 # import jsonpickle
 # import copy
-from nltk.internals import find_jars_within_path
-from nltk.tag.stanford import StanfordPOSTagger
-from nltk.tag.senna import SennaTagger
+# from nltk.internals import find_jars_within_path
+# from nltk.tag.stanford import StanfordPOSTagger
+# from nltk.tag.senna import SennaTagger
 
 def lambda_handler(event, context):
     jsonData = parse_query(event, event['query'])
@@ -120,15 +120,15 @@ def printPhraseObjState(phraseAndPOSList):
 def printPhraseObj(obj):
     print('')
     if (obj.phraseType == 'condition')|(obj.phraseType == 'subject'):
-        print('v------------------NEW LEXICON------------------v')
+        print('V------------------NEW LEXICON: ------------------V ' + obj.text)
     else:
-        print('v------NEW SUB-PHRASE------v')
+        print('v------NEW SUB-PHRASE------v ' + obj.text)
     print('Phrase Text: ' + obj.text)
     print('Phrase Type: ' + str(obj.phraseType))
     print('POS Tags: ' + str(obj.posTags))
     print('Synsets: ' + str(obj.synsets))
     if obj.closestMatch:
-        print('--------Closest Match Found--------')
+        print('~~~~~~~Closest Match Found~~~~~~~')
         printPhraseObj(obj.closestMatch)
     print('similarity: ' + str(obj.closestMatchSimilarity))
     print('Great Matches Found:')
@@ -136,9 +136,9 @@ def printPhraseObj(obj):
         print('Great Match: ' + match.text)
     print('Unstopped Text: ' + str(obj.unStoppedText))
     if (obj.phraseType == 'condition')|(obj.phraseType == 'subject'):
-        print('^------------------END LEXICON------------------^')
+        print('^------------------END LEXICON------------------^ ' + obj.text)
     else:
-        print('^------END SUB-PHRASE------^')
+        print('^------END SUB-PHRASE------^ ' + obj.text)
     
 
 def initial_checks(query):
@@ -183,13 +183,16 @@ def setup_nltk_data():
     
     #Now downloading data to temporary directory
     nltk.download('punkt', download_dir='/tmp/nltk_data')
-    nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
+    # nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
+    nltk.download('maxent_treebank_pos_tagger', download_dir='/tmp/nltk_data')
     nltk.download('stopwords', download_dir='/tmp/nltk_data')
     nltk.download('wordnet', download_dir='/tmp/nltk_data')
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
-    return nltk.pos_tag(words) # Averaged Perceptron default tagger (struggles with adjectives)
+    treebankTagger = nltk.data.load('taggers/maxent_treebank_pos_tagger/english.pickle')
+    # return nltk.pos_tag(words) # Averaged Perceptron default tagger (struggles with adjectives)
+    return treebankTagger.tag(words)    
     
     #Setting up the standford POS tagger:
     # stanford_dir = 'stanford-postagger'
@@ -204,8 +207,8 @@ def get_parse_tree(posTaggedQuery):
     
     baseGrammar = r"""
       NP: {<DT>?<PR.*>?<N.*>+}                                      # Chunk sequences of DT or JJ followed by one or more nouns
-      PP: {<IN><NP>}                                                # Chunk prepositions followed by NP
       JP: {<JJ.?><NP>}                                              # Chunk adjectives followed by NP
+      PP: {<IN><NP|JP>}                                                # Chunk prepositions followed by NP
       VP: {<V.*><NP|PP|JJ|CLAUSE>+}                                    # Chunk verbs and their arguments
       WP: {<W..*><JP>?<PP>?<NP>?}                                   # Chunk "wh-words" and their arguments
       CLAUSE: {<NP><VP>}                                            # Chunk NP, VP
