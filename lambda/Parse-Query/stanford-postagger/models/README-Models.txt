@@ -1,10 +1,10 @@
-Stanford POS Tagger, v3.9.2 - 2018-10-16
+Stanford POS Tagger, v3.5.2 - 2015-04-20
 Copyright (c) 2002-2012 The Board of Trustees of
 The Leland Stanford Junior University. All Rights Reserved.
 
 This document contains (some) information about the models included in
 this release and that may be downloaded for the POS tagger website at
-http://nlp.stanford.edu/software/tagger.html .  If you have downloaded
+http://nlp.stanford.edu/software/tagger.shtml .  If you have downloaded
 the full tagger, all of the models mentioned in this document are in the
 downloaded package in the same directory as this readme.  Otherwise,
 included in the download are two 
@@ -105,16 +105,17 @@ University of Stuttgart and the Seminar für Sprachwissenschaft of the
 University of Tübingen. See: 
 http://www.ims.uni-stuttgart.de/projekte/CQPDemos/Bundestag/help-tagset.html
 This model uses features from the distributional similarity clusters
-built over the HGC (Huge German Corpus).
+built over the HGC.
 Performance:
 96.90% on the first half of the remaining 20% of the Negra corpus (dev set)
 (90.33% on unknown words)
+
+german-dewac.tagger
+This model uses features from the distributional similarity clusters
+built from the deWac web corpus.
 
 german-fast.tagger
 Lacks distributional similarity features, but is several times faster
 than the other alternatives.
 Performance:
 96.61% overall / 86.72% unknown.
-
-german-ud.tagger
-This is a model that produces Universal Dependencies POS tags.

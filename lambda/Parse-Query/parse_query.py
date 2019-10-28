@@ -12,7 +12,7 @@ import contextlib, io
 # import os
 # import jsonpickle
 # import copy
-
+from nltk.internals import find_jars_within_path
 from nltk.tag.stanford import StanfordPOSTagger
 from nltk.tag.senna import SennaTagger
 
@@ -189,11 +189,16 @@ def setup_nltk_data():
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
-    return nltk.pos_tag(words)
-    # senna = SennaTagger('nltk/tag')
-    # return senna.tag(words)
-    # standford = StanfordPOSTagger('stanford-postagger', 'stanford-postagger/stanford-postagger-3.9.2.jar')
-    # return standford.tag(words)
+    return nltk.pos_tag(words) # Averaged Perceptron default tagger (struggles with adjectives)
+    
+    #Setting up the standford POS tagger:
+    # stanford_dir = 'stanford-postagger'
+    # path_to_model = 'stanford-postagger/models/english-bidirectional-distsim.tagger'
+    # path_to_jar = 'stanford-postagger/models/english-bidirectional-distsim.tagger'
+    # standford = StanfordPOSTagger(path_to_model, path_to_jar)
+    # standford._classpath = tuple(find_jars_within_path(stanford_dir))
+    # return standford.tag(inputQuery.split()) # Stanford tagger
+    
 
 def get_parse_tree(posTaggedQuery):
     

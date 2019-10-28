@@ -1,4 +1,4 @@
-Stanford POS Tagger, v3.9.2 - 2018-10-16
+Stanford POS Tagger, v3.5.2 - 2015-04-20
 Copyright (c) 2002-2012 The Board of Trustees of
 The Leland Stanford Junior University. All Rights Reserved.
 
@@ -6,7 +6,7 @@ Original tagger author: Kristina Toutanova
 Code contributions: Christopher Manning, Dan Klein, William Morgan,
 Huihsin Tseng, Anna Rafferty, John Bauer
 Major rewrite for version 2.0 by Michel Galley.
-Current release prepared by: Jason Bolton
+Current release prepared by: John Bauer
 
 This package contains a Maximum Entropy part of speech tagger.
 
@@ -37,6 +37,9 @@ tagger, along with some caseless versions, and we provide models for
 some other languages. The tagger can be retrained on other languages
 based on POS-annotated training text.
 
+If you really want to use this software under Java 1.4, look into RetroWeaver:
+
+  http://retroweaver.sourceforge.net/
 
 
 QUICKSTART
@@ -48,19 +51,25 @@ programmatically via its API.
 There is a GUI interface, but it is for
 demonstration purposes only; most features of the tagger can only be
 accessed via the command line. To run the demonstration GUI you should
-be able to use any of the following 2 methods:
+be able to use any of the following 3 methods:
 
 1)
-java -mx200m -classpath stanford-postagger.jar edu.stanford.nlp.tagger.maxent.MaxentTaggerGUI models/wsj-0-18-left3words-distsim.tagger
+java -mx200m -classpath stanford-postagger.jar edu.stanford.nlp.tagger.maxent.MaxentTaggerGUI models/wsj-0-18-left3words.tagger
 
-2) Running the appropriate script for your operating system:
+2)
+Providing your system gives java enough memory by default, you can also
+run it by either double-clicking the stanford-postagger.jar file, or
+giving the command: 
+    java -jar stanford-postagger.jar
+
+3) Running the appropriate script for your operating system:
     stanford-postagger-gui.bat
     ./stanford-postagger-gui.sh
 
 To run the tagger from the command line, you can start with the provided
 script appropriate for you operating system:
-    ./stanford-postagger.sh models/wsj-0-18-left3words-distsim.tagger sample-input.txt
-    stanford-postagger models\wsj-0-18-left3words-distsim.tagger sample-input.txt
+    ./stanford-postagger.sh models/wsj-0-18-left3words.tagger sample-input.txt
+    stanford-postagger models\wsj-0-18-left3words.tagger sample-input.txt
 The output should match what is found in sample-output.txt
 
 The tagger has three modes: tagging, training, and testing.  Tagging
@@ -176,7 +185,7 @@ TaggerDemo.java
   should be able to compile and run it with:
 
   javac -cp stanford-postagger.jar TaggerDemo.java
-  java -cp ".:stanford-postagger.jar" TaggerDemo models/wsj-0-18-left3words-distsim.tagger sample-input.txt
+  java -cp ".:stanford-postagger.jar" TaggerDemo models/wsj-0-18-left3words.tagger sample-input.txt
 
   (If you are on Windows, you need to replace the ":" with a ";" in the
   -cp argument, and should use a "\" in place of the "/" in the filename....)
@@ -192,17 +201,6 @@ processing.
 
 CHANGES
 -----------------------------------------------
-
-2018-10-16    3.9.2     New English models, better currency symbol 
-                        handling 
-
-2018-02-27    3.9.1     new French UD model 
-
-2017-06-09    3.8.0     new Spanish and French UD models 
-
-2016-10-31    3.7.0     Update for compatibility, German UD model 
-
-2015-12-09    3.6.0     Updated for compatibility 
 
 2015-04-20    3.5.2     Update for compatibility 
 
@@ -263,16 +261,17 @@ LICENSE
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
- along with this program.  If not, see http://www.gnu.org/licenses/ .
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
  For more information, bug reports, fixes, contact:
     Christopher Manning
-    Dept of Computer Science, Gates 2A
-    Stanford CA 94305-9020
+    Dept of Computer Science, Gates 1A
+    Stanford CA 94305-9010
     USA
     Support/Questions: java-nlp-user@lists.stanford.edu
-	  Licensing: java-nlp-support@lists.stanford.edu
-    http://nlp.stanford.edu/software/tagger.html
+	Licensing: java-nlp-support@lists.stanford.edu
+    http://www-nlp.stanford.edu/software/tagger.shtml
 
 
 CONTACT
