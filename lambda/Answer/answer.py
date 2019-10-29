@@ -86,7 +86,7 @@ def call_query_operation(context):
     return answer
         
 def show_work(text):
-    newText = "</p><p>"
+    newText = "<br>"
     newText += text
     return newText
 
@@ -118,8 +118,10 @@ def filter_by_lex(context, lexicon):
     
 def average(context):
     chosenSub = prepareForMath(context)
+    if (len(context.df) == 0):
+        return 'I couldn\'t do an average because no records matched the conditions in your question'
     if isinstance(chosenSub, str):
-        return chosenSub
+        return chosenSub #return String errors that were returned
     return context.df[chosenSub['closestMatch']['text']].mean()
 
 def prepareForMath(context):
@@ -154,24 +156,32 @@ def get_numeric_lex(context,lexicon):
 
 def minimum(context):
     chosenSub = prepareForMath(context)
+    if (len(context.df) == 0):
+        return 'I couldn\'t find a minimum because no records matched the conditions in your question'
     if isinstance(chosenSub, str):
         return chosenSub
     return context.df[chosenSub['closestMatch']['text']].min()
 
 def maximum(context):
     chosenSub = prepareForMath(context)
+    if (len(context.df) == 0):
+        return 'I couldn\'t find a maximum because no records matched the conditions in your question'
     if isinstance(chosenSub, str):
         return chosenSub
     return context.df[chosenSub['closestMatch']['text']].max()
     
 def summation(context):
     chosenSub = prepareForMath(context)
+    if (len(context.df) == 0):
+        return 'I couldn\'t add anything because no records matched the conditions in your question'
     if isinstance(chosenSub, str):
         return chosenSub
     return context.df[chosenSub['closestMatch']['text']].sum()
 
 def median(context):
     chosenSub = prepareForMath(context)
+    if (len(context.df) == 0):
+        return 'I couldn\'t find the median because no records matched the conditions in your question'
     if isinstance(chosenSub, str):
         return chosenSub
     return context.df[chosenSub['closestMatch']['text']].median()

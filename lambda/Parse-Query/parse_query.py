@@ -190,8 +190,8 @@ def setup_nltk_data():
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
-    treebankTagger = nltk.data.load('taggers/maxent_treebank_pos_tagger/english.pickle')
     # return nltk.pos_tag(words) # Averaged Perceptron default tagger (struggles with adjectives)
+    treebankTagger = nltk.data.load('taggers/maxent_treebank_pos_tagger/english.pickle')
     return treebankTagger.tag(words)    
     
     #Setting up the standford POS tagger:
@@ -208,9 +208,9 @@ def get_parse_tree(posTaggedQuery):
     baseGrammar = r"""
       NP: {<DT>?<PR.*>?<N.*>+}                                      # Chunk sequences of DT or JJ followed by one or more nouns
       JP: {<JJ.?><NP>}                                              # Chunk adjectives followed by NP
-      PP: {<IN><NP|JP>}                                                # Chunk prepositions followed by NP
-      VP: {<V.*><NP|PP|JJ|CLAUSE>+}                                    # Chunk verbs and their arguments
-      WP: {<W..*><JP>?<PP>?<NP>?}                                   # Chunk "wh-words" and their arguments
+      PP: {<IN><NP|JP>}                                             # Chunk prepositions followed by NP
+      VP: {<V.*><NP|PP|JJ|CLAUSE>+}                                 # Chunk verbs and their arguments
+      WP: {<W..*><VP>?<JP>?<PP>?<NP>?}                              # Chunk "wh-words" and their arguments
       CLAUSE: {<NP><VP>}                                            # Chunk NP, VP
       """
     parser = nltk.RegexpParser(baseGrammar)
@@ -478,7 +478,7 @@ def build_output_query(context, inputQuery,conditionsAndPOS,subjectsAndPOS, answ
         replaceText = '{<span class=\"res-subject\">' + subject.text + '</span>}'
         outputQuery = outputQuery.replace(subject.text,replaceText)
     
-    outputQuery = outputQuery + "</p><p>"
+    outputQuery = outputQuery + "<br>"
     outputQuery = outputQuery + context.workToShow + str(answerResponse['workToShow'])
     outputQuery = outputQuery + "</p><p>"
     outputQuery = outputQuery + "Answer: " + str(answerResponse['answer'])
@@ -556,7 +556,9 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'How many of the managers in engineering are women?')
 # parse_query(None,'Count the number of employees with more than 10 years with the company')
 # parse_query(None,'What is the average salary for employees with a BS degree?')
-parse_query(None,'What is the average tenure of female managers?')
+# parse_query(None,'What is the average tenure of female managers?')
 # parse_query(None,'How many employees are male?')
 # parse_query(None,'How many entry-level employees are in the engineering department?')
+parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
+# parse_query(None, 'What is the average salary of managers in the quality department who have MS degrees?')
 
