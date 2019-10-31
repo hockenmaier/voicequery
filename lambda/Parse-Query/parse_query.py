@@ -9,10 +9,10 @@ from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 import contextlib, io
-import sys
-import os
-sys.path.append(os.path.abspath("/nltk_contrib"))
-import timex
+# import sys
+# import os
+# sys.path.append(os.path.abspath("/nltk_contrib"))
+import timex_mod
 # import os
 # import jsonpickle
 # import copy
@@ -195,7 +195,7 @@ def setup_nltk_data():
     nltk.download('wordnet', download_dir='/tmp/nltk_data')
 
 def timexTag(text):
-    newText = tag(text)
+    newText = timex_mod.tag(text)
     return newText
 
 def get_pos_tagged_phrase(inputQuery):
@@ -569,6 +569,12 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'What is the average tenure of female managers?')
 # parse_query(None,'How many employees are male?')
 # parse_query(None,'How many entry-level employees are in the engineering department?')
-parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
+# parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
 # parse_query(None, 'What is the average salary of managers in the quality department who have MS degrees?')
+# parse_query(None,'How many employees with high school education where hired before May 2012?')
+
+# parse_query(None,'How many employees with high school education were hired this year?')
+# parse_query(None,'Last quarter, how many employees with high school education were hired?')
+parse_query(None,'How many employees with high school education were hired last april?')
+
 
