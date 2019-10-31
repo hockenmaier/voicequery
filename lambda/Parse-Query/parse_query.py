@@ -9,6 +9,10 @@ from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 import contextlib, io
+import sys
+import os
+sys.path.append(os.path.abspath("/nltk_contrib"))
+import timex
 # import os
 # import jsonpickle
 # import copy
@@ -39,6 +43,8 @@ def parse_query(parseObject, inputQuery):
     # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
     print('')
     print('query: ' + query)
+    print(timexTag(query))
+    
     posTaggedQuery = get_pos_tagged_phrase(query)
     parseTree = get_parse_tree(posTaggedQuery)
     prettyParseTree = prettyPrintToString(parseTree)
@@ -187,6 +193,10 @@ def setup_nltk_data():
     nltk.download('maxent_treebank_pos_tagger', download_dir='/tmp/nltk_data')
     nltk.download('stopwords', download_dir='/tmp/nltk_data')
     nltk.download('wordnet', download_dir='/tmp/nltk_data')
+
+def timexTag(text):
+    newText = tag(text)
+    return newText
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
