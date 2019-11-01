@@ -13,7 +13,6 @@ import contextlib, io
 # import os
 # sys.path.append(os.path.abspath("/nltk_contrib"))
 import timex_mod
-# import os
 # import jsonpickle
 # import copy
 # from nltk.internals import find_jars_within_path
@@ -422,6 +421,7 @@ def get_data_synset_pack(data):
         dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'], dataValue['query_part'])
         if 'parent_field_name'in dataValue:
             dataPhraseAndPOS.parentFieldName = dataValue['parent_field_name']
+        get_words_and_phrases(dataPhraseAndPOS)
         for word in dataPhraseAndPOS.posTags:
             dataPhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
             pack.append(dataPhraseAndPOS)
@@ -436,6 +436,10 @@ def create_phrase_and_pos(phrase, phraseType):
     newPhraseAndPOS.phraseType = phraseType
     
     return newPhraseAndPOS
+
+def get_words_and_phrases(PhraseAndPOS):
+    posTags = PhraseAndPOS.posTags
+    #todo: pair up all words and append synsets of phrases instead of words if they exist
 
 def get_synsets(wordAndTag, usePOS):
     if usePOS:
