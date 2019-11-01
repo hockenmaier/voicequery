@@ -360,32 +360,31 @@ def get_most_similar_info(lexObjects,data):
     for lex in lexObjects: #---Iterate through condition or subject phrases
         # print('[LEXICON] finding field value similarities for: ' + lex.text)
         maxSimilarity = 0
-        for word in lex.posTags: #---Iterate through words in the condition or subject phrase
-            lex.synsets = get_synsets(word, False)
-            for lexSyn in lex.synsets: #---Iterate through each synonym of the word at hand
-                for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
-                    # print('Comparing to: ' + dataPack.text)
-                    if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
-                        matchStringLenth = min(len(dataPack.text),len(lex.text))
-                        if matchStringLenth > maxSimilarity:
-                            lex.closestMatch = dataPack
-                            lex.closestMatchSimilarity = matchStringLenth
-                            maxSimilarity = matchStringLenth
-                        # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
-                    for dataSynList in dataPack.synsets: #---Iterate through the list of synset lists (each list pertaining to the word in the field value, if multiple words)
-                        for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
-                            # print(str(dataSyn))
-                            similarity = lexSyn.wup_similarity(dataSyn)
-                            # if dataPack.text == 'Female':
-                            #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
-                            if similarity:
-                                if similarity > maxSimilarity:
-                                    lex.closestMatch = dataPack
-                                    lex.closestMatchSimilarity = similarity
-                                    maxSimilarity = similarity
-                                if similarity > .9:
-                                    if dataPack not in lex.greatMatches:
-                                        lex.greatMatches.append(dataPack)
+        append_phrase_and_word_synsets(lex)
+        for lexSyn in lex.synsets: #---Iterate through each synonym of the word at hand
+            for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
+                # print('Comparing to: ' + dataPack.text)
+                if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
+                    matchStringLenth = min(len(dataPack.text),len(lex.text))
+                    if matchStringLenth > maxSimilarity:
+                        lex.closestMatch = dataPack
+                        lex.closestMatchSimilarity = matchStringLenth
+                        maxSimilarity = matchStringLenth
+                    # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
+                for dataSynList in dataPack.synsets: #---Iterate through the list of synset lists (each list pertaining to the word in the field value, if multiple words)
+                    for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
+                        # print(str(dataSyn))
+                        similarity = lexSyn.wup_similarity(dataSyn)
+                        # if dataPack.text == 'Female':
+                        #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
+                        if similarity:
+                            if similarity > maxSimilarity:
+                                lex.closestMatch = dataPack
+                                lex.closestMatchSimilarity = similarity
+                                maxSimilarity = similarity
+                            if similarity > .9:
+                                if dataPack not in lex.greatMatches:
+                                    lex.greatMatches.append(dataPack)
 
 class PhraseAndPOS:
     def __init__(self):
@@ -421,10 +420,10 @@ def get_data_synset_pack(data):
         dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'], dataValue['query_part'])
         if 'parent_field_name'in dataValue:
             dataPhraseAndPOS.parentFieldName = dataValue['parent_field_name']
-        get_words_and_phrases(dataPhraseAndPOS)
-        for word in dataPhraseAndPOS.posTags:
-            dataPhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
-            pack.append(dataPhraseAndPOS)
+        append_phrase_and_word_synsets(dataPhraseAndPOS)
+        # for word in dataPhraseAndPOS.posTags:
+        #     dataPhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
+        pack.append(dataPhraseAndPOS)
         # print('field is:' + dataValue['text'])
         # printPhraseObj(dataPhraseAndPOS)
     return pack
@@ -437,8 +436,21 @@ def create_phrase_and_pos(phrase, phraseType):
     
     return newPhraseAndPOS
 
-def get_words_and_phrases(PhraseAndPOS):
+def append_phrase_and_word_synsets(PhraseAndPOS):
     posTags = PhraseAndPOS.posTags
+    if len(posTags) > 1:
+        for i in range(1,len(posTags)):
+            phrase = posTags[i-1][0] + '_' + posTags[i][0]
+            print(PhraseAndPOS.text)
+            print(phrase)
+            phraseSynset = []
+            phraseSynset = wordnet.synsets(phrase)
+            if phraseSynset:
+                PhraseAndPOS.synsets.append(phraseSynset)
+            else:
+                for word in PhraseAndPOS.posTags:
+                    PhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
+        
     #todo: pair up all words and append synsets of phrases instead of words if they exist
 
 def get_synsets(wordAndTag, usePOS):
