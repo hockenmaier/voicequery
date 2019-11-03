@@ -62,8 +62,9 @@ def parse_query(parseObject, inputQuery):
     print('Query Type: ' + queryType['type'] + ', specifically: ' + queryType['term'])
     
     # Pair each condition and subject with similar field names and values found from stored dataset info
-    get_most_similar_info(conditionsAndPOS, available_data)
-    get_most_similar_info(subjectsAndPOS, available_data)
+    dataSynsetPacks = get_data_synset_pack(available_data) #All of the field and field synonym is gathered in this list first so that we don't have to keep generating them later
+    get_most_similar_info(conditionsAndPOS, dataSynsetPacks)
+    get_most_similar_info(subjectsAndPOS, dataSynsetPacks)
     
     # uncomment this call to see the state of PraseAndPOS Objects at any time:
     print_condition_and_subject_state(conditionsAndPOS,subjectsAndPOS)
@@ -201,16 +202,7 @@ def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
     # return nltk.pos_tag(words) # Averaged Perceptron default tagger (struggles with adjectives)
     treebankTagger = nltk.data.load('taggers/maxent_treebank_pos_tagger/english.pickle')
-    return treebankTagger.tag(words)    
-    
-    #Setting up the standford POS tagger:
-    # stanford_dir = 'stanford-postagger'
-    # path_to_model = 'stanford-postagger/models/english-bidirectional-distsim.tagger'
-    # path_to_jar = 'stanford-postagger/models/english-bidirectional-distsim.tagger'
-    # standford = StanfordPOSTagger(path_to_model, path_to_jar)
-    # standford._classpath = tuple(find_jars_within_path(stanford_dir))
-    # return standford.tag(inputQuery.split()) # Stanford tagger
-    
+    return treebankTagger.tag(words)
 
 def get_parse_tree(posTaggedQuery):
     
@@ -337,14 +329,6 @@ def stop_lexicon(lexObjects):
                 filteredLexTags.append(w)
         lex.posTags = filteredLexTags
 
-# def deduplicate_word_list(lexObjects):
-#     foundList = []
-#     for item in lexObjects:
-#         if item.text in foundList:
-#             lexObjects.remove(item)
-#         else:    
-#             foundList.append(item)
-            
 def deduplicate_word_list(lexObjects):
     uniqueTextList = []
     uniqueObjList = []
@@ -354,8 +338,7 @@ def deduplicate_word_list(lexObjects):
             uniqueTextList.append(item.text)
     return uniqueObjList
 
-def get_most_similar_info(lexObjects,data):
-    dataSynsetPacks = get_data_synset_pack(data) #All of the field and field synonym is gathered in this list first so that we don't have to keep generating them later
+def get_most_similar_info(lexObjects,dataSynsetPacks):
     # printPhraseObjState(dataSynsetPacks)
     for lex in lexObjects: #---Iterate through condition or subject phrases
         # print('[LEXICON] finding field value similarities for: ' + lex.text)
@@ -412,20 +395,17 @@ class PhraseAndPOS:
             data['greatMatches'].append(match.toJSON())
         data['unStoppedText'] = self.unStoppedText
         data['parentFieldName'] = self.parentFieldName
-        # data['conditions'].append(jsonpickle.encode(copyCon))
         return data
 
 def get_data_synset_pack(data):
     pack = []
     for dataValue in data:
+        # print('In datavalue loop with data vaue: ' + dataValue['text'])
         dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'], dataValue['query_part'])
         if 'parent_field_name'in dataValue:
             dataPhraseAndPOS.parentFieldName = dataValue['parent_field_name']
         append_phrase_and_word_synsets(dataPhraseAndPOS)
-        
         pack.append(dataPhraseAndPOS)
-        # print('field is:' + dataValue['text'])
-        # printPhraseObj(dataPhraseAndPOS)
     return pack
     
 def create_phrase_and_pos(phrase, phraseType):
@@ -433,7 +413,6 @@ def create_phrase_and_pos(phrase, phraseType):
     newPhraseAndPOS.text = phrase
     newPhraseAndPOS.posTags = get_pos_tagged_phrase(phrase)
     newPhraseAndPOS.phraseType = phraseType
-    
     return newPhraseAndPOS
 
 def append_phrase_and_word_synsets(PhraseAndPOS):
@@ -441,8 +420,6 @@ def append_phrase_and_word_synsets(PhraseAndPOS):
     if len(posTags) > 1: #get synsets for 2 or more word phrases
         for i in range(1,len(posTags)):
             phrase = posTags[i-1][0] + '_' + posTags[i][0]
-            print(PhraseAndPOS.text)
-            print(phrase)
             phraseSynset = []
             phraseSynset = wordnet.synsets(phrase)
             if phraseSynset:
