@@ -426,8 +426,10 @@ def append_phrase_and_word_synsets(PhraseAndPOS):
                 print('phraseSynsent: ' + str(phraseSynset))
                 PhraseAndPOS.synsets.append(phraseSynset)
             else:
-                for word in PhraseAndPOS.posTags:
-                    PhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
+                PhraseAndPOS.synsets.append(get_synsets(posTags[i-1][0], False)) #The last word won't be used in any more phrases, so just add its syns if this phrase didn't match
+                if(len(posTags)) == i+1:
+                    PhraseAndPOS.synsets.append(get_synsets(posTags[i][0], False)) #if this is the last 2-word phrase and there was no phrase syns, add the second word syns
+                    
     else: #just get synsets for one-word phrases
         for word in PhraseAndPOS.posTags:
             PhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
