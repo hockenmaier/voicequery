@@ -63,6 +63,9 @@ def parse_query(parseObject, inputQuery):
     
     # Pair each condition and subject with similar field names and values found from stored dataset info
     dataSynsetPacks = get_data_synset_pack(available_data) #All of the field and field synonym is gathered in this list first so that we don't have to keep generating them later
+    # print('Raw data synset packs:')
+    # for pack in dataSynsetPacks:
+    #     printPhraseObj(pack)
     get_most_similar_info(conditionsAndPOS, dataSynsetPacks)
     get_most_similar_info(subjectsAndPOS, dataSynsetPacks)
     
@@ -426,9 +429,11 @@ def append_phrase_and_word_synsets(PhraseAndPOS):
                 print('phraseSynsent: ' + str(phraseSynset))
                 PhraseAndPOS.synsets.append(phraseSynset)
             else:
-                PhraseAndPOS.synsets.append(get_synsets(posTags[i-1][0], False)) #The last word won't be used in any more phrases, so just add its syns if this phrase didn't match
+                # for word in PhraseAndPOS.posTags:
+                #     PhraseAndPOS.synsets.append(get_synsets(word, False)) #Don't use POS to filter synsets for data fields and values
+                PhraseAndPOS.synsets.append(get_synsets(posTags[i-1], False)) #The last word won't be used in any more phrases, so just add its syns if this phrase didn't match
                 if(len(posTags)) == i+1:
-                    PhraseAndPOS.synsets.append(get_synsets(posTags[i][0], False)) #if this is the last 2-word phrase and there was no phrase syns, add the second word syns
+                    PhraseAndPOS.synsets.append(get_synsets(posTags[i], False)) #if this is the last 2-word phrase and there was no phrase syns, add the second word syns
                     
     else: #just get synsets for one-word phrases
         for word in PhraseAndPOS.posTags:
