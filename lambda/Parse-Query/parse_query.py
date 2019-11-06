@@ -560,12 +560,12 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
         )
     return reducedPhraseList
 
-# parse_query(None,"What is the median tenure for female VPs who have MS degrees?")
+# parse_query(None,"What is the median tenure for female VP's who have MS degrees?")
 # parse_query(None,"How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 # parse_query(None,"How many visitors came on the lot during the month of May 2019?")
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
 # parse_query(None,'How many engineers did we hire in 2018?')
-# parse_query(None,'How many people in the operations division have their doctorates?')
+parse_query(None,'How many people in the operations division have their doctorates?')
 # parse_query(None,'Tell me the count of female managers in the engineering organization')
 # parse_query(None,'How many of the managers in engineering are women?')
 # parse_query(None,'Count the number of employees with more than 10 years with the company')
@@ -575,10 +575,10 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'How many entry-level employees are in the engineering department?')
 # parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
 # parse_query(None, 'What is the average salary of managers in the quality department who have MS degrees?')
-# parse_query(None,'How many employees with high school education where hired before May 2012?')
 
+# parse_query(None,'How many employees with high school education where hired before May 2012?')
 # parse_query(None,'How many employees with high school education were hired this year?')
 # parse_query(None,'Last quarter, how many employees with high school education were hired?')
-parse_query(None,'How many employees with high school education were hired last april?')
+# parse_query(None,'How many employees with high school education were hired last april?')
 
 

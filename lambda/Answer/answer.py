@@ -152,6 +152,10 @@ def get_numeric_lex(context,lexicon):
                 if np.issubdtype(context.df[lex['closestMatch']['text']].dtype, np.number): #check if column is numeric
                     context.workToShow += show_work("Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
                     numericLex.append(lex)
+        # elif (lex['greatMatches']):
+        #     for match in lex['greatMatches']:
+        #         #TODO append first lex great match that is numeric
+                
     return numericLex
 
 def minimum(context):
