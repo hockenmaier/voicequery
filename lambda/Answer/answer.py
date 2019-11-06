@@ -151,17 +151,19 @@ def get_numeric_lex(context,lexicon):
     print('getting numeric text')
     for lex in lexicon:
         if (lex['closestMatch']):
+            print('closest match not empty')
             if (lex['closestMatch']['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
                 if np.issubdtype(context.df[lex['closestMatch']['text']].dtype, np.number): #check if column is numeric
                     context.workToShow += show_work("ClosestMatch Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
                     numericLex.append({'sub': lex, 'field': lex['closestMatch'],'matchtype': 'closestMatch'})
-        elif (lex['greatMatches']):
+        if (lex['greatMatches']):
+            print('greatMatches was not empty')
             for match in lex['greatMatches']:
                 if (match['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
+                    print('greatMatches is a field')
                     if np.issubdtype(context.df[match['text']].dtype, np.number): #check if column is numeric
                         context.workToShow += show_work("GreatMatch Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
                         numericLex.append({'sub': lex, 'field': match,'matchtype': 'greatMatch'})
-                
     return numericLex
 
 def minimum(context):

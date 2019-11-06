@@ -481,7 +481,6 @@ def call_answer(workspace, query, parseTree, conditions, subjects, queryType):
     answerResponse = answerLambda.invoke(FunctionName = 'Answer', InvocationType = 'RequestResponse', Payload = json.dumps(data))
     # print(str(answerResponse))
     # print(dir(answerResponse['Payload'])) #show directory of boto object
-    
     return answerResponse['Payload'].read()
 
 def build_output_query(context, inputQuery,conditionsAndPOS,subjectsAndPOS, answerResponse):
@@ -545,10 +544,6 @@ def storeQuery(table, queryID, query, parseTree, workspace):
 def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType):
     reducedPhraseList = []
     for phrase in phraseAndPOSList:
-        print('here are the values being sent to dynamo for scan:')
-        print(phrase.text)
-        print(workspace)
-        print(lexType)
         foundItems = table.scan(
             FilterExpression=Key('text').eq(phrase.text) & Key('workspace').eq(workspace) & Key('query_part').eq(lexType)
         )

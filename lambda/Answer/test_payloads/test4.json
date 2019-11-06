@@ -1,6 +1,6 @@
 {
   "workspace": "1",
-  "query": "what is the average salary for employees with a bs degree?",
+  "query": "what is the average salary of people in the operations division that have their doctorates?",
   "parseTree": [
     [
       [
@@ -30,34 +30,56 @@
     ],
     [
       [
-        "for",
+        "of",
         "IN"
       ],
       [
         [
-          "employees",
+          "people",
           "NNS"
         ]
       ]
     ],
     [
       [
-        "with",
+        "in",
         "IN"
       ],
       [
         [
-          "a",
+          "the",
           "DT"
         ],
         [
-          "bs",
-          "NN"
+          "operations",
+          "NNS"
         ],
         [
-          "degree",
+          "division",
           "NN"
         ]
+      ]
+    ],
+    [
+      [
+        "that",
+        "IN"
+      ],
+      [
+        [
+          "have",
+          "NN"
+        ]
+      ]
+    ],
+    [
+      [
+        "their",
+        "PRP$"
+      ],
+      [
+        "doctorates",
+        "NNS"
       ]
     ],
     [
@@ -67,213 +89,157 @@
   ],
   "conditions": [
     {
-      "phraseType": "",
-      "text": "employees",
+      "phraseType": "condition",
+      "text": "people",
       "posTags": [
         [
-          "employees",
+          "people",
           "NNS"
         ]
       ],
       "closestMatch": {
         "phraseType": "info-field",
-        "text": "Employee ID",
+        "text": "Job Family",
         "posTags": [
           [
-            "Employee",
+            "Job",
             "NNP"
           ],
           [
-            "ID",
+            "Family",
             "NNP"
           ]
         ],
         "closestMatch": null,
         "closestMatchSimilarity": 0,
-        "greatMatches": [],
+        "greatMatches": [
+          
+        ],
         "unStoppedText": "",
         "parentFieldName": ""
       },
-      "closestMatchSimilarity": 1,
+      "closestMatchSimilarity": 0.94117647058824,
       "greatMatches": [
         {
           "phraseType": "info-field",
-          "text": "Employee ID",
-          "posTags": [
-            [
-              "Employee",
-              "NNP"
-            ],
-            [
-              "ID",
-              "NNP"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": ""
-        },
-        {
-          "phraseType": "info-field",
-          "text": "Employee Name",
-          "posTags": [
-            [
-              "Employee",
-              "NN"
-            ],
-            [
-              "Name",
-              "NN"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": ""
-        }
-      ],
-      "unStoppedText": "for employees",
-      "parentFieldName": ""
-    },
-    {
-      "phraseType": "",
-      "text": "bs degree",
-      "posTags": [
-        [
-          "bs",
-          "NN"
-        ],
-        [
-          "degree",
-          "NN"
-        ]
-      ],
-      "closestMatch": {
-        "phraseType": "info-value",
-        "text": "BS",
-        "posTags": [
-          [
-            "BS",
-            "NN"
-          ]
-        ],
-        "closestMatch": null,
-        "closestMatchSimilarity": 0,
-        "greatMatches": [],
-        "unStoppedText": "",
-        "parentFieldName": "Education"
-      },
-      "closestMatchSimilarity": 2,
-      "greatMatches": [
-        {
-          "phraseType": "info-value",
-          "text": "BS",
-          "posTags": [
-            [
-              "BS",
-              "NN"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": "Education"
-        },
-        {
-          "phraseType": "info-field",
-          "text": "Job Level",
+          "text": "Job Family",
           "posTags": [
             [
               "Job",
               "NNP"
             ],
             [
-              "Level",
+              "Family",
               "NNP"
             ]
           ],
           "closestMatch": null,
           "closestMatchSimilarity": 0,
-          "greatMatches": [],
+          "greatMatches": [
+            
+          ],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        }
+      ],
+      "unStoppedText": "of people",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "condition",
+      "text": "operations division",
+      "posTags": [
+        [
+          "operations",
+          "NNS"
+        ],
+        [
+          "division",
+          "NN"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "Operations",
+        "posTags": [
+          [
+            "Operations",
+            "NNS"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [
+          
+        ],
+        "unStoppedText": "",
+        "parentFieldName": "Business Function"
+      },
+      "closestMatchSimilarity": 10,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "Operations",
+          "posTags": [
+            [
+              "Operations",
+              "NNS"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [
+            
+          ],
+          "unStoppedText": "",
+          "parentFieldName": "Business Function"
+        },
+        {
+          "phraseType": "info-field",
+          "text": "Business Function",
+          "posTags": [
+            [
+              "Business",
+              "NN"
+            ],
+            [
+              "Function",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [
+            
+          ],
           "unStoppedText": "",
           "parentFieldName": ""
         },
         {
           "phraseType": "info-value",
-          "text": "High School",
+          "text": "Support",
           "posTags": [
             [
-              "High",
-              "JJ"
-            ],
-            [
-              "School",
-              "NNP"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": "Education"
-        },
-        {
-          "phraseType": "info-value",
-          "text": "Quality",
-          "posTags": [
-            [
-              "Quality",
+              "Support",
               "NN"
             ]
           ],
           "closestMatch": null,
           "closestMatchSimilarity": 0,
-          "greatMatches": [],
+          "greatMatches": [
+            
+          ],
           "unStoppedText": "",
           "parentFieldName": "Job Family"
-        },
-        {
-          "phraseType": "info-value",
-          "text": "Associate",
-          "posTags": [
-            [
-              "Associate",
-              "NN"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": "Education"
-        },
-        {
-          "phraseType": "info-value",
-          "text": "ASSOCIATE",
-          "posTags": [
-            [
-              "ASSOCIATE",
-              "NN"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": "Education"
         }
       ],
-      "unStoppedText": "with a bs degree",
+      "unStoppedText": "in the operations division",
       "parentFieldName": ""
     }
   ],
   "subjects": [
     {
-      "phraseType": "",
+      "phraseType": "subject",
       "text": "salary",
       "posTags": [
         [
@@ -282,6 +248,28 @@
         ]
       ],
       "closestMatch": {
+          "phraseType": "info-field",
+          "text": "Business Function",
+          "posTags": [
+            [
+              "Business",
+              "NN"
+            ],
+            [
+              "Function",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [
+            
+          ],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        },
+      "closestMatchSimilarity": 0.8,
+      "greatMatches": [{
         "phraseType": "info-field",
         "text": "Compensation (Monthly)",
         "posTags": [
@@ -291,7 +279,7 @@
           ],
           [
             "(",
-            "("
+            "``"
           ],
           [
             "Monthly",
@@ -299,18 +287,51 @@
           ],
           [
             ")",
-            ")"
+            "NNP"
           ]
         ],
         "closestMatch": null,
         "closestMatchSimilarity": 0,
-        "greatMatches": [],
+        "greatMatches": [
+          
+        ],
         "unStoppedText": "",
         "parentFieldName": ""
-      },
-      "closestMatchSimilarity": 0.8,
-      "greatMatches": [],
+      }],
       "unStoppedText": "salary",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "subject",
+      "text": "doctorates",
+      "posTags": [
+        [
+          "doctorates",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "PhD",
+        "posTags": [
+          [
+            "PhD",
+            "NNP"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [
+          
+        ],
+        "unStoppedText": "",
+        "parentFieldName": "Education"
+      },
+      "closestMatchSimilarity": 0.88888888888889,
+      "greatMatches": [
+        
+      ],
+      "unStoppedText": "their doctorates",
       "parentFieldName": ""
     }
   ],
