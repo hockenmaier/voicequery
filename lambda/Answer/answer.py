@@ -26,6 +26,7 @@ def answer(parseObject):
     # print(context.workToShow)
     
     jsonData = package_JSON(workspace, answer, query, sourceDataFile, context.workToShow)
+    print(jsonData)
     return jsonData
 
 class contextObject:
@@ -129,15 +130,21 @@ def prepareForMath(context):
     filter_by_lex(context,conditions) #filter by conditions
     subjects = context.parseObject['subjects']
     numericSubs = get_numeric_lex(context,subjects)
+    chosenSub,chosenField = None,None
     if numericSubs:
-        chosenSub = numericSubs[0]['sub'] #the first numberic subject is the one we will do math on
-        chosenField = numericSubs[0]['field']
+        for sub in numericSubs:
+            if (sub['matchtype'] == 'closestMatch'):
+                chosenSub = sub['sub'] #the first closestMatch numberic subject is the one we will do math on
+                chosenField = sub['field']
+        if not chosenSub:
+            chosenSub = numericSubs[0]['sub'] #the first numberic subject is the one we will do math on if all are greatMatches
+            chosenField = numericSubs[0]['field']
     else:
         return "I can't find any numeric subjects in your question to average"
     context.workToShow += show_work("The numeric subject chosen for math is: " + chosenSub['text'] + " with column: " + chosenField['text'])
     subjects.remove(chosenSub)
     filter_by_lex(context,subjects) #all other subjects than the first treated as filters
-    return chosenSub
+    return chosenField
 
 def get_numeric_lex(context,lexicon):
     numericLex = []
@@ -190,7 +197,7 @@ def median(context):
     return context.df[chosenSub['closestMatch']['text']].median()
     
 # with open('test_payloads/test_average10-21-19.json') as f:
-with open('test_payloads/test3.json') as f:
+with open('test_payloads/test4.json') as f:
     data = json.load(f)
     answer(data)
 

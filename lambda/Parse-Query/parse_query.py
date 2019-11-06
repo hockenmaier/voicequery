@@ -476,7 +476,8 @@ def call_answer(workspace, query, parseTree, conditions, subjects, queryType):
         data['subjects'].append(lexData)
     #     data['conditions'].append(jsonpickle.encode(sub))
     data['queryType'] = queryType
-    # print(json.dumps(data))
+    print('Answer Lambda Called With Payload:')
+    print(json.dumps(data)) #Uncomment to see answer call payload
     answerResponse = answerLambda.invoke(FunctionName = 'Answer', InvocationType = 'RequestResponse', Payload = json.dumps(data))
     # print(str(answerResponse))
     # print(dir(answerResponse['Payload'])) #show directory of boto object

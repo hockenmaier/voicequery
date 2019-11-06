@@ -1,0 +1,321 @@
+{
+  "workspace": "1",
+  "query": "what is the average salary for employees with a bs degree?",
+  "parseTree": [
+    [
+      [
+        "what",
+        "WP"
+      ]
+    ],
+    [
+      "is",
+      "VBZ"
+    ],
+    [
+      "the",
+      "DT"
+    ],
+    [
+      [
+        "average",
+        "JJ"
+      ],
+      [
+        [
+          "salary",
+          "NN"
+        ]
+      ]
+    ],
+    [
+      [
+        "for",
+        "IN"
+      ],
+      [
+        [
+          "employees",
+          "NNS"
+        ]
+      ]
+    ],
+    [
+      [
+        "with",
+        "IN"
+      ],
+      [
+        [
+          "a",
+          "DT"
+        ],
+        [
+          "bs",
+          "NN"
+        ],
+        [
+          "degree",
+          "NN"
+        ]
+      ]
+    ],
+    [
+      "?",
+      "."
+    ]
+  ],
+  "conditions": [
+    {
+      "phraseType": "",
+      "text": "employees",
+      "posTags": [
+        [
+          "employees",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-field",
+        "text": "Employee ID",
+        "posTags": [
+          [
+            "Employee",
+            "NNP"
+          ],
+          [
+            "ID",
+            "NNP"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": ""
+      },
+      "closestMatchSimilarity": 1,
+      "greatMatches": [
+        {
+          "phraseType": "info-field",
+          "text": "Employee ID",
+          "posTags": [
+            [
+              "Employee",
+              "NNP"
+            ],
+            [
+              "ID",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        },
+        {
+          "phraseType": "info-field",
+          "text": "Employee Name",
+          "posTags": [
+            [
+              "Employee",
+              "NN"
+            ],
+            [
+              "Name",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        }
+      ],
+      "unStoppedText": "for employees",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "",
+      "text": "bs degree",
+      "posTags": [
+        [
+          "bs",
+          "NN"
+        ],
+        [
+          "degree",
+          "NN"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "BS",
+        "posTags": [
+          [
+            "BS",
+            "NN"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": "Education"
+      },
+      "closestMatchSimilarity": 2,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "BS",
+          "posTags": [
+            [
+              "BS",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        },
+        {
+          "phraseType": "info-field",
+          "text": "Job Level",
+          "posTags": [
+            [
+              "Job",
+              "NNP"
+            ],
+            [
+              "Level",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        },
+        {
+          "phraseType": "info-value",
+          "text": "High School",
+          "posTags": [
+            [
+              "High",
+              "JJ"
+            ],
+            [
+              "School",
+              "NNP"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Quality",
+          "posTags": [
+            [
+              "Quality",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Job Family"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "Associate",
+          "posTags": [
+            [
+              "Associate",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        },
+        {
+          "phraseType": "info-value",
+          "text": "ASSOCIATE",
+          "posTags": [
+            [
+              "ASSOCIATE",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "greatMatches": [],
+          "unStoppedText": "",
+          "parentFieldName": "Education"
+        }
+      ],
+      "unStoppedText": "with a bs degree",
+      "parentFieldName": ""
+    }
+  ],
+  "subjects": [
+    {
+      "phraseType": "",
+      "text": "salary",
+      "posTags": [
+        [
+          "salary",
+          "NN"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-field",
+        "text": "Compensation (Monthly)",
+        "posTags": [
+          [
+            "Compensation",
+            "NN"
+          ],
+          [
+            "(",
+            "("
+          ],
+          [
+            "Monthly",
+            "NNP"
+          ],
+          [
+            ")",
+            ")"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "greatMatches": [],
+        "unStoppedText": "",
+        "parentFieldName": ""
+      },
+      "closestMatchSimilarity": 0.8,
+      "greatMatches": [],
+      "unStoppedText": "salary",
+      "parentFieldName": ""
+    }
+  ],
+  "queryType": {
+    "type": "average",
+    "term": "average"
+  }
+}
