@@ -330,6 +330,8 @@ def stop_lexicon(lexObjects):
         for w in lex.posTags:
             if w[0] not in stopWords:
                 filteredLexTags.append(w)
+        if not lex.text: #if there is nothing left after removing stop words, remove the whole lexicon
+            lexObjects.remove(lex)
         lex.posTags = filteredLexTags
 
 def deduplicate_word_list(lexObjects):
