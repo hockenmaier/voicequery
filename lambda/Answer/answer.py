@@ -117,12 +117,12 @@ def filter_by_lex(context, lexicon):
             # print('this one didnt find anything decent: ' + lex['text'] + ': ' + str(lex['closestMatchSimilarity']))
     
 def average(context):
-    chosenSub = prepareForMath(context)
+    chosenField = prepareForMath(context)
     if (len(context.df) == 0):
         return 'I couldn\'t do an average because no records matched the conditions in your question'
-    if isinstance(chosenSub, str):
-        return chosenSub #return String errors that were returned
-    return context.df[chosenSub['closestMatch']['text']].mean()
+    if isinstance(chosenField, str):
+        return chosenField #return String errors that were returned
+    return context.df[chosenField['text']].mean()
 
 def prepareForMath(context):
     conditions = context.parseObject['conditions']
@@ -130,10 +130,11 @@ def prepareForMath(context):
     subjects = context.parseObject['subjects']
     numericSubs = get_numeric_lex(context,subjects)
     if numericSubs:
-        chosenSub = numericSubs[0] #the first numberic subject is the one we will do math on
+        chosenSub = numericSubs[0]['sub'] #the first numberic subject is the one we will do math on
+        chosenField = numericSubs[0]['field']
     else:
         return "I can't find any numeric subjects in your question to average"
-    context.workToShow += show_work("The numeric subject chosen for math is: " + chosenSub['text'] + " with column: " + chosenSub['closestMatch']['text'])
+    context.workToShow += show_work("The numeric subject chosen for math is: " + chosenSub['text'] + " with column: " + chosenField['text'])
     subjects.remove(chosenSub)
     filter_by_lex(context,subjects) #all other subjects than the first treated as filters
     return chosenSub
@@ -141,20 +142,18 @@ def prepareForMath(context):
 def get_numeric_lex(context,lexicon):
     numericLex = []
     print('getting numeric text')
-    # print(str(lexicon))
     for lex in lexicon:
-        # print(lex['text'])
         if (lex['closestMatch']):
             if (lex['closestMatch']['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
-                # print(lex['closestMatch']['text'])
-                # print(context.df[lex['closestMatch']['text']])
-                # print(context.df[lex['closestMatch']['text']].dtype)
                 if np.issubdtype(context.df[lex['closestMatch']['text']].dtype, np.number): #check if column is numeric
-                    context.workToShow += show_work("Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
-                    numericLex.append(lex)
-        # elif (lex['greatMatches']):
-        #     for match in lex['greatMatches']:
-        #         #TODO append first lex great match that is numeric
+                    context.workToShow += show_work("ClosestMatch Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
+                    numericLex.append({'sub': lex, 'field': lex['closestMatch'],'matchtype': 'closestMatch'})
+        elif (lex['greatMatches']):
+            for match in lex['greatMatches']:
+                if (match['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
+                    if np.issubdtype(context.df[match['text']].dtype, np.number): #check if column is numeric
+                        context.workToShow += show_work("GreatMatch Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
+                        numericLex.append({'sub': lex, 'field': match,'matchtype': 'greatMatch'})
                 
     return numericLex
 

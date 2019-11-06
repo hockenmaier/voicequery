@@ -269,8 +269,8 @@ def findAndFilterQueryTerms(query, posTaggedQuery, conditions, subjects):
     
     medianQueryTerms = ['median']
     sumQueryTerms = ['add', 'sum', 'total']
-    maxQueryTerms = ['biggest', 'largest', 'max','maximum']
-    minQueryTerms = ['min', 'minimum', 'smallest']
+    maxQueryTerms = ['biggest', 'largest', 'max','maximum', 'highest']
+    minQueryTerms = ['min', 'minimum', 'smallest', 'lowest']
     aveQueryTerms = ['mean', 'average']
     countQueryTerms = ['number','count','how many']
     allQueryTerms = medianQueryTerms + sumQueryTerms + maxQueryTerms + minQueryTerms + aveQueryTerms + countQueryTerms
@@ -542,6 +542,10 @@ def storeQuery(table, queryID, query, parseTree, workspace):
 def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType):
     reducedPhraseList = []
     for phrase in phraseAndPOSList:
+        print('here are the values being sent to dynamo for scan:')
+        print(phrase.text)
+        print(workspace)
+        print(lexType)
         foundItems = table.scan(
             FilterExpression=Key('text').eq(phrase.text) & Key('workspace').eq(workspace) & Key('query_part').eq(lexType)
         )
@@ -565,7 +569,8 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,"How many visitors came on the lot during the month of May 2019?")
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
 # parse_query(None,'How many engineers did we hire in 2018?')
-parse_query(None,'How many people in the operations division have their doctorates?')
+# parse_query(None,'How many people in the operations division have their doctorates?')
+parse_query(None,'What is the average salary of people in the operations division that have their doctorates?')
 # parse_query(None,'Tell me the count of female managers in the engineering organization')
 # parse_query(None,'How many of the managers in engineering are women?')
 # parse_query(None,'Count the number of employees with more than 10 years with the company')
