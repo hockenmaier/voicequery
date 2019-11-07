@@ -18,6 +18,9 @@ import timex_mod
 # from nltk.internals import find_jars_within_path
 # from nltk.tag.stanford import StanfordPOSTagger
 # from nltk.tag.senna import SennaTagger
+from nltk.corpus import wordnet_ic
+brown_ic = wordnet_ic.ic('ic-brown.dat')
+semcor_ic = wordnet_ic.ic('ic-semcor.dat')
 
 def lambda_handler(event, context):
     jsonData = parse_query(event, event['query'])
@@ -353,17 +356,17 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
             for lexSyn in lexSynList: #---Iterate through each synonym list of the word at hand
                 for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
                     # print('Comparing to: ' + dataPack.text)
-                    if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
-                        matchStringLenth = min(len(dataPack.text),len(lex.text))
-                        if matchStringLenth > maxSimilarity:
-                            lex.closestMatch = dataPack
-                            lex.closestMatchSimilarity = matchStringLenth
-                            maxSimilarity = matchStringLenth
+                    # if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
+                    #     matchStringLenth = min(len(dataPack.text),len(lex.text))
+                    #     if matchStringLenth > maxSimilarity:
+                    #         lex.closestMatch = dataPack
+                    #         lex.closestMatchSimilarity = matchStringLenth
+                    #         maxSimilarity = matchStringLenth
                         # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
                     for dataSynList in dataPack.synsets: #---Iterate through the list of synset lists (each list pertaining to the word in the field value, if multiple words)
                         for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
                             # print(str(dataSyn))
-                            similarity = lexSyn.wup_similarity(dataSyn)
+                            similarity = lexSyn.res_similarity(dataSyn,semcor_ic)
                             # if dataPack.text == 'Female':
                             #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
                             if similarity:
