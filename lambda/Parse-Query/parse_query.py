@@ -362,16 +362,12 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
             for lexSyn in lexSynList: #---Iterate through each synonym list of the word at hand
                 for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
                     # print('Comparing to: ' + dataPack.text)
-                    if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
+                    maxDataPackSimilarity = 0
+                    dataPacksMatched = []
+                    if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length x a multiplier instead of similarity
                         matchStringLenth = min(len(dataPack.text),len(lex.text))
-                        if matchStringLenth > maxSimilarity:
-                            stringMatchSimilarity = matchStringLenth * 5
-                            newDataPack = copy.copy(dataPack)
-                            newDataPack.parentLexMatchSimilarity = stringMatchSimilarity
-                            lex.closestMatch = newDataPack
-                            lex.greatMatches.append(newDataPack)
-                            lex.closestMatchSimilarity = matchStringLenth
-                            maxSimilarity = matchStringLenth
+                        stringMatchSimilarity = matchStringLenth * 5
+                        maxSimilarity = addToMatches(dataPack,lex,stringMatchSimilarity,dataPacksMatched,maxSimilarity)
                         # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
                     for dataSynList in dataPack.synsets: #---Iterate through the list of synset lists (each list pertaining to the word in the field value, if multiple words)
                         for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
@@ -382,16 +378,25 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
                             # if dataPack.text == 'Female':
                             #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
                             if similarity:
-                                if similarity > maxSimilarity:
-                                    lex.closestMatch = copy.copy(dataPack)
-                                    lex.closestMatchSimilarity = similarity
-                                    lex.closestMatch.parentLexMatchSimilarity = similarity
-                                    maxSimilarity = similarity
-                                if similarity > 8:
-                                    if dataPack not in lex.greatMatches:
-                                        newDataPack = copy.copy(dataPack)
-                                        newDataPack.parentLexMatchSimilarity = similarity
-                                        lex.greatMatches.append(newDataPack)
+                                maxSimilarity = addToMatches(dataPack,lex,similarity,dataPacksMatched,maxSimilarity)
+
+def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity):
+    # print(dataPacksMatched)
+    if dataPack.text not in dataPacksMatched:
+        if similarity > 8:
+            newDataPack = copy.copy(dataPack)
+            newDataPack.parentLexMatchSimilarity = similarity
+            lex.greatMatches.append(newDataPack)
+            dataPacksMatched.append(dataPack.text)
+    else:
+        print(dataPack.text + ' is already in the datapack match list and similarity is: ' + str(similarity))
+    if similarity > maxSimilarity:
+        lex.closestMatch = copy.copy(dataPack)
+        lex.closestMatchSimilarity = similarity
+        lex.closestMatch.parentLexMatchSimilarity = similarity
+        maxSimilarity = similarity
+    return maxSimilarity
+        
 
 class PhraseAndPOS:
     def __init__(self):
