@@ -358,27 +358,27 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
         # print('[LEXICON] finding field value similarities for: ' + lex.text)
         maxSimilarity = 0
         append_phrase_and_word_synsets(lex)
-        for lexSynList in lex.synsets: #---Iterate through each synonym list of the word at hand
-            for lexSyn in lexSynList: #---Iterate through each synonym list of the word at hand
-                for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
-                    # print('Comparing to: ' + dataPack.text)
-                    maxDataPackSimilarity = 0
-                    dataPacksMatched = []
-                    if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length x a multiplier instead of similarity
-                        matchStringLenth = min(len(dataPack.text),len(lex.text))
-                        stringMatchSimilarity = matchStringLenth * 5
-                        maxSimilarity = addToMatches(dataPack,lex,stringMatchSimilarity,dataPacksMatched,maxSimilarity)
-                        # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
-                    for dataSynList in dataPack.synsets: #---Iterate through the list of synset lists (each list pertaining to the word in the field value, if multiple words)
+        for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
+            # print('Comparing to: ' + dataPack.text)
+            maxDataPackSimilarity = 0
+            dataPacksMatched = []
+            if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length x a multiplier instead of similarity
+                matchStringLenth = min(len(dataPack.text),len(lex.text))
+                stringMatchSimilarity = matchStringLenth * 5
+                maxSimilarity = addToMatches(dataPack,lex,stringMatchSimilarity,dataPacksMatched,maxSimilarity)
+                # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
+            for lexSynList in lex.synsets: #---Iterate through each synonym set list of the lexicon at hand
+                for lexSyn in lexSynList: #---Iterate through each synonym set of the lexicon at hand
+                    for dataSynList in dataPack.synsets: #---Iterate through the list of data field synset lists (each list pertaining to the word in the field value, if multiple words)
                         for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
-                            # print(str(dataSyn))
                             similarity = 0
                             if(lexSyn.pos() == dataSyn.pos()):
                                 similarity = lexSyn.res_similarity(dataSyn,semcor_ic)
-                            # if dataPack.text == 'Female':
-                            #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
                             if similarity:
                                 maxSimilarity = addToMatches(dataPack,lex,similarity,dataPacksMatched,maxSimilarity)
+                            # print(str(dataSyn))
+                            # if dataPack.text == 'Female':
+                            #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
 
 def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity):
     # print(dataPacksMatched)
@@ -388,8 +388,6 @@ def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity):
             newDataPack.parentLexMatchSimilarity = similarity
             lex.greatMatches.append(newDataPack)
             dataPacksMatched.append(dataPack.text)
-    else:
-        print(dataPack.text + ' is already in the datapack match list and similarity is: ' + str(similarity))
     if similarity > maxSimilarity:
         lex.closestMatch = copy.copy(dataPack)
         lex.closestMatchSimilarity = similarity
