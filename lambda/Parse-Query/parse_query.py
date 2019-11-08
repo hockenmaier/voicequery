@@ -4,6 +4,9 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 from nltk.corpus import wordnet
+from nltk.corpus import wordnet_ic
+# brown_ic = wordnet_ic.ic('ic-brown.dat')
+semcor_ic = wordnet_ic.ic('ic-semcor.dat')
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
@@ -14,13 +17,11 @@ import contextlib, io
 # sys.path.append(os.path.abspath("/nltk_contrib"))
 import timex_mod
 # import jsonpickle
-# import copy
+import copy
 # from nltk.internals import find_jars_within_path
 # from nltk.tag.stanford import StanfordPOSTagger
 # from nltk.tag.senna import SennaTagger
-from nltk.corpus import wordnet_ic
-brown_ic = wordnet_ic.ic('ic-brown.dat')
-semcor_ic = wordnet_ic.ic('ic-semcor.dat')
+
 
 def lambda_handler(event, context):
     jsonData = parse_query(event, event['query'])
@@ -139,14 +140,17 @@ def printPhraseObj(obj):
     print('Phrase Type: ' + str(obj.phraseType))
     print('POS Tags: ' + str(obj.posTags))
     print('Synsets: ' + str(obj.synsets))
+    print('Closest Match Similarity: ' + str(obj.closestMatchSimilarity))
+    print('Parent Lexicon Match Similarity: ' + str(obj.parentLexMatchSimilarity))
+    print('Unstopped Text: ' + str(obj.unStoppedText))
     if obj.closestMatch:
         print('~~~~~~~Closest Match Found~~~~~~~')
         printPhraseObj(obj.closestMatch)
-    print('similarity: ' + str(obj.closestMatchSimilarity))
-    print('Great Matches Found:')
-    for match in obj.greatMatches:
-        print('Great Match: ' + match.text)
-    print('Unstopped Text: ' + str(obj.unStoppedText))
+    
+    if obj.greatMatches:
+        print('~~~Great Matches Found~~~')
+        for match in obj.greatMatches:
+            printPhraseObj(match)
     if (obj.phraseType == 'condition')|(obj.phraseType == 'subject'):
         print('^------------------END LEXICON------------------^ ' + obj.text)
     else:
@@ -356,27 +360,36 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
             for lexSyn in lexSynList: #---Iterate through each synonym list of the word at hand
                 for dataPack in dataSynsetPacks: #---Iterate through each data field or value available
                     # print('Comparing to: ' + dataPack.text)
-                    # if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
-                    #     matchStringLenth = min(len(dataPack.text),len(lex.text))
-                    #     if matchStringLenth > maxSimilarity:
-                    #         lex.closestMatch = dataPack
-                    #         lex.closestMatchSimilarity = matchStringLenth
-                    #         maxSimilarity = matchStringLenth
+                    if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length instead of similarity
+                        matchStringLenth = min(len(dataPack.text),len(lex.text))
+                        if matchStringLenth > maxSimilarity:
+                            stringMatchSimilarity = matchStringLenth * 5
+                            newDataPack = copy.copy(dataPack)
+                            newDataPack.parentLexMatchSimilarity = stringMatchSimilarity
+                            lex.closestMatch = newDataPack
+                            lex.greatMatches.append(newDataPack)
+                            lex.closestMatchSimilarity = matchStringLenth
+                            maxSimilarity = matchStringLenth
                         # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
                     for dataSynList in dataPack.synsets: #---Iterate through the list of synset lists (each list pertaining to the word in the field value, if multiple words)
                         for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
                             # print(str(dataSyn))
-                            similarity = lexSyn.res_similarity(dataSyn,semcor_ic)
+                            similarity = 0
+                            if(lexSyn.pos() == dataSyn.pos()):
+                                similarity = lexSyn.res_similarity(dataSyn,semcor_ic)
                             # if dataPack.text == 'Female':
                             #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
                             if similarity:
                                 if similarity > maxSimilarity:
-                                    lex.closestMatch = dataPack
+                                    lex.closestMatch = copy.copy(dataPack)
                                     lex.closestMatchSimilarity = similarity
+                                    lex.closestMatch.parentLexMatchSimilarity = similarity
                                     maxSimilarity = similarity
-                                if similarity > .9:
+                                if similarity > 8:
                                     if dataPack not in lex.greatMatches:
-                                        lex.greatMatches.append(dataPack)
+                                        newDataPack = copy.copy(dataPack)
+                                        newDataPack.parentLexMatchSimilarity = similarity
+                                        lex.greatMatches.append(newDataPack)
 
 class PhraseAndPOS:
     def __init__(self):
@@ -386,6 +399,7 @@ class PhraseAndPOS:
         self.synsets = []
         self.closestMatch = None
         self.closestMatchSimilarity = 0
+        self.parentLexMatchSimilarity = 0
         self.greatMatches = []
         self.unStoppedText = ''
         self.parentFieldName = ''
@@ -398,6 +412,7 @@ class PhraseAndPOS:
         if self.closestMatch:
             data['closestMatch'] = self.closestMatch.toJSON()
         data['closestMatchSimilarity'] = self.closestMatchSimilarity
+        data['parentLexMatchSimilarity'] = self.parentLexMatchSimilarity
         data['greatMatches'] = []
         for match in self.greatMatches:
             data['greatMatches'].append(match.toJSON())
