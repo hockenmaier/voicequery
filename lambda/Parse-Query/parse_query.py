@@ -144,10 +144,12 @@ def printPhraseObj(obj):
     print('Parent Lexicon Match Similarity: ' + str(obj.parentLexMatchSimilarity))
     print('Unstopped Text: ' + str(obj.unStoppedText))
     if obj.closestMatch:
+        print('')
         print('~~~~~~~Closest Match Found~~~~~~~')
         printPhraseObj(obj.closestMatch)
     
     if obj.greatMatches:
+        print('')
         print('~~~Great Matches Found~~~')
         for match in obj.greatMatches:
             printPhraseObj(match)
