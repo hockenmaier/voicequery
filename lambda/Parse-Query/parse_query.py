@@ -6,7 +6,6 @@ from nltk.tokenize.treebank import TreebankWordDetokenizer
 from nltk.corpus import wordnet
 from nltk.corpus import wordnet_ic
 # brown_ic = wordnet_ic.ic('ic-brown.dat')
-semcor_ic = wordnet_ic.ic('ic-semcor.dat')
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
@@ -205,6 +204,7 @@ def setup_nltk_data():
     nltk.download('maxent_treebank_pos_tagger', download_dir='/tmp/nltk_data')
     nltk.download('stopwords', download_dir='/tmp/nltk_data')
     nltk.download('wordnet', download_dir='/tmp/nltk_data')
+    nltk.download('wordnet_ic', download_dir='/tmp/nltk_data')
 
 def timexTag(text):
     newText = timex_mod.tag(text)
@@ -354,6 +354,8 @@ def deduplicate_word_list(lexObjects):
 
 def get_most_similar_info(lexObjects,dataSynsetPacks):
     # printPhraseObjState(dataSynsetPacks)
+    semcor_ic = wordnet_ic.ic('ic-semcor.dat')
+    # brown_ic = wordnet_ic.ic('ic-brown.dat')
     for lex in lexObjects: #---Iterate through condition or subject phrases
         # print('[LEXICON] finding field value similarities for: ' + lex.text)
         maxSimilarity = 0
@@ -371,12 +373,15 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
                 for lexSyn in lexSynList: #---Iterate through each synonym set of the lexicon at hand
                     for dataSynList in dataPack.synsets: #---Iterate through the list of data field synset lists (each list pertaining to the word in the field value, if multiple words)
                         for dataSyn in dataSynList: #---This is where we do the work.  Iterate through each data synonym and compare its similarity with the condition/subject synonym at hand
+                            # print(str(dataSyn))
+                            # print(str(lexSyn))
                             similarity = 0
                             if(lexSyn.pos() == dataSyn.pos()):
-                                similarity = lexSyn.res_similarity(dataSyn,semcor_ic)
+                                if ((lexSyn.pos() != 's') & (lexSyn.pos() != 'a')):
+                                    similarity = lexSyn.res_similarity(dataSyn,semcor_ic)
                             if similarity:
                                 maxSimilarity = addToMatches(dataPack,lex,similarity,dataPacksMatched,maxSimilarity)
-                            # print(str(dataSyn))
+                            
                             # if dataPack.text == 'Female':
                             #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
 
@@ -591,7 +596,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
 # parse_query(None,'How many engineers did we hire in 2018?')
 # parse_query(None,'How many people in the operations division have their doctorates?')
-parse_query(None,'What is the average salary of people in the operations division that have their doctorates?')
+# parse_query(None,'What is the average salary of people in the operations division that have their doctorates?')
 # parse_query(None,'Tell me the count of female managers in the engineering organization')
 # parse_query(None,'How many of the managers in engineering are women?')
 # parse_query(None,'Count the number of employees with more than 10 years with the company')
@@ -599,7 +604,7 @@ parse_query(None,'What is the average salary of people in the operations divisio
 # parse_query(None,'What is the average tenure of female managers?')
 # parse_query(None,'How many employees are male?')
 # parse_query(None,'How many entry-level employees are in the engineering department?')
-# parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
+parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
 # parse_query(None, 'What is the average salary of managers in the quality department who have MS degrees?')
 
 # parse_query(None,'How many employees with high school education where hired before May 2012?')
