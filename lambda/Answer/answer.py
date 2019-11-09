@@ -112,7 +112,7 @@ def filter_by_lex(context, lexicon):
                 isValue =  context.df[fieldName]==fieldValue
                 context.df = context.df[isValue]
                 # print('length after filter = ' + str(len(df)))
-                context.workToShow += show_work("Applying filter on field " + fieldName + " for unique value: " + fieldValue + ". Length is now: " + str(len(context.df)))
+                context.workToShow += show_work("Applying filter on field " + fieldName + " for unique value: " + fieldValue + ". Number of records is now: " + str(len(context.df)))
         else:
             context.workToShow += show_work("No good matches found for " + lex['phraseType'] + ' ' + lex['text'])
             # print('this one didnt find anything decent: ' + lex['text'] + ': ' + str(lex['closestMatchSimilarity']))
@@ -167,39 +167,39 @@ def get_numeric_lex(context,lexicon):
     return numericLex
 
 def minimum(context):
-    chosenSub = prepareForMath(context)
+    chosenField = prepareForMath(context)
     if (len(context.df) == 0):
         return 'I couldn\'t find a minimum because no records matched the conditions in your question'
-    if isinstance(chosenSub, str):
-        return chosenSub
-    return context.df[chosenSub['closestMatch']['text']].min()
+    if isinstance(chosenField, str):
+        return chosenField
+    return context.df[chosenField['text']].min()
 
 def maximum(context):
-    chosenSub = prepareForMath(context)
+    chosenField = prepareForMath(context)
     if (len(context.df) == 0):
         return 'I couldn\'t find a maximum because no records matched the conditions in your question'
-    if isinstance(chosenSub, str):
-        return chosenSub
-    return context.df[chosenSub['closestMatch']['text']].max()
+    if isinstance(chosenField, str):
+        return chosenField
+    return context.df[chosenField['text']].max()
     
 def summation(context):
-    chosenSub = prepareForMath(context)
+    chosenField = prepareForMath(context)
     if (len(context.df) == 0):
         return 'I couldn\'t add anything because no records matched the conditions in your question'
-    if isinstance(chosenSub, str):
-        return chosenSub
-    return context.df[chosenSub['closestMatch']['text']].sum()
+    if isinstance(chosenField, str):
+        return chosenField
+    return context.df[chosenField['text']].sum()
 
 def median(context):
-    chosenSub = prepareForMath(context)
+    chosenField = prepareForMath(context)
     if (len(context.df) == 0):
         return 'I couldn\'t find the median because no records matched the conditions in your question'
-    if isinstance(chosenSub, str):
-        return chosenSub
-    return context.df[chosenSub['closestMatch']['text']].median()
+    if isinstance(chosenField, str):
+        return chosenField
+    return context.df[chosenField['text']].median()
     
 # with open('test_payloads/test_average10-21-19.json') as f:
-with open('test_payloads/test4.json') as f:
+with open('test_payloads/test5.json') as f:
     data = json.load(f)
     answer(data)
 

@@ -606,7 +606,8 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'How many entry-level employees are in the engineering department?')
 # parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
 # parse_query(None, 'What is the average salary of managers in the quality department who have MS degrees?')
-parse_query(None,'what is the average tenure of managers who are women with a high school degree?')
+# parse_query(None,'what is the average tenure of managers who are women with a high school degree?')
+parse_query(None,'what\'s the median tenure of employees in sales?')
 
 # parse_query(None,'How many employees with high school education where hired before May 2012?')
 # parse_query(None,'How many employees with high school education were hired this year?')

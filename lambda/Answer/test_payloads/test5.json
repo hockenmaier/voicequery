@@ -1,0 +1,233 @@
+{
+  "workspace": "1",
+  "query": "what's the median tenure of employees in sales?",
+  "parseTree": [
+    [
+      [
+        "what",
+        "WP"
+      ]
+    ],
+    [
+      "'s",
+      "VBZ"
+    ],
+    [
+      "the",
+      "DT"
+    ],
+    [
+      [
+        "median",
+        "JJ"
+      ],
+      [
+        [
+          "tenure",
+          "NN"
+        ]
+      ]
+    ],
+    [
+      [
+        "of",
+        "IN"
+      ],
+      [
+        [
+          "employees",
+          "NNS"
+        ]
+      ]
+    ],
+    [
+      [
+        "in",
+        "IN"
+      ],
+      [
+        [
+          "sales",
+          "NNS"
+        ]
+      ]
+    ],
+    [
+      "?",
+      "."
+    ]
+  ],
+  "conditions": [
+    {
+      "phraseType": "condition",
+      "text": "employees",
+      "posTags": [
+        [
+          "employees",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-field",
+        "text": "Employee Name",
+        "posTags": [
+          [
+            "Employee",
+            "NNP"
+          ],
+          [
+            "Name",
+            "NNP"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "parentLexMatchSimilarity": 6.6299614115943,
+        "greatMatches": [
+          
+        ],
+        "unStoppedText": "",
+        "parentFieldName": ""
+      },
+      "closestMatchSimilarity": 6.6299614115943,
+      "parentLexMatchSimilarity": 0,
+      "greatMatches": [
+        
+      ],
+      "unStoppedText": "of employees",
+      "parentFieldName": ""
+    },
+    {
+      "phraseType": "condition",
+      "text": "sales",
+      "posTags": [
+        [
+          "sales",
+          "NNS"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-value",
+        "text": "Sales",
+        "posTags": [
+          [
+            "Sales",
+            "NNS"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "parentLexMatchSimilarity": 1.0e+300,
+        "greatMatches": [
+          
+        ],
+        "unStoppedText": "",
+        "parentFieldName": "Business Function"
+      },
+      "closestMatchSimilarity": 1.0e+300,
+      "parentLexMatchSimilarity": 0,
+      "greatMatches": [
+        {
+          "phraseType": "info-value",
+          "text": "Sales",
+          "posTags": [
+            [
+              "Sales",
+              "NNS"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "parentLexMatchSimilarity": 25,
+          "greatMatches": [
+            
+          ],
+          "unStoppedText": "",
+          "parentFieldName": "Business Function"
+        }
+      ],
+      "unStoppedText": "in sales",
+      "parentFieldName": ""
+    }
+  ],
+  "subjects": [
+    {
+      "phraseType": "subject",
+      "text": "tenure",
+      "posTags": [
+        [
+          "tenure",
+          "NN"
+        ]
+      ],
+      "closestMatch": {
+        "phraseType": "info-field",
+        "text": "Tenure",
+        "posTags": [
+          [
+            "Tenure",
+            "NN"
+          ]
+        ],
+        "closestMatch": null,
+        "closestMatchSimilarity": 0,
+        "parentLexMatchSimilarity": 1.0e+300,
+        "greatMatches": [
+          
+        ],
+        "unStoppedText": "",
+        "parentFieldName": ""
+      },
+      "closestMatchSimilarity": 1.0e+300,
+      "parentLexMatchSimilarity": 0,
+      "greatMatches": [
+        {
+          "phraseType": "info-field",
+          "text": "Tenure",
+          "posTags": [
+            [
+              "Tenure",
+              "NN"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "parentLexMatchSimilarity": 30,
+          "greatMatches": [
+            
+          ],
+          "unStoppedText": "",
+          "parentFieldName": ""
+        },
+        {
+          "phraseType": "info-value",
+          "text": "life event",
+          "posTags": [
+            [
+              "life",
+              "NN"
+            ],
+            [
+              "event",
+              "VBD"
+            ]
+          ],
+          "closestMatch": null,
+          "closestMatchSimilarity": 0,
+          "parentLexMatchSimilarity": 8.6302656327154,
+          "greatMatches": [
+            
+          ],
+          "unStoppedText": "",
+          "parentFieldName": "Notes"
+        }
+      ],
+      "unStoppedText": "tenure",
+      "parentFieldName": ""
+    }
+  ],
+  "queryType": {
+    "type": "median",
+    "term": "median"
+  }
+}
