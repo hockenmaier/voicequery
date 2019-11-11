@@ -142,6 +142,10 @@ def printPhraseObj(obj):
     print('Closest Match Similarity: ' + str(obj.closestMatchSimilarity))
     print('Parent Lexicon Match Similarity: ' + str(obj.parentLexMatchSimilarity))
     print('Unstopped Text: ' + str(obj.unStoppedText))
+    print('parentLexMatchLexSynset: ' + str(obj.parentLexMatchLexSynset))
+    print('parentLexMatchDataSynset: ' + str(obj.parentLexMatchDataSynset))
+    print('parentLexMatchLCS: ' + str(obj.parentLexMatchLCS))
+    
     if obj.closestMatch:
         print('')
         print('~~~~~~~Closest Match Found~~~~~~~')
@@ -367,7 +371,7 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
             if (dataPack.text.lower() in lex.text.lower() or lex.text.lower() in dataPack.text.lower()): # If text matches exactly, we use matching length x a multiplier instead of similarity
                 matchStringLenth = min(len(dataPack.text),len(lex.text))
                 stringMatchSimilarity = matchStringLenth * 5
-                maxSimilarity = addToMatches(dataPack,lex,stringMatchSimilarity,dataPacksMatched,maxSimilarity)
+                maxSimilarity = addToMatches(dataPack,lex,stringMatchSimilarity,dataPacksMatched,maxSimilarity,None,None)
                 # print('found text exactness for: ' + lex.text + ' and ' + dataPack.text)
             for lexSynList in lex.synsets: #---Iterate through each synonym set list of the lexicon at hand
                 for lexSyn in lexSynList: #---Iterate through each synonym set of the lexicon at hand
@@ -380,26 +384,46 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
                                 if ((lexSyn.pos() != 's') & (lexSyn.pos() != 'a') & (lexSyn.pos() != 'r')):
                                     similarity = lexSyn.res_similarity(dataSyn,semcor_ic)
                             if similarity:
-                                maxSimilarity = addToMatches(dataPack,lex,similarity,dataPacksMatched,maxSimilarity)
+                                maxSimilarity = addToMatches(dataPack,lex,similarity,dataPacksMatched,maxSimilarity,dataSyn,lexSyn)
                             
                             # if dataPack.text == 'Female':
                             #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
 
-def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity):
+def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity,dataSyn,lexSyn):
     # print(dataPacksMatched)
+    isGreatMatch,isClosestMatch,isWordNetMatch = False,False,False
     if dataPack.text not in dataPacksMatched:
         if similarity > 8:
-            newDataPack = copy.copy(dataPack)
-            newDataPack.parentLexMatchSimilarity = similarity
+            isGreatMatch = True
+    if similarity > maxSimilarity:
+        isClosestMatch = True
+    if dataSyn:
+        isWordNetMatch = True
+        
+    if isClosestMatch|isGreatMatch:
+        newDataPack = copy.copy(dataPack)
+        newDataPack.parentLexMatchSimilarity = similarity
+        if isWordNetMatch:
+            lcs = get_lcs(dataSyn,lexSyn)
+            newDataPack.parentLexMatchDataSynset = dataSyn
+            newDataPack.parentLexMatchLexSynset = lexSyn
+            newDataPack.parentLexMatchLCS = lcs
+        if isGreatMatch:
             lex.greatMatches.append(newDataPack)
             dataPacksMatched.append(dataPack.text)
-    if similarity > maxSimilarity:
-        lex.closestMatch = copy.copy(dataPack)
-        lex.closestMatchSimilarity = similarity
-        lex.closestMatch.parentLexMatchSimilarity = similarity
-        maxSimilarity = similarity
+        if isClosestMatch:
+            lex.closestMatchSimilarity = similarity
+            lex.closestMatch = newDataPack
+            maxSimilarity = similarity
     return maxSimilarity
-        
+
+def get_lcs(dataSyn,lexSyn):
+    sortedHypernyms = dataSyn.lowest_common_hypernyms(lexSyn)
+    # print('New Closest Match')
+    # print('data Synset: ' + str(dataSyn))
+    # print('lex Synset: ' + str(lexSyn))
+    # print(sortedHypernyms)
+    return sortedHypernyms[0]
 
 class PhraseAndPOS:
     def __init__(self):
@@ -413,6 +437,9 @@ class PhraseAndPOS:
         self.greatMatches = []
         self.unStoppedText = ''
         self.parentFieldName = ''
+        self.parentLexMatchLexSynset = None
+        self.parentLexMatchDataSynset = None
+        self.parentLexMatchLCS = None
     def toJSON(self):
         data = {}
         data['phraseType'] = self.phraseType
@@ -596,7 +623,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
 # parse_query(None,'How many engineers did we hire in 2018?')
 # parse_query(None,'How many people in the operations division have their doctorates?')
-# parse_query(None,'What is the average salary of people in the operations division that have their doctorates?')
+parse_query(None,'What is the average salary of people in the operations division that have their doctorates?')
 # parse_query(None,'Tell me the count of female managers in the engineering organization')
 # parse_query(None,'How many of the managers in engineering are women?')
 # parse_query(None,'Count the number of employees with more than 10 years with the company')
@@ -607,7 +634,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
 # parse_query(None, 'What is the average salary of managers in the quality department who have MS degrees?')
 # parse_query(None,'what is the average tenure of managers who are women with a high school degree?')
-parse_query(None,'what\'s the median tenure of employees in sales?')
+# parse_query(None,'what\'s the median tenure of employees in sales?')
 
 # parse_query(None,'How many employees with high school education where hired before May 2012?')
 # parse_query(None,'How many employees with high school education were hired this year?')
