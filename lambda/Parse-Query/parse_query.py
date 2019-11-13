@@ -211,8 +211,11 @@ def setup_nltk_data():
     nltk.download('wordnet_ic', download_dir='/tmp/nltk_data')
 
 def timexTag(text):
-    newText = timex_mod.tag(text)
-    return newText
+    # timex_mod.demo()
+    tagText = timex_mod.tag(text)
+    print(tagText)
+    groundText = timex_mod.ground(tagText,datetime.datetime.today())
+    return groundText
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
@@ -623,7 +626,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
 # parse_query(None,'How many engineers did we hire in 2018?')
 # parse_query(None,'How many people in the operations division have their doctorates?')
-parse_query(None,'What is the average salary of people in the operations division that have their doctorates?')
+# parse_query(None,'What is the average salary of people in the operations division that have their doctorates?')
 # parse_query(None,'Tell me the count of female managers in the engineering organization')
 # parse_query(None,'How many of the managers in engineering are women?')
 # parse_query(None,'Count the number of employees with more than 10 years with the company')
@@ -639,6 +642,6 @@ parse_query(None,'What is the average salary of people in the operations divisio
 # parse_query(None,'How many employees with high school education where hired before May 2012?')
 # parse_query(None,'How many employees with high school education were hired this year?')
 # parse_query(None,'Last quarter, how many employees with high school education were hired?')
-# parse_query(None,'How many employees with high school education were hired last april?')
+parse_query(None,'How many employees with high school education were hired last april?')
 
 
