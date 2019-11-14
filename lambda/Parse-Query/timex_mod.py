@@ -81,29 +81,29 @@ def tag(text):
 # Hash function for week days to simplify the grounding task.
 # [Mon..Sun] -> [0..6]
 hashweekdays = {
-    'Monday': 0,
-    'Tuesday': 1,
-    'Wednesday': 2,
-    'Thursday': 3,
-    'Friday': 4,
-    'Saturday': 5,
-    'Sunday': 6}
+    'monday': 0,
+    'tuesday': 1,
+    'wednesday': 2,
+    'thursday': 3,
+    'friday': 4,
+    'saturday': 5,
+    'sunday': 6}
 
 # Hash function for months to simplify the grounding task.
 # [Jan..Dec] -> [1..12]
 hashmonths = {
-    'January': 1,
-    'February': 2,
-    'March': 3,
+    'january': 1,
+    'february': 2,
+    'march': 3,
     'april': 4,
-    'May': 5,
-    'June': 6,
-    'July': 7,
-    'August': 8,
-    'September': 9,
-    'October': 10,
-    'November': 11,
-    'December': 12}
+    'may': 5,
+    'june': 6,
+    'july': 7,
+    'august': 8,
+    'september': 9,
+    'october': 10,
+    'november': 11,
+    'december': 12}
 
 # Hash number in words into the corresponding integer value
 def hashnum(number):
@@ -178,13 +178,13 @@ def ground(tagged_text, base_date):
 
     # Calculate the new date accordingly
     for timex in timex_found:
+        global month
         timex_val = 'UNKNOWN' # Default value
 
         timex_ori = timex   # Backup original timex for later substitution
 
         # If numbers are given in words, hash them into corresponding numbers.
         # eg. twenty five days ago --> 25 days ago
-        month = ''
         if re.search(numbers, timex, re.IGNORECASE):
             split_timex = re.split(r'\s(?=days?|months?|years?|weeks?)', \
                                                               timex, re.IGNORECASE)
