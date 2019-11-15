@@ -5,6 +5,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
+# from decimal import Decimal
 
 def lambda_handler(event, context):
     jsonData = read_dataset(event['workspace'])
@@ -42,6 +43,7 @@ def package_JSON(dataset, unique_value_limit):
     data['version'] = "0.0.1"
     bubbles = []
     columns = dataset.columns
+    length = len(dataset)
     
     for col in columns:
         # print('column: ' + col)
@@ -52,7 +54,9 @@ def package_JSON(dataset, unique_value_limit):
         bubble['dataType'] = map_numpy_datatypes(dataset[col].dtype)
         bubble['bubbles'] = []
         unique = dataset[col].unique()
-        bubble['unique_value_count'] = len(unique)
+        uniqueLength = len(unique)
+        bubble['unique_value_count'] = uniqueLength
+        bubble['cardinality_ratio'] = str(uniqueLength/length)
         if (len(unique) < unique_value_limit):
             for value in unique:
                 # print('unique value: ' + value)
@@ -87,6 +91,7 @@ def store_fields(jsonData, table, workspace, file_name, unique_value_limit):
                 'data_type': col['dataType'],
                 'data_set_name': file_name,
                 'unique_value_count': col['unique_value_count'],
+                'cardinality_ratio': col['cardinality_ratio'],
                 'create_time': str(datetime.datetime.now()),
                 'workspace': workspace,
                 # 'unique_values': col['bubbles'] #if col['bubbles'] else 'More than ' + str(unique_value_limit) + ' unique values',
