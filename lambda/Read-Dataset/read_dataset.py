@@ -47,16 +47,19 @@ def package_JSON(dataset, unique_value_limit):
     
     for col in columns:
         # print('column: ' + col)
+        datatype = get_datatype(dataset,col)
+        unique = dataset[col].unique()
+        uniqueLength = len(unique)
+        cardinalityRatio = uniqueLength/length
+        
         bubble = {}
         bubble['internalID'] = ""
         bubble['name'] = str(col)
         bubble['type'] = 'info-field'
-        bubble['dataType'] = map_numpy_datatypes(dataset[col].dtype)
+        bubble['dataType'] = datatype
         bubble['bubbles'] = []
-        unique = dataset[col].unique()
-        uniqueLength = len(unique)
         bubble['unique_value_count'] = uniqueLength
-        bubble['cardinality_ratio'] = str(uniqueLength/length)
+        bubble['cardinality_ratio'] = str(cardinalityRatio)
         if (len(unique) < unique_value_limit):
             for value in unique:
                 # print('unique value: ' + value)
@@ -70,6 +73,16 @@ def package_JSON(dataset, unique_value_limit):
     data['bubbles'] = bubbles
     #print(data)
     return data
+    
+def get_datatype(df,col):
+    dataType = map_numpy_datatypes(df[col].dtype)
+    if df[col].dtype == 'object':
+        try:
+            df[col] = pd.to_datetime(df[col])
+            dataType = 'datetime'
+        except ValueError:
+            pass
+    return dataType
     
 def map_numpy_datatypes(dtype):
     stringedType = str(dtype)

@@ -175,6 +175,7 @@ def ground(tagged_text, base_date):
     timex_found = timex_regex.findall(tagged_text)
     timex_found = map(lambda timex:re.sub(r'</?TIMEX2.*?>', '', timex), \
                 timex_found)
+    timexList = []
 
     # Calculate the new date accordingly
     for timex in timex_found:
@@ -344,8 +345,13 @@ def ground(tagged_text, base_date):
         # Substitute tag+timex in the text with grounded tag+timex.
         tagged_text = re.sub('<TIMEX2>' + timex_ori + '</TIMEX2>', '<TIMEX2 val=\"' \
             + timex_val + '\">' + timex_ori + '</TIMEX2>', tagged_text)
+        
+        timexList.append({
+          "text": timex_ori,
+          "value": timex_val
+        })
 
-    return tagged_text
+    return tagged_text, timexList
 
 ####
 
