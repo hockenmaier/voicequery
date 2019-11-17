@@ -45,7 +45,9 @@ def parse_query(parseObject, inputQuery):
     # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
     print('')
     print('query: ' + query)
-    print(timexTag(query))
+    print('query timex values: ' + str(timexTag(query)))
+    get_default_date_field(available_data,context)
+    print('default date: ' + str(context.defaultDate))
     
     posTaggedQuery = get_pos_tagged_phrase(query)
     parseTree = get_parse_tree(posTaggedQuery)
@@ -98,6 +100,7 @@ class contextObject:
     def __init__(self):
         self.workToShow = ''
         self.parseObject = None
+        self.defaultDate = None
         
 def create_context(parseObject):
     newContext = contextObject()
@@ -519,6 +522,21 @@ def convert_penn_to_morphy(penntag, returnNone=False):
         return morphy_tag[penntag[:2]]
     except:
         return None if returnNone else ''
+
+def get_default_date_field(available_data,context):
+    defaultDate = None
+    maxCardinality = 0
+    for dataValue in available_data:
+        if dataValue['query_part'] == 'info-field':
+            if dataValue['data_type'] == 'datetime':
+                thisCardinality = float(dataValue['cardinality_ratio'])
+                if  thisCardinality > maxCardinality:
+                    defaultDate = dataValue['text']
+                    maxCardinality = thisCardinality
+    if defaultDate:
+        context.workToShow = show_work("Found highest cardinality date field to use as default: " + str(defaultDate))
+    context.defaultDate = defaultDate
+            
 
 def call_answer(workspace, query, parseTree, conditions, subjects, queryType):
     answerLambda = boto3.client('lambda', region_name='us-west-2')
