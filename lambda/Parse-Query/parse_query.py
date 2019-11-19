@@ -42,13 +42,16 @@ def parse_query(parseObject, inputQuery):
     setup_nltk_data()
     available_data = get_workspace_data(table,workspace)
     
-    # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
     print('')
     print('query: ' + query)
-    print('query timex values: ' + str(timexTag(query)))
+    
+    # Get and set date and time variables and set them in context
+    get_timex_tags(query,context)
     get_default_date_field(available_data,context)
     print('default date: ' + str(context.defaultDate))
+    print('default date: ' + str(context.timeExpressionList))
     
+    # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
     posTaggedQuery = get_pos_tagged_phrase(query)
     parseTree = get_parse_tree(posTaggedQuery)
     prettyParseTree = prettyPrintToString(parseTree)
@@ -101,6 +104,8 @@ class contextObject:
         self.workToShow = ''
         self.parseObject = None
         self.defaultDate = None
+        self.timeExpressionString = ''
+        self.timeExpressionList = []
         
 def create_context(parseObject):
     newContext = contextObject()
@@ -213,15 +218,10 @@ def setup_nltk_data():
     nltk.download('wordnet', download_dir='/tmp/nltk_data')
     nltk.download('wordnet_ic', download_dir='/tmp/nltk_data')
 
-def timexTag(text):
-    # timex_mod.demo()
-    tagText = timex_mod.tag(text)
+def get_timex_tags(query,context):
+    tagText = timex_mod.tag(query)
     # print(tagText)
-    groundText, timexList = timex_mod.ground(tagText,datetime.datetime.today())
-    # for item in timexList:
-    #     print(item['text'])
-    #     print(item['value'])
-    return timexList
+    context.timeExpressionString, context.timeExpressionList = timex_mod.ground(tagText,datetime.datetime.today())
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
