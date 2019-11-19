@@ -57,13 +57,15 @@ def parse_query(parseObject, inputQuery):
     prettyParseTree = prettyPrintToString(parseTree)
     # context.workToShow += show_work(prettyParseTree)
     
-    # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate
+    # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate via text and timex conditions
     conditionsAndPOS, subjectsAndPOS = [],[]
     traverse_tree(parseTree, parseTree, conditionsAndPOS, subjectsAndPOS)
     stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
     stop_lexicon(subjectsAndPOS)
-    conditionsAndPOS = deduplicate_word_list(conditionsAndPOS)
-    subjectsAndPOS = deduplicate_word_list(subjectsAndPOS)
+    # conditionsAndPOS = deduplicate_lex_list(conditionsAndPOS)
+    # subjectsAndPOS = deduplicate_lex_list(subjectsAndPOS)
+    conditionsAndPOS = deduplicate_lex_and_timex(conditionsAndPOS,context)
+    subjectsAndPOS = deduplicate_lex_and_timex(subjectsAndPOS,context)
     
     #Detect Query Type and remove query type trigger words from lexicon:
     queryType = findAndFilterQueryTerms(query, posTaggedQuery, conditionsAndPOS,subjectsAndPOS)
@@ -356,8 +358,19 @@ def stop_lexicon(lexObjects):
             lexObjects.remove(lex)
         lex.posTags = filteredLexTags
 
-def deduplicate_word_list(lexObjects):
+# def deduplicate_lex_list(lexObjects):
+#     uniqueTextList = []
+#     uniqueObjList = []
+#     for item in lexObjects:
+#         if item.text not in uniqueTextList:
+#             uniqueObjList.append(item)
+#             uniqueTextList.append(item.text)
+#     return uniqueObjList
+    
+def deduplicate_lex_and_timex(lexObjects,context):
     uniqueTextList = []
+    for value in context.timeExpressionList:
+        uniqueTextList.append(value['text'])
     uniqueObjList = []
     for item in lexObjects:
         if item.text not in uniqueTextList:
@@ -661,8 +674,8 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'what\'s the median tenure of employees in sales?')
 
 # parse_query(None,'How many employees with high school education where hired before May 2012?')
-# parse_query(None,'How many employees with high school education were hired this year?')
+parse_query(None,'How many employees with high school education were hired last april?')
 # parse_query(None,'Last quarter, how many employees with high school education were hired?')
-parse_query(None,'How many employees with high school education were hired before this year?')
+# parse_query(None,'How many employees with high school education were hired before this year?')
 
 
