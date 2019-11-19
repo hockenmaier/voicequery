@@ -45,37 +45,42 @@ def parse_query(parseObject, inputQuery):
     print('')
     print('query: ' + query)
     
-    # Get and set date and time variables and set them in context
-    get_timex_tags(query,context)
-    get_default_date_field(available_data,context)
-    print('default date: ' + str(context.defaultDate))
-    print('default date: ' + str(context.timeExpressionList))
-    
     # Apply POS tags, create parse tree using Regex grammar, and then make a pretty version
     posTaggedQuery = get_pos_tagged_phrase(query)
     parseTree = get_parse_tree(posTaggedQuery)
     prettyParseTree = prettyPrintToString(parseTree)
     # context.workToShow += show_work(prettyParseTree)
     
-    # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate via text and timex conditions
+    # Create condition and subject arrays, populate them by traversing the parse tree, filter out stop words, and deduplicate via text match
     conditionsAndPOS, subjectsAndPOS = [],[]
     traverse_tree(parseTree, parseTree, conditionsAndPOS, subjectsAndPOS)
     stop_lexicon(conditionsAndPOS) #these directly edit the PraseAndPOS objects
     stop_lexicon(subjectsAndPOS)
-    # conditionsAndPOS = deduplicate_lex_list(conditionsAndPOS)
-    # subjectsAndPOS = deduplicate_lex_list(subjectsAndPOS)
-    conditionsAndPOS = deduplicate_lex_and_timex(conditionsAndPOS,context)
-    subjectsAndPOS = deduplicate_lex_and_timex(subjectsAndPOS,context)
+    conditionsAndPOS = deduplicate_lex(conditionsAndPOS)
+    subjectsAndPOS = deduplicate_lex(subjectsAndPOS)
     
-    #Detect Query Type and remove query type trigger words from lexicon:
+    #All of the field data and field synonym data is gathered in this list first so that we don't have to keep generating them later
+    dataSynsetPacks = get_data_synset_pack(available_data) 
+    # print('Raw data synset packs:')
+    # for pack in dataSynsetPacks:
+    #     printPhraseObj(pack)
+    
+    # Get and set date and time variables and set them in context
+    get_timex_tags(query,context)
+    get_default_date_field(dataSynsetPacks,context)
+    print('default date: ' + str(context.defaultDate))
+    print('default date: ' + str(context.timeExpressionList))
+    
+    # Remove conditions that are actually time phrases and add them back in again as timeconditions
+    conditionsAndPOS = deduplicate_time_conditions(conditionsAndPOS,context)
+    subjectsAndPOS = deduplicate_time_conditions(subjectsAndPOS,context)
+    addTimeConditions(conditionsAndPOS,context)
+    
+    # Detect Query Type and remove query type trigger words from lexicon:
     queryType = findAndFilterQueryTerms(query, posTaggedQuery, conditionsAndPOS,subjectsAndPOS)
     print('Query Type: ' + queryType['type'] + ', specifically: ' + queryType['term'])
     
     # Pair each condition and subject with similar field names and values found from stored dataset info
-    dataSynsetPacks = get_data_synset_pack(available_data) #All of the field and field synonym is gathered in this list first so that we don't have to keep generating them later
-    # print('Raw data synset packs:')
-    # for pack in dataSynsetPacks:
-    #     printPhraseObj(pack)
     get_most_similar_info(conditionsAndPOS, dataSynsetPacks)
     get_most_similar_info(subjectsAndPOS, dataSynsetPacks)
     
@@ -155,6 +160,9 @@ def printPhraseObj(obj):
     print('parentLexMatchLexSynset: ' + str(obj.parentLexMatchLexSynset))
     print('parentLexMatchDataSynset: ' + str(obj.parentLexMatchDataSynset))
     print('parentLexMatchLCS: ' + str(obj.parentLexMatchLCS))
+    print('dataType: ' + str(obj.dataType))
+    print('cardinalityRatio: ' + str(obj.cardinalityRatio))
+    print('dateValue: ' + str(obj.dateValue))
     
     if obj.closestMatch:
         print('')
@@ -358,25 +366,51 @@ def stop_lexicon(lexObjects):
             lexObjects.remove(lex)
         lex.posTags = filteredLexTags
 
-# def deduplicate_lex_list(lexObjects):
-#     uniqueTextList = []
-#     uniqueObjList = []
-#     for item in lexObjects:
-#         if item.text not in uniqueTextList:
-#             uniqueObjList.append(item)
-#             uniqueTextList.append(item.text)
-#     return uniqueObjList
-    
-def deduplicate_lex_and_timex(lexObjects,context):
+def deduplicate_lex(lexObjects):
     uniqueTextList = []
-    for value in context.timeExpressionList:
-        uniqueTextList.append(value['text'])
     uniqueObjList = []
     for item in lexObjects:
         if item.text not in uniqueTextList:
             uniqueObjList.append(item)
             uniqueTextList.append(item.text)
     return uniqueObjList
+    
+def deduplicate_time_conditions(lexObjects,context):
+    timexTexts = []
+    for value in context.timeExpressionList:
+        timexTexts.append(value['text'])
+    uniqueObjList = []
+    for item in lexObjects:
+        timeCondition = False
+        for text in timexTexts:
+            if item.text in text:
+                timeCondition = True
+        if not timeCondition:
+            uniqueObjList.append(item)
+    return uniqueObjList
+    
+def addTimeConditions(conditionsAndPOS,context):
+    for timeValue in context.timeExpressionList:
+        newPhraseInstance = PhraseAndPOS()
+        newPhraseInstance.phraseType = 'timecondition'
+        newPhraseInstance.text = timeValue['text']
+        newPhraseInstance.dateValue = timeValue['value']
+        newPhraseInstance.closestMatch = context.defaultDate
+        conditionsAndPOS.append(newPhraseInstance)
+        
+def get_default_date_field(dataSynsetPacks,context):
+    defaultDate = None
+    maxCardinality = 0
+    for dataPack in dataSynsetPacks:
+        if dataPack.phraseType == 'info-field':
+            if dataPack.dataType == 'datetime':
+                thisCardinality = float(dataPack.cardinalityRatio)
+                if  thisCardinality > maxCardinality:
+                    defaultDate = dataPack
+                    maxCardinality = thisCardinality
+    if defaultDate:
+        context.workToShow = show_work("Found highest cardinality date field to use as default: " + str(defaultDate.text))
+    context.defaultDate = defaultDate
 
 def get_most_similar_info(lexObjects,dataSynsetPacks):
     # printPhraseObjState(dataSynsetPacks)
@@ -462,6 +496,9 @@ class PhraseAndPOS:
         self.parentLexMatchLexSynset = None
         self.parentLexMatchDataSynset = None
         self.parentLexMatchLCS = None
+        self.dataType = ''
+        self.cardinalityRatio = 0
+        self.dateValue = ''
     def toJSON(self):
         data = {}
         data['phraseType'] = self.phraseType
@@ -487,14 +524,17 @@ def get_data_synset_pack(data):
         if 'parent_field_name'in dataValue:
             dataPhraseAndPOS.parentFieldName = dataValue['parent_field_name']
         append_phrase_and_word_synsets(dataPhraseAndPOS)
+        if dataPhraseAndPOS.phraseType == 'info-field':
+            dataPhraseAndPOS.cardinalityRatio = dataValue['cardinality_ratio']
+            dataPhraseAndPOS.dataType = dataValue['data_type']
         pack.append(dataPhraseAndPOS)
     return pack
     
 def create_phrase_and_pos(phrase, phraseType):
     newPhraseAndPOS = PhraseAndPOS()
     newPhraseAndPOS.text = phrase
-    newPhraseAndPOS.posTags = get_pos_tagged_phrase(phrase)
     newPhraseAndPOS.phraseType = phraseType
+    newPhraseAndPOS.posTags = get_pos_tagged_phrase(phrase)
     return newPhraseAndPOS
 
 def append_phrase_and_word_synsets(PhraseAndPOS):
@@ -535,21 +575,6 @@ def convert_penn_to_morphy(penntag, returnNone=False):
         return morphy_tag[penntag[:2]]
     except:
         return None if returnNone else ''
-
-def get_default_date_field(available_data,context):
-    defaultDate = None
-    maxCardinality = 0
-    for dataValue in available_data:
-        if dataValue['query_part'] == 'info-field':
-            if dataValue['data_type'] == 'datetime':
-                thisCardinality = float(dataValue['cardinality_ratio'])
-                if  thisCardinality > maxCardinality:
-                    defaultDate = dataValue['text']
-                    maxCardinality = thisCardinality
-    if defaultDate:
-        context.workToShow = show_work("Found highest cardinality date field to use as default: " + str(defaultDate))
-    context.defaultDate = defaultDate
-            
 
 def call_answer(workspace, query, parseTree, conditions, subjects, queryType):
     answerLambda = boto3.client('lambda', region_name='us-west-2')
