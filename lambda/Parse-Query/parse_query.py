@@ -392,7 +392,7 @@ def deduplicate_time_conditions(lexObjects,context):
 def addTimeConditions(conditionsAndPOS,context):
     for timeValue in context.timeExpressionList:
         newPhraseInstance = PhraseAndPOS()
-        newPhraseInstance.phraseType = 'timecondition'
+        newPhraseInstance.phraseType = 'timeCondition'
         newPhraseInstance.text = timeValue['text']
         newPhraseInstance.dateValue = timeValue['value']
         newPhraseInstance.closestMatch = context.defaultDate
@@ -514,6 +514,7 @@ class PhraseAndPOS:
             data['greatMatches'].append(match.toJSON())
         data['unStoppedText'] = self.unStoppedText
         data['parentFieldName'] = self.parentFieldName
+        data['dateValue'] = str(self.dateValue)
         return data
 
 def get_data_synset_pack(data):
@@ -699,7 +700,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'what\'s the median tenure of employees in sales?')
 
 # parse_query(None,'How many employees with high school education where hired before May 2012?')
-parse_query(None,'How many employees with high school education were hired last april?')
+parse_query(None,'How many employees with high school education were hired in 2014?')
 # parse_query(None,'Last quarter, how many employees with high school education were hired?')
 # parse_query(None,'How many employees with high school education were hired before this year?')
 

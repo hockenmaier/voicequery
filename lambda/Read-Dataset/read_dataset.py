@@ -76,7 +76,7 @@ def package_JSON(dataset, unique_value_limit):
     
 def get_datatype(df,col):
     dataType = map_numpy_datatypes(df[col].dtype)
-    if df[col].dtype == 'object':
+    if dataType == 'string':
         try:
             df[col] = pd.to_datetime(df[col])
             dataType = 'datetime'

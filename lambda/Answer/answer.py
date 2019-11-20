@@ -92,8 +92,10 @@ def show_work(text):
     return newText
 
 def count(context):
-    lexicon = context.parseObject['conditions'] + context.parseObject['subjects']
+    conditions,timeConditions = separate_conditions(context)
+    lexicon = conditions + context.parseObject['subjects']
     filter_by_lex(context, lexicon)
+    filter_by_time(context, timeConditions)
     return len(context.df)
 
 def filter_by_lex(context, lexicon):
@@ -109,14 +111,24 @@ def filter_by_lex(context, lexicon):
                 fieldName = closestMatch['parentFieldName']
                 fieldValue = closestMatch['text']
                 # print('value = ' + fieldValue)
-                isValue =  context.df[fieldName]==fieldValue
+                isValue = context.df[fieldName]==fieldValue
                 context.df = context.df[isValue]
                 # print('length after filter = ' + str(len(df)))
                 context.workToShow += show_work("Applying filter on field " + fieldName + " for unique value: " + fieldValue + ". Number of records is now: " + str(len(context.df)))
         else:
             context.workToShow += show_work("No good matches found for " + lex['phraseType'] + ' ' + lex['text'])
             # print('this one didnt find anything decent: ' + lex['text'] + ': ' + str(lex['closestMatchSimilarity']))
-    
+
+def filter_by_time(context,timeConditions):
+    for timeCondition in timeConditions:
+        matchedDate = timeCondition['closestMatch']['text']
+        if matchedDate:
+            # dateValue = datetime.datetime.strptime(timeCondition['dateValue'],"%Y-%m-%d")
+            context.df[matchedDate] = pd.to_datetime(context.df[matchedDate])
+            # isWithinDateTime = context.df[matchedDate] in dateValue
+            # context.df = context.df[isWithinDateTime]
+            # context.workToShow += show_work("Applying date filter on field " + matchedDate + " for time value: " + dateValue + ". Number of records is now: " + str(len(context.df)))
+
 def average(context):
     chosenField = prepareForMath(context)
     if (len(context.df) == 0):
@@ -126,8 +138,9 @@ def average(context):
     return context.df[chosenField['text']].mean()
 
 def prepareForMath(context):
-    conditions = context.parseObject['conditions']
+    conditions,timeConditions = separate_conditions(context)
     filter_by_lex(context,conditions) #filter by conditions
+    filter_by_time(context,timeConditions)
     subjects = context.parseObject['subjects']
     numericSubs = get_numeric_lex(context,subjects)
     chosenSub,chosenField = None,None
@@ -145,6 +158,17 @@ def prepareForMath(context):
     subjects.remove(chosenSub)
     filter_by_lex(context,subjects) #all other subjects than the first treated as filters
     return chosenField
+    
+def separate_conditions(context):
+    conditions,timeConditions = [],[]
+    for condition in context.parseObject['conditions']:
+        if condition['phraseType'] == 'condition':
+            conditions.append(condition)
+        elif condition['phraseType'] == 'timeCondition':
+            timeConditions.append(condition)
+    print(conditions)
+    print(timeConditions)
+    return conditions, timeConditions
 
 def get_numeric_lex(context,lexicon):
     numericLex = []
@@ -199,7 +223,7 @@ def median(context):
     return context.df[chosenField['text']].median()
     
 # with open('test_payloads/test_average10-21-19.json') as f:
-with open('test_payloads/test5.json') as f:
+with open('test_payloads/test6.json') as f:
     data = json.load(f)
     answer(data)
 
