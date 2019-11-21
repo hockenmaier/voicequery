@@ -514,7 +514,7 @@ class PhraseAndPOS:
             data['greatMatches'].append(match.toJSON())
         data['unStoppedText'] = self.unStoppedText
         data['parentFieldName'] = self.parentFieldName
-        data['dateValue'] = str(self.dateValue)
+        data['dateValue'] = self.dateValue.__str__()
         return data
 
 def get_data_synset_pack(data):

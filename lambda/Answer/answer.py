@@ -5,6 +5,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
+import dateutil
 
 def lambda_handler(event, context):
     # parseObject = json.loads(event)
@@ -124,10 +125,17 @@ def filter_by_time(context,timeConditions):
         matchedDate = timeCondition['closestMatch']['text']
         if matchedDate:
             # dateValue = datetime.datetime.strptime(timeCondition['dateValue'],"%Y-%m-%d")
-            context.df[matchedDate] = pd.to_datetime(context.df[matchedDate])
-            # isWithinDateTime = context.df[matchedDate] in dateValue
-            # context.df = context.df[isWithinDateTime]
-            # context.workToShow += show_work("Applying date filter on field " + matchedDate + " for time value: " + dateValue + ". Number of records is now: " + str(len(context.df)))
+            dateValue = dateutil.parser.parse(timeCondition['dateValue'])
+            resolution = dateValue.resolution
+            print(dateValue)
+            print(dateValue.year)
+            print(dateValue.month)
+            print(dateValue.day)
+            print(datetime.datetime.now().resolution)
+            matchedDateCol = pd.to_datetime(context.df[matchedDate])
+            isWithinDateTime = matchedDateCol == dateValue
+            context.df = context.df[isWithinDateTime]
+            context.workToShow += show_work("Applying date filter on field " + matchedDate.__str__() + " for time value: " + dateValue.__str__() + ". Number of records is now: " + str(len(context.df)))
 
 def average(context):
     chosenField = prepareForMath(context)
