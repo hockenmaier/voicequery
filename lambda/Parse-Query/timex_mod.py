@@ -180,6 +180,7 @@ def ground(tagged_text, base_date):
     # Calculate the new date accordingly
     for timex in timex_found:
         global month
+        month = str(month)
         timex_val = 'UNKNOWN' # Default value
 
         timex_ori = timex   # Backup original timex for later substitution

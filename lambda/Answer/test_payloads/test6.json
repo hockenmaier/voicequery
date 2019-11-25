@@ -1,6 +1,6 @@
 {
   "workspace": "1",
-  "query": "how many employees with high school education were hired in 2014?",
+  "query": "how many managers were hired last april?",
   "parseTree": [
     [
       [
@@ -14,30 +14,8 @@
         ],
         [
           [
-            "employees",
+            "managers",
             "NNS"
-          ]
-        ]
-      ],
-      [
-        [
-          "with",
-          "IN"
-        ],
-        [
-          [
-            "high",
-            "JJ"
-          ],
-          [
-            [
-              "school",
-              "NN"
-            ],
-            [
-              "education",
-              "NN"
-            ]
           ]
         ]
       ]
@@ -51,12 +29,16 @@
       "VBN"
     ],
     [
-      "in",
-      "IN"
-    ],
-    [
-      "2014",
-      "CD"
+      [
+        "last",
+        "JJ"
+      ],
+      [
+        [
+          "april",
+          "NN"
+        ]
+      ]
     ],
     [
       "?",
@@ -82,67 +64,8 @@
       "dateValue": ""
     },
     {
-      "phraseType": "condition",
-      "text": "high",
-      "posTags": [
-        [
-          "high",
-          "JJ"
-        ]
-      ],
-      "closestMatch": {
-        "phraseType": "info-value",
-        "text": "High School",
-        "posTags": [
-          [
-            "High",
-            "JJ"
-          ],
-          [
-            "School",
-            "NNP"
-          ]
-        ],
-        "closestMatch": null,
-        "closestMatchSimilarity": 0,
-        "parentLexMatchSimilarity": 20,
-        "greatMatches": [],
-        "unStoppedText": "",
-        "parentFieldName": "Education",
-        "dateValue": ""
-      },
-      "closestMatchSimilarity": 20,
-      "parentLexMatchSimilarity": 0,
-      "greatMatches": [
-        {
-          "phraseType": "info-value",
-          "text": "High School",
-          "posTags": [
-            [
-              "High",
-              "JJ"
-            ],
-            [
-              "School",
-              "NNP"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "parentLexMatchSimilarity": 20,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": "Education",
-          "dateValue": ""
-        }
-      ],
-      "unStoppedText": "high",
-      "parentFieldName": "",
-      "dateValue": ""
-    },
-    {
       "phraseType": "timeCondition",
-      "text": "2014",
+      "text": "last april",
       "posTags": [],
       "closestMatch": {
         "phraseType": "info-field",
@@ -166,145 +89,58 @@
       "greatMatches": [],
       "unStoppedText": "",
       "parentFieldName": "",
-      "dateValue": "2014"
+      "dateValue": "UNKNOWN"
     }
   ],
   "subjects": [
     {
       "phraseType": "subject",
-      "text": "employees",
+      "text": "managers",
       "posTags": [
         [
-          "employees",
+          "managers",
           "NNS"
         ]
       ],
       "closestMatch": {
-        "phraseType": "info-field",
-        "text": "Employee Name",
+        "phraseType": "info-value",
+        "text": "Manager",
         "posTags": [
           [
-            "Employee",
-            "NNP"
-          ],
-          [
-            "Name",
+            "Manager",
             "NNP"
           ]
         ],
         "closestMatch": null,
         "closestMatchSimilarity": 0,
-        "parentLexMatchSimilarity": 6.629961411594312,
+        "parentLexMatchSimilarity": 35,
         "greatMatches": [],
         "unStoppedText": "",
-        "parentFieldName": "",
+        "parentFieldName": "Job Level",
         "dateValue": ""
       },
-      "closestMatchSimilarity": 6.629961411594312,
-      "parentLexMatchSimilarity": 0,
-      "greatMatches": [],
-      "unStoppedText": "employees",
-      "parentFieldName": "",
-      "dateValue": ""
-    },
-    {
-      "phraseType": "subject",
-      "text": "school education",
-      "posTags": [
-        [
-          "school",
-          "NN"
-        ],
-        [
-          "education",
-          "NN"
-        ]
-      ],
-      "closestMatch": {
-        "phraseType": "info-field",
-        "text": "Education",
-        "posTags": [
-          [
-            "Education",
-            "NNP"
-          ]
-        ],
-        "closestMatch": null,
-        "closestMatchSimilarity": 0,
-        "parentLexMatchSimilarity": 1e+300,
-        "greatMatches": [],
-        "unStoppedText": "",
-        "parentFieldName": "",
-        "dateValue": ""
-      },
-      "closestMatchSimilarity": 1e+300,
+      "closestMatchSimilarity": 35,
       "parentLexMatchSimilarity": 0,
       "greatMatches": [
         {
-          "phraseType": "info-field",
-          "text": "Education",
-          "posTags": [
-            [
-              "Education",
-              "NNP"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "parentLexMatchSimilarity": 45,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": "",
-          "dateValue": ""
-        },
-        {
           "phraseType": "info-value",
-          "text": "Executive Team",
+          "text": "Manager",
           "posTags": [
             [
-              "Executive",
-              "JJ"
-            ],
-            [
-              "Team",
+              "Manager",
               "NNP"
             ]
           ],
           "closestMatch": null,
           "closestMatchSimilarity": 0,
-          "parentLexMatchSimilarity": 8.182240910188463,
+          "parentLexMatchSimilarity": 35,
           "greatMatches": [],
           "unStoppedText": "",
-          "parentFieldName": "Job Family",
-          "dateValue": ""
-        },
-        {
-          "phraseType": "info-value",
-          "text": "Doc & Training",
-          "posTags": [
-            [
-              "Doc",
-              "NNP"
-            ],
-            [
-              "&",
-              "CC"
-            ],
-            [
-              "Training",
-              "NNP"
-            ]
-          ],
-          "closestMatch": null,
-          "closestMatchSimilarity": 0,
-          "parentLexMatchSimilarity": 8.426903720068777,
-          "greatMatches": [],
-          "unStoppedText": "",
-          "parentFieldName": "Job Family",
+          "parentFieldName": "Job Level",
           "dateValue": ""
         }
       ],
-      "unStoppedText": "school education",
+      "unStoppedText": "managers",
       "parentFieldName": "",
       "dateValue": ""
     }
