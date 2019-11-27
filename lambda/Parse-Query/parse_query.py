@@ -720,9 +720,9 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 
 # DOUBLE TIME TEST
 
-parse_query(None,"how many managers were hired last april?")
-parse_query(None,"how many managers were hired last april?")
+# parse_query(None,"how many managers were hired last april?")
+# parse_query(None,"how many managers were hired last april?")
 
-# parse_query(None,"how many managers were hired last saturday?")
+parse_query(None,"how many managers were hired last saturday?")
 
 #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#

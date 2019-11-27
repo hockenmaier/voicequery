@@ -5,6 +5,8 @@ import re
 import string
 import os
 import sys
+sys.path.append(os.path.abspath("/mx/DateTime"))
+from mx.DateTime import *
 
 # Requires eGenix.com mx Base Distribution
 # http://www.egenix.com/products/python/mxBase/
