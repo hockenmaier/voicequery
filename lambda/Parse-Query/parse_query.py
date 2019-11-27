@@ -14,7 +14,11 @@ import contextlib, io
 # import sys
 # import os
 # sys.path.append(os.path.abspath("/nltk_contrib"))
+
 import timex_mod
+# import importlib
+# importlib.reload(timex_mod)
+
 # import jsonpickle
 import copy
 # from nltk.internals import find_jars_within_path
@@ -711,10 +715,14 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'How many employees with high school education were hired in 2014')
 # parse_query(None,'Last quarter, how many employees with high school education were hired?')
 # parse_query(None,'How many employees with high school education were hired before this year?')
+# parse_query(None,"what was the average salary of female employees last may?")
+
 
 # DOUBLE TIME TEST
 
-# parse_query(None,"how many managers were hired last april?")
-# parse_query(None,"how many managers were hired last april?")
+parse_query(None,"how many managers were hired last april?")
+parse_query(None,"how many managers were hired last april?")
+
+# parse_query(None,"how many managers were hired last saturday?")
 
 #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
