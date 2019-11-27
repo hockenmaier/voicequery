@@ -24,7 +24,6 @@ day = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday)"
 week_day = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday)"
 month = "(january|february|march|april|may|june|july|august|september| \
           october|november|december)"
-print("Month has just been set initially: " + str(month))
 dmy = "(year|day|week|month)"
 rel_day = "(today|yesterday|tomorrow|tonight|tonite)"
 exp1 = "(before|after|earlier|later|ago)"
@@ -183,10 +182,7 @@ def ground(tagged_text, base_date):
         # global month
         month = "(january|february|march|april|may|june|july|august|september| \
         october|november|december)"
-        print("Month has just been used as global: " + str(month))
 
-
-        # month = str(month)
         timex_val = 'UNKNOWN' # Default value
 
         timex_ori = timex   # Backup original timex for later substitution
@@ -369,6 +365,3 @@ def demo():
 
 if __name__ == '__main__':
     demo()
-
-def RelativeDateTime(days):
-    return 0
