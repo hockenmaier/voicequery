@@ -69,8 +69,8 @@ def parse_query(parseObject, inputQuery):
     get_timex_tags(query,context)
     print(context.timeExpressionList)
     get_default_date_field(dataSynsetPacks,context)
-    print('default date: ' + str(context.defaultDate))
-    print('default date: ' + str(context.timeExpressionList))
+    print('Default Date Found: ' + str(context.defaultDate))
+    print('Time Expressions Found: ' + str(context.timeExpressionList))
     
     # Remove conditions that are actually time phrases and add them back in again as timeconditions
     conditionsAndPOS = deduplicate_time_conditions(conditionsAndPOS,context)
@@ -233,6 +233,7 @@ def get_timex_tags(query,context):
     tagText = timex_mod.tag(query)
     # print(tagText)
     context.timeExpressionString, context.timeExpressionList = timex_mod.ground(tagText,datetime.datetime.today())
+    print("Calling Timex with tagtext " + tagText + " and ground time: " + str(datetime.datetime.today()))
 
 def get_pos_tagged_phrase(inputQuery):
     words = nltk.word_tokenize(inputQuery)
@@ -681,6 +682,10 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
         )
     return reducedPhraseList
 
+#-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+
+# SIMPLE TESTS
+
 # parse_query(None,"What is the median tenure for female VP's who have MS degrees?")
 # parse_query(None,"How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 # parse_query(None,"How many visitors came on the lot during the month of May 2019?")
@@ -700,9 +705,16 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'what is the average tenure of managers who are women with a high school degree?')
 # parse_query(None,'what\'s the median tenure of employees in sales?')
 
+# TIME TESTS
+
 # parse_query(None,'How many employees with high school education where hired before May 2012?')
-parse_query(None,'How many employees with high school education were hired in 2014')
+# parse_query(None,'How many employees with high school education were hired in 2014')
 # parse_query(None,'Last quarter, how many employees with high school education were hired?')
 # parse_query(None,'How many employees with high school education were hired before this year?')
+
+# DOUBLE TIME TEST
+
+# parse_query(None,"how many managers were hired last april?")
 # parse_query(None,"how many managers were hired last april?")
 
+#-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#

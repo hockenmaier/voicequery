@@ -138,6 +138,10 @@ def delete_old_fields(table,workspace,file_name):
                     'text': item['text'],
                 }
             )
+            
+#-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-read_dataset('1')
+# read_dataset('1')
+
+#-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 

@@ -233,8 +233,10 @@ def median(context):
         return chosenField
     return context.df[chosenField['text']].median()
     
-# with open('test_payloads/test_average10-21-19.json') as f:
-with open('test_payloads/test6.json') as f:
-    data = json.load(f)
-    answer(data)
-
+    
+# #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+# # with open('test_payloads/test_average10-21-19.json') as f:
+# with open('test_payloads/test6.json') as f:
+#     data = json.load(f)
+#     answer(data)
+# #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
