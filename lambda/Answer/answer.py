@@ -143,7 +143,7 @@ def filter_by_time(context,timeConditions):
             
             if startTime:
                 matchedDateCol = pd.to_datetime(context.df[matchedDate])
-                isWithinDateTime = (matchedDateCol > startTime) & (matchedDateCol < endTime)
+                isWithinDateTime = (matchedDateCol >= startTime) & (matchedDateCol <= endTime)
                 context.df = context.df[isWithinDateTime]
                 context.workToShow += show_work("Applying date filter on field " + matchedDate.__str__() + " for time value: " + dateValue.__str__() + ". Number of records is now: " + str(len(context.df)))
 
@@ -243,7 +243,7 @@ def median(context):
     
 # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 # with open('test_payloads/test_average10-21-19.json') as f:
-with open('test_payloads/test6.json') as f:
-    data = json.load(f)
-    answer(data)
+# with open('test_payloads/test6.json') as f:
+#     data = json.load(f)
+#     answer(data)
 # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
