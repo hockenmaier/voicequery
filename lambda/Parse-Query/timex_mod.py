@@ -5,17 +5,18 @@ import re
 import string
 import os
 import sys
-sys.path.append(os.path.abspath("/mx/DateTime"))
-from mx.DateTime import *
+from datetime import datetime, timedelta
+# sys.path.append(os.path.abspath("/mx/DateTime"))
+# from mx.DateTime import *
 
 # Requires eGenix.com mx Base Distribution
 # http://www.egenix.com/products/python/mxBase/
-try:
-    from mx.DateTime import *
-except ImportError:
-    print("""
-Requires eGenix.com mx Base Distribution
-http://www.egenix.com/products/python/mxBase/""")
+# try:
+#     from mx.DateTime import *
+# except ImportError:
+#     print("""
+# Requires eGenix.com mx Base Distribution
+# http://www.egenix.com/products/python/mxBase/""")
 
 # Predefined strings.
 numbers = "(^a(?=\s)|one|two|three|four|five|six|seven|eight|nine|ten| \
@@ -214,43 +215,46 @@ def ground(tagged_text, base_date):
         elif re.match(r'tonight|tonite|today', timex, re.IGNORECASE):
             timex_val = str(base_date)
         elif re.match(r'yesterday', timex, re.IGNORECASE):
-            timex_val = str(base_date + RelativeDateTime(days=-1))
+            timex_val = str(base_date + timedelta(days=-1))
         elif re.match(r'tomorrow', timex, re.IGNORECASE):
-            timex_val = str(base_date + RelativeDateTime(days=+1))
+            timex_val = str(base_date + timedelta(days=+1))
 
         # Weekday in the previous week.
         elif re.match(r'last ' + week_day, timex, re.IGNORECASE):
-            day = hashweekdays[timex.split()[1]]
-            timex_val = str(base_date + RelativeDateTime(weeks=-1, \
-                            weekday=(day,0)))
+            target_day = hashweekdays[timex.split()[1]]
+            monday_of_base_week = base_date - timedelta(days=base_date.weekday())
+            monday_of_target_week = base_date + timedelta(weeks=-1)
+            timex_val = str(monday_of_target_week + timedelta(days=target_day+1))
 
         # Weekday in the current week.
         elif re.match(r'this ' + week_day, timex, re.IGNORECASE):
-            day = hashweekdays[timex.split()[1]]
-            timex_val = str(base_date + RelativeDateTime(weeks=0, \
-                            weekday=(day,0)))
+            target_day = hashweekdays[timex.split()[1]]
+            monday_of_base_week = base_date - timedelta(days=base_date.weekday())
+            monday_of_target_week = base_date + timedelta(weeks=0)
+            timex_val = str(monday_of_target_week + timedelta(days=target_day+1))
 
         # Weekday in the following week.
         elif re.match(r'next ' + week_day, timex, re.IGNORECASE):
-            day = hashweekdays[timex.split()[1]]
-            timex_val = str(base_date + RelativeDateTime(weeks=+1, \
-                              weekday=(day,0)))
+            target_day = hashweekdays[timex.split()[1]]
+            monday_of_base_week = base_date - timedelta(days=base_date.weekday())
+            monday_of_target_week = base_date + timedelta(weeks=+1)
+            timex_val = str(monday_of_target_week + timedelta(days=target_day+1))
 
         # Last, this, next week.
         elif re.match(r'last week', timex, re.IGNORECASE):
-            year = (base_date + RelativeDateTime(weeks=-1)).year
+            year = (base_date + timedelta(weeks=-1)).year
 
             # iso_week returns a triple (year, week, day) hence, retrieve
             # only week value.
-            week = (base_date + RelativeDateTime(weeks=-1)).iso_week[1]
+            week = (base_date + timedelta(weeks=-1)).isocalendar()[1]
             timex_val = str(year) + 'W' + str(week)
         elif re.match(r'this week', timex, re.IGNORECASE):
-            year = (base_date + RelativeDateTime(weeks=0)).year
-            week = (base_date + RelativeDateTime(weeks=0)).iso_week[1]
+            year = (base_date + timedelta(weeks=0)).year
+            week = (base_date + timedelta(weeks=0)).isocalendar()[1]
             timex_val = str(year) + 'W' + str(week)
         elif re.match(r'next week', timex, re.IGNORECASE):
-            year = (base_date + RelativeDateTime(weeks=+1)).year
-            week = (base_date + RelativeDateTime(weeks=+1)).iso_week[1]
+            year = (base_date + timedelta(weeks=+1)).year
+            week = (base_date + timedelta(weeks=+1)).isocalendar()[1]
             timex_val = str(year) + 'W' + str(week)
 
         # Month in the previous year.
@@ -293,20 +297,20 @@ def ground(tagged_text, base_date):
 
             # Calculate the offset by taking '\d+' part from the timex.
             offset = int(re.split(r'\s', timex)[0])
-            timex_val = str(base_date + RelativeDateTime(days=-offset))
+            timex_val = str(base_date + timedelta(days=-offset))
         elif re.match(r'\d+ days? (later|after)', timex, re.IGNORECASE):
             offset = int(re.split(r'\s', timex)[0])
-            timex_val = str(base_date + RelativeDateTime(days=+offset))
+            timex_val = str(base_date + timedelta(days=+offset))
         elif re.match(r'\d+ weeks? (ago|earlier|before)', timex, re.IGNORECASE):
             offset = int(re.split(r'\s', timex)[0])
-            year = (base_date + RelativeDateTime(weeks=-offset)).year
+            year = (base_date + timedelta(weeks=-offset)).year
             week = (base_date + \
-                            RelativeDateTime(weeks=-offset)).iso_week[1]
+                            timedelta(weeks=-offset)).isocalendar()[1]
             timex_val = str(year) + 'W' + str(week)
         elif re.match(r'\d+ weeks? (later|after)', timex, re.IGNORECASE):
             offset = int(re.split(r'\s', timex)[0])
-            year = (base_date + RelativeDateTime(weeks=+offset)).year
-            week = (base_date + RelativeDateTime(weeks=+offset)).iso_week[1]
+            year = (base_date + timedelta(weeks=+offset)).year
+            week = (base_date + timedelta(weeks=+offset)).isocalendar()[1]
             timex_val = str(year) + 'W' + str(week)
         elif re.match(r'\d+ months? (ago|earlier|before)', timex, re.IGNORECASE):
             extra = 0
