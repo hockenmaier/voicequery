@@ -1,6 +1,6 @@
 {
   "workspace": "1",
-  "query": "how many managers were hired last april?",
+  "query": "how many managers were hired 200 weeks ago?",
   "parseTree": [
     [
       [
@@ -29,16 +29,18 @@
       "VBN"
     ],
     [
+      "200",
+      "CD"
+    ],
+    [
       [
-        "last",
-        "JJ"
-      ],
-      [
-        [
-          "april",
-          "NN"
-        ]
+        "weeks",
+        "NNS"
       ]
+    ],
+    [
+      "ago",
+      "IN"
     ],
     [
       "?",
@@ -65,7 +67,7 @@
     },
     {
       "phraseType": "timeCondition",
-      "text": "last april",
+      "text": "200 weeks ago",
       "posTags": [],
       "closestMatch": {
         "phraseType": "info-field",
@@ -89,7 +91,7 @@
       "greatMatches": [],
       "unStoppedText": "",
       "parentFieldName": "",
-      "dateValue": "UNKNOWN"
+      "dateValue": "2015W2"
     }
   ],
   "subjects": [
