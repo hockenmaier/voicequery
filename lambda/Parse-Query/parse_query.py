@@ -168,6 +168,7 @@ def printPhraseObj(obj):
     print('dataType: ' + str(obj.dataType))
     print('cardinalityRatio: ' + str(obj.cardinalityRatio))
     print('dateValue: ' + str(obj.dateValue))
+    print('id: ' + obj.id)
     
     if obj.closestMatch:
         print('')
@@ -505,6 +506,7 @@ class PhraseAndPOS:
         self.dataType = ''
         self.cardinalityRatio = 0
         self.dateValue = ''
+        self.id = ''
     def toJSON(self):
         data = {}
         data['phraseType'] = self.phraseType
@@ -521,6 +523,7 @@ class PhraseAndPOS:
         data['unStoppedText'] = self.unStoppedText
         data['parentFieldName'] = self.parentFieldName
         data['dateValue'] = self.dateValue.__str__()
+        data['id'] = self.id
         return data
 
 def get_data_synset_pack(data):
@@ -528,6 +531,7 @@ def get_data_synset_pack(data):
     for dataValue in data:
         # print('In datavalue loop with data vaue: ' + dataValue['text'])
         dataPhraseAndPOS = create_phrase_and_pos(dataValue['text'], dataValue['query_part'])
+        dataPhraseAndPOS.id = dataValue['item_id']
         if 'parent_field_name'in dataValue:
             dataPhraseAndPOS.parentFieldName = dataValue['parent_field_name']
         append_phrase_and_word_synsets(dataPhraseAndPOS)
@@ -673,6 +677,10 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
         )
         if not(foundItems['Items']):
             reducedPhraseList.append(phrase)
+            closest_match_id,closest_match_text = 'null','null'
+            if phrase.closestMatch:
+                closest_match_id = phrase.closestMatch.id
+                closest_match_text = phrase.closestMatch.text
             put = table.put_item(
             Item={
                 'item_id': str(uuid.uuid4()),
@@ -681,6 +689,8 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
                 'query_id': queryID,
                 'query_part': lexType,
                 'create_time':str(datetime.datetime.now()),
+                'closest_match_id': closest_match_id,
+                'closest_match_text': closest_match_text,
                 'workspace': workspace,
             }
         )
@@ -723,6 +733,6 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,"how many managers were hired last april?")
 # parse_query(None,"how many managers were hired last april?")
 
-# parse_query(None,"how many managers were hired 200 weeks ago?")
+parse_query(None,"how many managers were hired 200 weeks ago?")
 
 #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
