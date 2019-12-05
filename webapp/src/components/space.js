@@ -425,12 +425,6 @@ class Space extends React.Component{
         const stateBubbles = this.state.bubbles.slice(0);
         const newBubbles = this.createBubbleDeets(data.bubbles);
         const allBubbles = stateBubbles.concat(newBubbles);
-        console.log('updating bubbles...payload:')
-        console.log(allBubbles)
-        console.log('updating bubbles...allbubbles:')
-        console.log(allBubbles)
-        // console.log('closest Match: ' + outer.closestMatchText)
-        //console.log(bubbleUpdatePayload.bubbles);
         this.setState({
             bubbles: allBubbles
         })
