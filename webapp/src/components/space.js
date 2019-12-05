@@ -197,7 +197,7 @@ class Space extends React.Component{
         newbubsInConcept.push(dragged.id);
         newbubsInConcept.push(dropped.id);
 
-        const newConcept = new BubbleDeets('','Concept','concept',[],'',newX,newY,newbubsInConcept)
+        const newConcept = new BubbleDeets('','Concept','concept',[],'','','',newX,newY,newbubsInConcept)
         newBubbles.unshift(newConcept);
         console.log(newBubbles);
         this.setState({   // Have to refactor everywhere now since i am actually setting state directly by assigning an array to the state array
