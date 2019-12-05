@@ -49,7 +49,11 @@ class Bubble extends React.Component{
         else if (this.props.type === 'concept'){
             height = layout.conceptHeight;
             width = layout.conceptWidth;
-        }     
+        }
+        let subText = ''
+        if (this.props.type === 'subject' | this.props.type === 'condition'){
+            subText = 'close: ' + this.props.closestMatchText
+        }
         //modify size based on dragover event
         const dragScale = 1.25;
         height = (this.state.dragover ? height*dragScale : height);
@@ -89,7 +93,7 @@ class Bubble extends React.Component{
                     top: stringYLocation,
                     left: stringXLocation,
                 }}
-            >{this.props.name}
+            >{this.props.name}<br/><font size="1" color='#CFCFCF'>{subText}</font>
             </button>
         );
     }

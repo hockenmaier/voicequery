@@ -642,6 +642,9 @@ def package_JSON(outputQuery,reducedConditionsAndPOS,reducedSubjectsAndPOS, pret
         bubble['internalID'] = ""
         bubble['name'] = condition.text
         bubble['type'] = "condition"
+        closest_match_id,closest_match_text = get_clean_closest_match(condition)
+        bubble['closestMatchId'] = closest_match_id
+        bubble['closestMatchText'] = closest_match_text
         bubble['bubbles'] = []
         bubbles.append(bubble)
     for subject in reducedSubjectsAndPOS:
@@ -649,10 +652,20 @@ def package_JSON(outputQuery,reducedConditionsAndPOS,reducedSubjectsAndPOS, pret
         bubble['internalID'] = ""
         bubble['name'] = subject.text
         bubble['type'] = "subject"
+        closest_match_id,closest_match_text = get_clean_closest_match(subject)
+        bubble['closestMatchId'] = closest_match_id
+        bubble['closestMatchText'] = closest_match_text
         bubble['bubbles'] = []
         bubbles.append(bubble)
     data['bubbles'] = bubbles
     return data   #.replace('\/', r'/')
+
+def get_clean_closest_match(phrase):
+    closest_match_id,closest_match_text = 'null','null'
+    if phrase.closestMatch:
+        closest_match_id = phrase.closestMatch.id
+        closest_match_text = phrase.closestMatch.text
+    return closest_match_id,closest_match_text
     
 def storeQuery(table, queryID, query, parseTree, workspace):
     put = table.put_item(
@@ -677,10 +690,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
         )
         if not(foundItems['Items']):
             reducedPhraseList.append(phrase)
-            closest_match_id,closest_match_text = 'null','null'
-            if phrase.closestMatch:
-                closest_match_id = phrase.closestMatch.id
-                closest_match_text = phrase.closestMatch.text
+            closest_match_id,closest_match_text = get_clean_closest_match(phrase)
             put = table.put_item(
             Item={
                 'item_id': str(uuid.uuid4()),
@@ -733,6 +743,6 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,"how many managers were hired last april?")
 # parse_query(None,"how many managers were hired last april?")
 
-parse_query(None,"how many managers were hired 200 weeks ago?")
+# parse_query(None,"how many managers were hired 200 weeks ago?")
 
 #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#

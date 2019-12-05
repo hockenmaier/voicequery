@@ -29,9 +29,11 @@ def package_JSON(workspaceItems):
         bubbles = []
         for item in workspaceItems:
             bubble = {}
-            bubble['internalID'] = ""
+            bubble['internalID'] = item['item_id']
             bubble['name'] = item['text']
             bubble['type'] = item['query_part']
+            bubble['closestMatchId'] = item['closest_match_id']
+            bubble['closestMatchText'] = item['closest_match_text']
             bubble['bubbles'] = []
             bubbles.append(bubble)
         data['bubbles'] = bubbles

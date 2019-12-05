@@ -96,12 +96,12 @@ class Space extends React.Component{
     createBubbleDeets(bubbles){
         //initializing full bubbledeets object for each top-level bubble in incoming payload
         const newBubbles = bubbles.map((bub) => {
-            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"");
+            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"",bub.closestMatchId,bub.closestMatchText);
 
             //Now we do the same for sub-bubbles
             if(newBub.bubbles.length > 0){
                 newBub.bubbles = newBub.bubbles.map((intBub) => {
-                    const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id);
+                    const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id,bub.closestMatchId,bub.closestMatchText);
                     return newIntBub;
                 })
             }
@@ -425,6 +425,11 @@ class Space extends React.Component{
         const stateBubbles = this.state.bubbles.slice(0);
         const newBubbles = this.createBubbleDeets(data.bubbles);
         const allBubbles = stateBubbles.concat(newBubbles);
+        console.log('updating bubbles...payload:')
+        console.log(allBubbles)
+        console.log('updating bubbles...allbubbles:')
+        console.log(allBubbles)
+        // console.log('closest Match: ' + outer.closestMatchText)
         //console.log(bubbleUpdatePayload.bubbles);
         this.setState({
             bubbles: allBubbles
@@ -464,6 +469,7 @@ class Space extends React.Component{
                   onDrop={(event) => this.handleBubbleDrop(event, bub.id)}
                   xLocation= {bub.xLocation}
                   yLocation={bub.yLocation}
+                  closestMatchText={bub.closestMatchText}
             />
         );
     }
@@ -575,7 +581,7 @@ class Space extends React.Component{
 let bubblesInitialized = false;
 
 class BubbleDeets{
-    constructor(internalId,text,typetext,bubbles,parentBubbleId, xLocation, yLocation,bubsInConcept){
+    constructor(internalId,text,typetext,bubbles,parentBubbleId,closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept){ //last three are not set on construction
         this.internalID = internalId;
         this.id = getNextBubbleID();
         this.text = text;
@@ -583,6 +589,8 @@ class BubbleDeets{
         this.bubbles = bubbles;
         this.parentBubbleId = parentBubbleId;
         this.atHome = true;
+        this.closestMatchId = closestMatchId;
+        this.closestMatchText = closestMatchText;
         if (bubsInConcept){
             this.bubsInConcept = bubsInConcept;
         }else{
@@ -598,7 +606,6 @@ class BubbleDeets{
         }else{
             this.yLocation = nextYLocation(this.type,this.id,this.parentBubbleId);
         }
-        
     }
 }
 
