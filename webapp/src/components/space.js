@@ -344,8 +344,8 @@ class Space extends React.Component{
 
     positionConceptBubbles = (concept,X,Y) => {
         let newBubbles = this.state.bubbles.slice(0);
-        const xOffset = 50;
-        const yOffset = 50;
+        const xOffset = 30;
+        const yOffset = 20;
         const nextYOffset = 60;
         for (let outer = 0; outer < newBubbles.length; outer++){
             if(concept.bubsInConcept.includes(newBubbles[outer].id)){

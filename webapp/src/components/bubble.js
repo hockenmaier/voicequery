@@ -76,6 +76,7 @@ class Bubble extends React.Component{
         const stringXLocation = xLocation + 'px';
 
         const typeBubble= 'bubble ' + this.props.type
+        const titleClass = typeBubble + '-title'
         
         return(
             <button 
@@ -93,7 +94,7 @@ class Bubble extends React.Component{
                     top: stringYLocation,
                     left: stringXLocation,
                 }}
-            >{this.props.name}<br/><font size="1" color='#CFCFCF'>{subText}</font>
+            ><span className={titleClass}>{this.props.name}<br/><font size="1" color='#CFCFCF'>{subText}</font></span>
             </button>
         );
     }

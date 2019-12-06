@@ -144,11 +144,7 @@ body {
     background: rgb(216, 216, 216);
     border-radius:  50% / 10%;   
     color: rgb(58, 58, 58);
-    font-weight: 900;
-    font-size: 16px;
-    text-align: center;
-    text-indent: .1em;
-    padding-bottom: 14em;
+    
     /*padding-bottom: 0em;*/
     /*text-indent: -20em;*/
     position: fixed;
@@ -162,7 +158,37 @@ body {
       left: -5%;
       background: inherit;
       border-radius: 5% / 50%;
-    }
+  }
+  
+  .concept-title {
+    font-weight: 700;
+    font-size: 16px;
+    display: block;
+    position: absolute; 
+    top: -25px;
+    text-align: center;
+    text-indent: 3.3em;
+  }
+  
+  .subject-title {
+    position: relative;
+    text-align: center;
+  }
+  
+  .condition-title {
+    position: relative;
+    text-align: center;
+  }
+  
+  .info-value-title {
+    position: relative;
+    text-align: center;
+  }
+  
+  .info-field-title {
+    position: relative;
+    text-align: center;
+  }
 
   
 
