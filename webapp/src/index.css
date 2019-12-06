@@ -36,6 +36,11 @@ body {
   .subject {
     background: var(--subject-color);
     border-radius: 50%;
+  }
+  
+  .subject-title {
+    position: relative;
+    text-align: center;
     font-style: italic;
     font-size: 14px; 
     font-weight: 600;
@@ -56,6 +61,12 @@ body {
     background: var(--condition-color);
     border-radius: 5px;
     transform: skew(-12deg);
+  }
+  
+  .condition-title {
+    position: relative;
+    text-align: center;
+    transform: none;
     font-size: 14px;
     font-weight: 600;
   }
@@ -74,15 +85,25 @@ body {
   .info-field {
     background: var(--info-field-color);
     border-radius: 3px;
+  }
+  
+  .info-field-title {
+    position: relative;
+    text-align: center;
     font-size: 16px;
   }
   
   .info-value {
     background: var(--info-value-color);
     border-radius: 5px;
+  }
+  
+  .info-value-title {
+    position: relative;
+    text-align: center;
     font-size: 12px;
   }
-
+  
   .info-room {
     background: var(--room-background);
     border-radius: 10px;
@@ -169,26 +190,5 @@ body {
     text-align: center;
     text-indent: 3.3em;
   }
-  
-  .subject-title {
-    position: relative;
-    text-align: center;
-  }
-  
-  .condition-title {
-    position: relative;
-    text-align: center;
-  }
-  
-  .info-value-title {
-    position: relative;
-    text-align: center;
-  }
-  
-  .info-field-title {
-    position: relative;
-    text-align: center;
-  }
-
   
 
