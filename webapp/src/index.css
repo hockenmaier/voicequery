@@ -142,14 +142,27 @@ body {
 
   .concept {
     background: rgb(216, 216, 216);
-    border-radius: 5px;
-    border: 3px solid rgb(162, 170, 167);
-    border-radius: 50%;    
+    border-radius:  50% / 10%;   
     color: rgb(58, 58, 58);
     font-weight: 900;
     font-size: 16px;
-    padding-bottom: 11em;
+    text-align: center;
+    text-indent: .1em;
+    padding-bottom: 14em;
+    /*padding-bottom: 0em;*/
+    /*text-indent: -20em;*/
     position: fixed;
   }
+  .concept:before {
+      content: '';
+      position: absolute;
+      top: 9%;
+      bottom: 9%;
+      right: -5%;
+      left: -5%;
+      background: inherit;
+      border-radius: 5% / 50%;
+    }
 
+  
 

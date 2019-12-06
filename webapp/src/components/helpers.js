@@ -47,6 +47,6 @@ export function initializeLayout(){
 
     layout.InfoBubbleLeft = window.innerWidth - (layout.infoWidth + layout.rightMargin - layout.BubbleRoomLeftMargin);
 
-    layout.conceptWidth = 235;
-    layout.conceptHeight = 235;
+    layout.conceptWidth = 180;
+    layout.conceptHeight = 160;
 }
