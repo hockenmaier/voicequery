@@ -638,15 +638,16 @@ def package_JSON(outputQuery,reducedConditionsAndPOS,reducedSubjectsAndPOS, pret
     data['parseTree'] = prettyParseTree
     bubbles = []
     for condition in reducedConditionsAndPOS:
-        bubble = {}
-        bubble['internalID'] = ""
-        bubble['name'] = condition.text
-        bubble['type'] = "condition"
-        closest_match_id,closest_match_text = get_clean_closest_match(condition)
-        bubble['closestMatchId'] = closest_match_id
-        bubble['closestMatchText'] = closest_match_text
-        bubble['bubbles'] = []
-        bubbles.append(bubble)
+        if condition.phraseType != 'timeCondition':
+            bubble = {}
+            bubble['internalID'] = ""
+            bubble['name'] = condition.text
+            bubble['type'] = condition.phraseType
+            closest_match_id,closest_match_text = get_clean_closest_match(condition)
+            bubble['closestMatchId'] = closest_match_id
+            bubble['closestMatchText'] = closest_match_text
+            bubble['bubbles'] = []
+            bubbles.append(bubble)
     for subject in reducedSubjectsAndPOS:
         bubble = {}
         bubble['internalID'] = ""
@@ -685,25 +686,26 @@ def storeQuery(table, queryID, query, parseTree, workspace):
 def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType):
     reducedPhraseList = []
     for phrase in phraseAndPOSList:
-        foundItems = table.scan(
-            FilterExpression=Key('text').eq(phrase.text) & Key('workspace').eq(workspace) & Key('query_part').eq(lexType)
-        )
-        if not(foundItems['Items']):
-            reducedPhraseList.append(phrase)
-            closest_match_id,closest_match_text = get_clean_closest_match(phrase)
-            put = table.put_item(
-            Item={
-                'item_id': str(uuid.uuid4()),
-                'text': phrase.text,
-                'storage_source': 'parse',
-                'query_id': queryID,
-                'query_part': lexType,
-                'create_time':str(datetime.datetime.now()),
-                'closest_match_id': closest_match_id,
-                'closest_match_text': closest_match_text,
-                'workspace': workspace,
-            }
-        )
+        if phrase.phraseType != 'timeCondition':
+            foundItems = table.scan(
+                FilterExpression=Key('text').eq(phrase.text) & Key('workspace').eq(workspace) & Key('query_part').eq(lexType)
+            )
+            if not(foundItems['Items']):
+                reducedPhraseList.append(phrase)
+                closest_match_id,closest_match_text = get_clean_closest_match(phrase)
+                put = table.put_item(
+                Item={
+                    'item_id': str(uuid.uuid4()),
+                    'text': phrase.text,
+                    'storage_source': 'parse',
+                    'query_id': queryID,
+                    'query_part': lexType,
+                    'create_time':str(datetime.datetime.now()),
+                    'closest_match_id': closest_match_id,
+                    'closest_match_text': closest_match_text,
+                    'workspace': workspace,
+                }
+            )
     return reducedPhraseList
 
 #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
