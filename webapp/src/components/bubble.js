@@ -47,7 +47,7 @@ class Bubble extends React.Component{
             width = 90;
         }
         else if (this.props.type === 'concept'){
-            height = layout.conceptHeight;
+            height = 30 + (this.props.conceptCount * 60)
             width = layout.conceptWidth;
         }
         let subText = ''

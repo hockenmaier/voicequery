@@ -453,6 +453,7 @@ class Space extends React.Component{
     }
 
     renderBubble(bub){
+        const conceptCount = bub.bubsInConcept.length
         return (
             <Bubble key={bub.id}
                   internalID = {bub.internalId}
@@ -464,6 +465,7 @@ class Space extends React.Component{
                   xLocation= {bub.xLocation}
                   yLocation={bub.yLocation}
                   closestMatchText={bub.closestMatchText}
+                  conceptCount={conceptCount}
             />
         );
     }
