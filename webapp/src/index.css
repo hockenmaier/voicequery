@@ -35,7 +35,7 @@ body {
 
   .subject {
     background: var(--subject-color);
-    border-radius: 50%;
+    border-radius: 40% / 80% /*transform: scale(0.5);*/
   }
   
   .subject-title {
@@ -60,7 +60,7 @@ body {
   .condition {
     background: var(--condition-color);
     border-radius: 5px;
-    transform: skew(-12deg);
+    border-radius: 30% 0% / 85% 0%;
   }
   
   .condition-title {
@@ -96,6 +96,7 @@ body {
   .info-value {
     background: var(--info-value-color);
     border-radius: 5px;
+    transform: skew(-10deg);
   }
   
   .info-value-title {
@@ -165,10 +166,8 @@ body {
     background: rgb(216, 216, 216);
     border-radius:  50% / 10%;   
     color: rgb(58, 58, 58);
-    
-    /*padding-bottom: 0em;*/
-    /*text-indent: -20em;*/
     position: fixed;
+    /*transform: scale(0.5);*/
   }
   .concept:before {
       content: '';
