@@ -84,7 +84,7 @@ body {
 
   .info-field {
     background: var(--info-field-color);
-    border-radius: 3px;
+    border-radius: 12px 12px 2px 2px;
   }
   
   .info-field-title {
