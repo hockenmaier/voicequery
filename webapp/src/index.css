@@ -8,6 +8,8 @@
   --info-field-color: rgb(113, 132, 136); 
   --info-value-color: rgb(78, 105, 112); 
   --info-text-light: rgb(186, 216, 221);
+  --concept-color: rgb(216, 216, 216);
+  --concept-text-light: rgb(235, 235, 235);
 }
 body {
   margin: 0;
@@ -32,10 +34,14 @@ body {
     isolation: isolate;
     position: absolute;
   }
+  
+  #shrink {
+    transform: scale(0.5);
+  }
 
   .subject {
     background: var(--subject-color);
-    border-radius: 40% / 80% /*transform: scale(0.5);*/
+    border-radius: 40% / 80% 
   }
   
   .subject-title {
@@ -163,21 +169,21 @@ body {
   }
 
   .concept {
-    background: rgb(216, 216, 216);
+    background: var(--concept-color);
     border-radius:  50% / 10%;   
     color: rgb(58, 58, 58);
     position: fixed;
     /*transform: scale(0.5);*/
   }
   .concept:before {
-      content: '';
-      position: absolute;
-      top: 9%;
-      bottom: 9%;
-      right: -5%;
-      left: -5%;
-      background: inherit;
-      border-radius: 5% / 50%;
+    content: '';
+    position: absolute;
+    top: 9%;
+    bottom: 9%;
+    right: -5%;
+    left: -5%;
+    background: inherit;
+    border-radius: 5% / 50%;
   }
   
   .concept-title {
@@ -188,6 +194,17 @@ body {
     top: -25px;
     text-align: center;
     text-indent: 3.3em;
+  }
+  
+  .concept-room {
+    background: var(--room-background);
+    border-radius: 10px;
+    border: 3px solid var(--concept-color);
+    position: fixed;
+    color: var(--concept-text-light);
+    font-weight: 600;
+    text-indent: .5em;
+    user-select: none;
   }
   
 

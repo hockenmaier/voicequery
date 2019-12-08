@@ -505,33 +505,43 @@ class Space extends React.Component{
                 ></div>                
                 <div className = "subject-room"
                     style={{
-                        height: layout.subjectHeight,
-                        width: layout.subjectWidth,
+                        width: layout.lexWidth,
                         top: layout.topMargin,
+                        bottom: layout.subjectBottom,
                         left: layout.leftMargin,
                     }}
                     >
-                    Unmapped Subjects
+                    New Subjects
                 </div>
                 <div className = "condition-room"
                     style={{
-                        height: layout.conditionHeight,
-                        width: layout.conditionWidth,
+                        width: layout.lexWidth,
+                        bottom: layout.bottomMargin,
                         top: layout.conditionTop,
                         left: layout.leftMargin,
                     }}
                     >
-                    Unmapped Conditions
+                    New Conditions
                 </div>
                 <div className = "info-room"
                     style={{
-                        height: layout.infoHeight,
                         width: layout.infoWidth,
+                        bottom: layout.bottomMargin,
                         top: layout.topMargin,
                         right: layout.rightMargin,
                     }}
                     >
-                    Available Info: rental_transaction Table
+                    Available Info
+                </div>
+                <div className = "concept-room"
+                    style={{
+                        height: layout.conceptRoomHeight,
+                        bottom: layout.conceptRoomBottomMargin,
+                        right: layout.conceptRoomRight,
+                        left: layout.conceptRoomLeft,
+                    }}
+                    >
+                    Concept Storage
                 </div>
                 {bubbleArray}
                 <div className = "query"
