@@ -75,8 +75,12 @@ class Bubble extends React.Component{
         const stringYLocation = yLocation + 'px';
         const stringXLocation = xLocation + 'px';
 
-        const typeBubble= 'bubble ' + this.props.type
-        const titleClass = typeBubble + '-title'
+        let typeBubble= 'bubble ' + this.props.type
+        let titleClass = typeBubble + '-title'
+        if (this.props.shrink){
+            titleClass = titleClass + ' shrink'
+            typeBubble = typeBubble + ' shrink'
+        }
         
         return(
             <button 

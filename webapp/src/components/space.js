@@ -305,13 +305,43 @@ class Space extends React.Component{
 
     handleWorkRoomDrop(e){
         this.updateAtHome(false);
+        this.updateShrink(false);
         this.moveBubble(e);
         this.removeFromConcept(lastDragStart.id.toString())
     }
+    
+    handleConceptRoomDrop(e){
+        this.updateShrink(true);
+        this.moveBubble(e);
+    }
 
-    updateAtHome(){
-        //Todo:
-        //update subject or condition bubble's "athome" state and subtract the appropriate count to allow all bubbles below it to shift up when it drags out
+    updateAtHome(atHomeValue){
+        const draggedID = lastDragStart.id.toString();
+        let newBubbles = this.state.bubbles.slice(0);
+        for (let iter = 0; iter < newBubbles.length; iter++){
+            if (newBubbles[iter].id === draggedID){
+                newBubbles[iter].atHome = atHomeValue;
+            }
+        }
+        this.setState({
+            bubbles: newBubbles
+        })
+    }
+    
+    updateShrink(shrinkValue){
+        const draggedID = lastDragStart.id.toString();
+        let newBubbles = this.state.bubbles.slice(0);
+        for (let iter = 0; iter < newBubbles.length; iter++){
+            if (newBubbles[iter].id === draggedID){
+                newBubbles[iter].shrink = shrinkValue;
+                for (let iter2 = 0; iter2 < newBubbles[iter].bubsInConcept.length; iter2++){
+                    this.getBubble(newBubbles[iter].bubsInConcept[iter2]).shrink = shrinkValue
+                }
+            }
+        }
+        this.setState({
+            bubbles: newBubbles
+        })
     }
 
     moveBubble(e){
@@ -344,9 +374,13 @@ class Space extends React.Component{
 
     positionConceptBubbles = (concept,X,Y) => {
         let newBubbles = this.state.bubbles.slice(0);
-        const xOffset = 30;
-        const yOffset = 20;
-        const nextYOffset = 60;
+        let xOffset = 30;
+        let yOffset = 20;
+        let nextYOffset = 60;
+        if(concept.shrink){
+            yOffset = yOffset - 10 + (concept.bubsInConcept).length*14;
+            nextYOffset = nextYOffset/2;
+        }
         for (let outer = 0; outer < newBubbles.length; outer++){
             if(concept.bubsInConcept.includes(newBubbles[outer].id)){
                 newBubbles[outer].xLocation = X + xOffset;
@@ -466,6 +500,7 @@ class Space extends React.Component{
                   yLocation={bub.yLocation}
                   closestMatchText={bub.closestMatchText}
                   conceptCount={conceptCount}
+                  shrink={bub.shrink}
             />
         );
     }
@@ -534,6 +569,8 @@ class Space extends React.Component{
                     Available Info
                 </div>
                 <div className = "concept-room"
+                    onDrop={this.handleConceptRoomDrop.bind(this)}
+                    onDragOver={this.handleWorkRoomDragOver}
                     style={{
                         height: layout.conceptRoomHeight,
                         bottom: layout.conceptRoomBottomMargin,
@@ -597,6 +634,7 @@ class BubbleDeets{
         this.atHome = true;
         this.closestMatchId = closestMatchId;
         this.closestMatchText = closestMatchText;
+        this.shrink = false;
         if (bubsInConcept){
             this.bubsInConcept = bubsInConcept;
         }else{
