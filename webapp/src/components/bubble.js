@@ -26,6 +26,13 @@ class Bubble extends React.Component{
             dragover: false,
         })
     }
+    
+    handleDrop(e){
+        this.setState({
+            dragover: false,
+        })
+        this.props.onDrop(e)
+    }
 
     // handleDragStart(e){
     //     console.log('drag start and this.props.id is: ' + this.props.id);
@@ -89,7 +96,7 @@ class Bubble extends React.Component{
                 draggable="true" 
                 onDragStart={this.props.onDragStart}
                 //onDragStart={this.handleDragStart.bind(this)}
-                onDrop={this.props.onDrop}
+                onDrop={this.handleDrop.bind(this)}
                 onDragOver={this.handleDragOver.bind(this)}
                 onDragLeave={this.handleDragLeave.bind(this)}
                 style={{
