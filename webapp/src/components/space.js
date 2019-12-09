@@ -336,6 +336,8 @@ class Space extends React.Component{
                 newBubbles[iter].shrink = shrinkValue;
                 for (let iter2 = 0; iter2 < newBubbles[iter].bubsInConcept.length; iter2++){
                     this.getBubble(newBubbles[iter].bubsInConcept[iter2]).shrink = shrinkValue
+                    console.log(this.getBubble(newBubbles[iter].bubsInConcept[iter2]).text)
+                    console.log(this.getBubble(newBubbles[iter].bubsInConcept[iter2]).typeText)
                 }
             }
         }

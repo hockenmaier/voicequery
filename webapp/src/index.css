@@ -102,7 +102,7 @@ body {
   .info-value {
     background: var(--info-value-color);
     border-radius: 5px;
-    transform: skew(-10deg);
+    /*transform: skew(-10deg);*/
   }
   
   .info-value-title {
