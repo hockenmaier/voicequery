@@ -43,26 +43,26 @@ class Bubble extends React.Component{
         let height;
         let width;
         if (this.props.type === 'subject' | this.props.type === 'condition'){
-            height = 50;
-            width = 120;
+            height = layout.bubbleHeight['subject'];
+            width = layout.bubbleWidth['subject'];
         }else if (this.props.type === 'info-field'){
-            height = 40;
-            width = 150;
+            height = layout.bubbleHeight['info-field'];
+            width = layout.bubbleWidth['info-field'];
         }
         else if (this.props.type === 'info-value'){
-            height = 30;
-            width = 90;
+            height = layout.bubbleHeight['info-value'];
+            width = layout.bubbleWidth['info-value'];
         }
         else if (this.props.type === 'concept'){
             height = 30 + (this.props.conceptCount * 60)
-            width = layout.conceptWidth;
+            width = layout.bubbleWidth['concept'];
         }
         let subText = ''
         if (this.props.type === 'subject' | this.props.type === 'condition'){
             subText = 'close: ' + this.props.closestMatchText
         }
         //modify size based on dragover event
-        const dragScale = 1.25;
+        const dragScale = 1.15;
         height = (this.state.dragover ? height*dragScale : height);
         width = (this.state.dragover ? width*dragScale : width);
         

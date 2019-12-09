@@ -46,12 +46,28 @@ export function initializeLayout(){
     
     layout.InfoBubbleLeft = window.innerWidth - (layout.infoWidth + layout.rightMargin - layout.BubbleRoomLeftMargin);
     
-    layout.conceptWidth = 180;
-    layout.conceptHeight = 160;
+    // layout.conceptWidth = 180;
+    // layout.conceptHeight = 160;
     
     layout.conceptRoomHeight = 150;
     layout.conceptRoomBottomMargin = layout.roomBuffer;
     layout.conceptRoomRight = layout.infoWidth + layout.leftMargin + layout.roomBuffer;
     layout.conceptRoomLeft = layout.lexWidth + layout.leftMargin + layout.roomBuffer;
+    
+    layout.bubbleHeight = {
+      'subject': 50,
+      'condition': 50,
+      'info-field': 40,
+      'info-value': 30,
+      'concept': 160,
+    };
+    
+    layout.bubbleWidth = {
+      'subject': 120,
+      'condition': 120,
+      'info-field': 150,
+      'info-value': 90,
+      'concept': 180,
+    };
     
 }

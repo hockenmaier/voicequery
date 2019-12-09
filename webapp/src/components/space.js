@@ -109,7 +109,6 @@ class Space extends React.Component{
         })
         return newBubbles;
     }
-    
 
     handleBubbleDragStart(e, id){
         lastDragStart.id = id;
@@ -117,6 +116,7 @@ class Space extends React.Component{
         lastDragStart.shiftX = e.nativeEvent.clientX - e.nativeEvent.srcElement.getBoundingClientRect().left;
         lastDragStart.shiftY = e.nativeEvent.clientY - e.nativeEvent.srcElement.getBoundingClientRect().top;
     }
+    
     handleBubbleDrop(e, id){
         e.nativeEvent.preventDefault();
         const draggedID = lastDragStart.id.toString();
@@ -162,7 +162,7 @@ class Space extends React.Component{
         else{
             console.log('concept creation');
             const newConcept = this.createConcept(dragged,dropped,e)
-            //this.positionConceptBubbles(newConcept,newConcept.xLocation,newConcept.yLocation)
+            // this.positionConceptBubbles(newConcept,newConcept.xLocation,newConcept.yLocation)
         }
     }
 
@@ -190,8 +190,8 @@ class Space extends React.Component{
         this.removeFromConcept(dropped.id);
 
         let newBubbles = this.state.bubbles.slice(0);
-        const newX = e.nativeEvent.clientX - layout.conceptWidth / 2
-        const newY = e.nativeEvent.clientY - layout.conceptHeight / 2
+        const newX = e.nativeEvent.clientX - layout.bubbleWidth['concept'] / 2
+        const newY = e.nativeEvent.clientY - layout.bubbleHeight['concept'] / 2
 
         const newbubsInConcept = []
         newbubsInConcept.push(dragged.id);
@@ -336,8 +336,6 @@ class Space extends React.Component{
                 newBubbles[iter].shrink = shrinkValue;
                 for (let iter2 = 0; iter2 < newBubbles[iter].bubsInConcept.length; iter2++){
                     this.getBubble(newBubbles[iter].bubsInConcept[iter2]).shrink = shrinkValue
-                    console.log(this.getBubble(newBubbles[iter].bubsInConcept[iter2]).text)
-                    console.log(this.getBubble(newBubbles[iter].bubsInConcept[iter2]).typeText)
                 }
             }
         }
@@ -376,7 +374,7 @@ class Space extends React.Component{
 
     positionConceptBubbles = (concept,X,Y) => {
         let newBubbles = this.state.bubbles.slice(0);
-        let xOffset = 30;
+        // let xOffset = 30;
         let yOffset = 20;
         let nextYOffset = 60;
         if(concept.shrink){
@@ -385,14 +383,16 @@ class Space extends React.Component{
         }
         for (let outer = 0; outer < newBubbles.length; outer++){
             if(concept.bubsInConcept.includes(newBubbles[outer].id)){
-                newBubbles[outer].xLocation = X + xOffset;
-                newBubbles[outer].yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(newBubbles[outer].id)*nextYOffset);
+                let outerBubble = newBubbles[outer];
+                outerBubble.xLocation = X + this.getConceptXOffset(outerBubble.type);
+                outerBubble.yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(outerBubble.id)*nextYOffset);
             }      
             if (newBubbles[outer].bubbles.length > 0){
                 for (let inner = 0; inner < newBubbles[outer].bubbles.length; inner++){
                     if(concept.bubsInConcept.includes(newBubbles[outer].bubbles[inner].id)){
-                        newBubbles[outer].bubbles[inner].xLocation = X + xOffset;
-                        newBubbles[outer].bubbles[inner].yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(newBubbles[outer].bubbles[inner].id)*nextYOffset);
+                        let innerBubble = newBubbles[outer].bubbles[inner];
+                        innerBubble.xLocation = X + this.getConceptXOffset(innerBubble.type);
+                        innerBubble.yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(innerBubble.id)*nextYOffset);
                     }   
                 }
             }
@@ -400,6 +400,11 @@ class Space extends React.Component{
         this.setState({
             bubbles: newBubbles                
         })
+    }
+    
+    getConceptXOffset(type){
+        let width = layout.bubbleWidth[type];
+        return (layout.bubbleWidth['concept'] - width)/2;
     }
 
     handleWorkRoomDragOver(e){
