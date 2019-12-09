@@ -38,6 +38,9 @@ body {
   .shrink {
     transform: scale(0.5);
   }
+  .grow {
+    transform: scale(1.0);
+  }
 
   .subject {
     background: var(--subject-color);
@@ -193,7 +196,7 @@ body {
     position: absolute; 
     top: -25px;
     text-align: center;
-    text-indent: 3.3em;
+    text-indent: 2.8em;
   }
   
   .concept-room {

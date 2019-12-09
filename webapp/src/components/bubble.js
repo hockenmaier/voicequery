@@ -42,20 +42,12 @@ class Bubble extends React.Component{
         //set base size by type        
         let height;
         let width;
-        if (this.props.type === 'subject' | this.props.type === 'condition'){
-            height = layout.bubbleHeight['subject'];
-            width = layout.bubbleWidth['subject'];
-        }else if (this.props.type === 'info-field'){
-            height = layout.bubbleHeight['info-field'];
-            width = layout.bubbleWidth['info-field'];
-        }
-        else if (this.props.type === 'info-value'){
-            height = layout.bubbleHeight['info-value'];
-            width = layout.bubbleWidth['info-value'];
-        }
-        else if (this.props.type === 'concept'){
+        if (this.props.type === 'concept'){
             height = 30 + (this.props.conceptCount * 60)
             width = layout.bubbleWidth['concept'];
+        }else{
+            height = layout.bubbleHeight[this.props.type]
+            width = layout.bubbleWidth[this.props.type]
         }
         let subText = ''
         if (this.props.type === 'subject' | this.props.type === 'condition'){
@@ -85,7 +77,7 @@ class Bubble extends React.Component{
         let typeBubble= 'bubble ' + this.props.type
         let titleClass = typeBubble + '-title'
         if (this.props.shrink){
-            titleClass = titleClass + ' shrink'
+            titleClass = titleClass + ' grow'
             typeBubble = typeBubble + ' shrink'
         }
         

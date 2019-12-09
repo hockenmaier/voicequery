@@ -67,7 +67,7 @@ export function initializeLayout(){
       'condition': 120,
       'info-field': 150,
       'info-value': 90,
-      'concept': 180,
+      'concept': 160,
     };
     
 }
