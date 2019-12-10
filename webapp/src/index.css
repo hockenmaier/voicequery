@@ -64,6 +64,7 @@ body {
     font-weight: 500;
     text-indent: .5em;
     user-select: none;
+    overflow-y:auto;
   }
   
   .condition {
@@ -89,6 +90,7 @@ body {
     font-weight: 700;
     text-indent: .5em;
     user-select: none;
+    overflow-y:auto;
   }  
 
   .info-field {
@@ -123,6 +125,7 @@ body {
     font-weight: 600;
     text-indent: .5em;
     user-select: none;
+    overflow-y:auto;
   }
 
   .query-input{    
@@ -208,6 +211,7 @@ body {
     font-weight: 600;
     text-indent: .5em;
     user-select: none;
+    overflow-x:auto;
   }
   
 

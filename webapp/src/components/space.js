@@ -304,25 +304,39 @@ class Space extends React.Component{
     }
 
     handleWorkRoomDrop(e){
-        this.updateAtHome(false);
+        this.updateRoom('work');
         this.updateShrink(false);
         this.moveBubble(e);
         this.removeFromConcept(lastDragStart.id.toString())
     }
     
     handleConceptRoomDrop(e){
+        this.updateRoom('concept');
         this.updateShrink(true);
         this.moveBubble(e);
     }
 
-    updateAtHome(atHomeValue){
+    updateRoom(roomValue){
         const draggedID = lastDragStart.id.toString();
         let newBubbles = this.state.bubbles.slice(0);
         for (let iter = 0; iter < newBubbles.length; iter++){
             if (newBubbles[iter].id === draggedID){
-                newBubbles[iter].atHome = atHomeValue;
+                newBubbles[iter].room = roomValue;
+            }
+            for (let iter2 = 0; iter2 < newBubbles[iter].bubbles.length; iter2++){
+                if (newBubbles[iter].bubbles[iter2].id === draggedID){
+                    newBubbles[iter].bubbles[iter2].room = roomValue;
+                }
             }
         }
+        // for (let outer = 0; outer < newBubbles.length; outer++){            
+        //     newBubbles[outer].room = roomValue;
+        //     if (newBubbles[outer].newBubbles.length > 0){
+        //         for (let inner = 0; inner < newBubbles[outer].newBubbles.length; inner++){
+        //             this.getBubble(newBubbles[outer].bubsInConcept[inner]).room = roomValue;
+        //         }
+        //     }
+        // };
         this.setState({
             bubbles: newBubbles
         })
@@ -386,6 +400,7 @@ class Space extends React.Component{
                 let outerBubble = newBubbles[outer];
                 outerBubble.xLocation = X + this.getConceptXOffset(outerBubble.type);
                 outerBubble.yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(outerBubble.id)*nextYOffset);
+                outerBubble.room = (concept.room == 'concept' ? 'work' : concept.room);
             }      
             if (newBubbles[outer].bubbles.length > 0){
                 for (let inner = 0; inner < newBubbles[outer].bubbles.length; inner++){
@@ -393,6 +408,7 @@ class Space extends React.Component{
                         let innerBubble = newBubbles[outer].bubbles[inner];
                         innerBubble.xLocation = X + this.getConceptXOffset(innerBubble.type);
                         innerBubble.yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(innerBubble.id)*nextYOffset);
+                        innerBubble.room = (concept.room == 'concept' ? 'work' : concept.room);
                     }   
                 }
             }
@@ -518,10 +534,23 @@ class Space extends React.Component{
             return<div className = "space"></div>; //doing this so that render doesn't execute before bubbles are initialized on componentdidmount
         }
 
-        let bubbleArray = [];
+        let workRoomBubbleArray = [];
+        let subjectRoomBubbleArray = [];
+        let conditionRoomBubbleArray = [];
+        let infoRoomBubbleArray = [];
+        let conceptRoomBubbleArray = [];
         let flatBubbles = this.bubbleFlattener(this.state.bubbles);
         for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
-            bubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));            
+            if (flatBubbles[bubblePos].room == 'work')
+                workRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));
+            if (flatBubbles[bubblePos].room == 'subject')
+                subjectRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));   
+            if (flatBubbles[bubblePos].room == 'condition')
+                conditionRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
+            if (flatBubbles[bubblePos].room == 'info')
+                infoRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
+            if (flatBubbles[bubblePos].room == 'concept')
+                conceptRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
         };
         
         return(
@@ -554,6 +583,7 @@ class Space extends React.Component{
                     }}
                     >
                     New Subjects
+                    {subjectRoomBubbleArray}
                 </div>
                 <div className = "condition-room"
                     style={{
@@ -564,6 +594,7 @@ class Space extends React.Component{
                     }}
                     >
                     New Conditions
+                    {conditionRoomBubbleArray}
                 </div>
                 <div className = "info-room"
                     style={{
@@ -574,6 +605,7 @@ class Space extends React.Component{
                     }}
                     >
                     Available Info
+                    {infoRoomBubbleArray}
                 </div>
                 <div className = "concept-room"
                     onDrop={this.handleConceptRoomDrop.bind(this)}
@@ -586,8 +618,9 @@ class Space extends React.Component{
                     }}
                     >
                     Concept Storage
+                    {conceptRoomBubbleArray}
                 </div>
-                {bubbleArray}
+                {workRoomBubbleArray}
                 <div className = "query"
                     >
                     <input 
@@ -632,13 +665,20 @@ let bubblesInitialized = false;
 
 class BubbleDeets{
     constructor(internalId,text,typetext,bubbles,parentBubbleId,closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept){ //last three are not set on construction
+        let room = typetext;
+        if(typetext == 'info-field' | typetext == 'info-value'){
+            room = 'info'
+        }
+        if(typetext == 'concept'){
+            room = 'work'
+        }
         this.internalID = internalId;
         this.id = getNextBubbleID();
         this.text = text;
         this.type = typetext;        
         this.bubbles = bubbles;
         this.parentBubbleId = parentBubbleId;
-        this.atHome = true;
+        this.room = room;
         this.closestMatchId = closestMatchId;
         this.closestMatchText = closestMatchText;
         this.shrink = false;
