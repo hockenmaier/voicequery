@@ -29,7 +29,7 @@ export function initializeLayout(){
     layout.roomBuffer = 20;
     
     layout.subjectBottom = window.innerHeight/2 + (layout.roomBuffer/2);
-    layout.lexWidth = 165;
+    layout.lexWidth = 155;
     
     layout.queryResponseLeft = layout.leftMargin + layout.subjectWidth + 15;
     
@@ -39,7 +39,8 @@ export function initializeLayout(){
     layout.infoWidth = 500;
     
     layout.BubbleRoomLeftMargin = 20;
-    layout.BubbleRoomTopMargin = 30;
+    // layout.BubbleRoomTopMargin = 30;
+    layout.BubbleRoomTopMargin = -30;
     layout.BubbleLeftMargin = layout.leftMargin + layout.BubbleRoomLeftMargin;
     layout.BubbleTopMargin = layout.topMargin + layout.BubbleRoomTopMargin;
     layout.conditionBubbleTopMargin = layout.conditionTop + layout.BubbleRoomTopMargin;

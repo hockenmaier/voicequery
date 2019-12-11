@@ -315,6 +315,16 @@ class Space extends React.Component{
         this.updateShrink(true);
         this.moveBubble(e);
     }
+    
+    handleSubjectRoomDrop(e){
+        this.updateRoom('subject');
+        this.removeFromConcept(lastDragStart.id.toString())
+    }
+    
+    handleConditionRoomDrop(e){
+        this.updateRoom('condition');
+        this.removeFromConcept(lastDragStart.id.toString())
+    }
 
     updateRoom(roomValue){
         const draggedID = lastDragStart.id.toString();
@@ -361,8 +371,8 @@ class Space extends React.Component{
     moveBubble(e){
         //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
         //console.log(e.nativeEvent);        
-        const newX = e.nativeEvent.clientX - lastDragStart.shiftX -3; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
-        const newY = e.nativeEvent.clientY - lastDragStart.shiftY -3;
+        const newX = e.nativeEvent.clientX - lastDragStart.shiftX; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
+        const newY = e.nativeEvent.clientY - lastDragStart.shiftY; //SOLVED: I had a 3 px margin in my main bubble css class!
 
         const newBubbles = this.state.bubbles.map((bub) => {
             for (let inner = 0; inner < bub.bubbles.length; inner++){
@@ -524,6 +534,7 @@ class Space extends React.Component{
                   closestMatchText={bub.closestMatchText}
                   conceptCount={conceptCount}
                   shrink={bub.shrink}
+                  room={bub.room}
             />
         );
     }
@@ -575,6 +586,8 @@ class Space extends React.Component{
                         }}
                 ></div>                
                 <div className = "subject-room"
+                    onDrop={this.handleSubjectRoomDrop.bind(this)}
+                    onDragOver={this.handleWorkRoomDragOver}
                     style={{
                         width: layout.lexWidth,
                         top: layout.topMargin,
@@ -586,6 +599,8 @@ class Space extends React.Component{
                     {subjectRoomBubbleArray}
                 </div>
                 <div className = "condition-room"
+                    onDrop={this.handleConditionRoomDrop.bind(this)}
+                    onDragOver={this.handleWorkRoomDragOver}
                     style={{
                         width: layout.lexWidth,
                         bottom: layout.bottomMargin,
@@ -732,10 +747,12 @@ function nextXLocation(type,id,parentId){
     if (type === 'subject' | type === 'condition'){
         return layout.BubbleLeftMargin;
     }else if (type === 'info-field'){
-        return layout.InfoBubbleLeft;
+        // return layout.InfoBubbleLeft;
+        return 0;
     }else if (type === 'info-value'){
         //console.log(((parseInt(id)-parseInt(parentId))%infoValueRows + 1)*105);
-        return layout.InfoBubbleLeft + 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
+        // return layout.InfoBubbleLeft + 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
+        return 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
     }else{
     return 300;
     }
