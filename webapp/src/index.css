@@ -10,6 +10,7 @@
   --info-text-light: rgb(186, 216, 221);
   --concept-color: rgb(216, 216, 216);
   --concept-text-light: rgb(235, 235, 235);
+  --top-bar: rgb(226, 226, 226);
 }
 body {
   margin: 0;
@@ -19,6 +20,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+  ::-webkit-scrollbar {
+      width: 12px;
+    }
+  ::-webkit-scrollbar-track {
+    background-color: var(--room-background);
+    border-radius: 15px;
+  }
+  ::-webkit-scrollbar-thumb{
+    background: var(--top-bar);
+    border-radius: 8px;
+    border: 2px solid var(--room-background);
+  }
+  
   .work-room {
     background: var(--main-background);
     position: fixed;
@@ -54,7 +68,7 @@ body {
     margin-top: 5px;
   }
   .concept-position {
-    position: relative;
+    position: static;
   }
   
   .shrink {
@@ -89,6 +103,10 @@ body {
     overflow-y:auto;
   }
   
+  .subject-room::-webkit-scrollbar-thumb{
+    background: var(--subject-color);
+  }
+  
   .condition {
     background: var(--condition-color);
     border-radius: 5px;
@@ -113,7 +131,11 @@ body {
     text-indent: .5em;
     user-select: none;
     overflow-y:auto;
-  }  
+  }
+  
+  .condition-room::-webkit-scrollbar-thumb{
+    background: var(--condition-color);
+  }
 
   .info-field {
     background: var(--info-field-color);
@@ -149,10 +171,14 @@ body {
     user-select: none;
     overflow-y:auto;
   }
+  
+  .info-room::-webkit-scrollbar-thumb{
+    background: var(--info-field-color);
+  }
 
   .query-input{    
     border-radius: 9px;
-    color: rgb(226, 226, 226);
+    color: var(--top-bar);
     border-width: 0px;
     font-size: 18px;
     position: fixed;
@@ -192,7 +218,7 @@ body {
   }
 
   .top-bar{
-    background: rgb(226, 226, 226);
+    background:var(--top-bar);
     position: fixed;
   }
 
@@ -233,7 +259,12 @@ body {
     font-weight: 600;
     text-indent: .5em;
     user-select: none;
-    overflow-x:auto;
+    overflow-x:scroll;
   }
+  
+  .concept-room::-webkit-scrollbar-thumb{
+    background: var(--concept-color);
+  }
+
   
 
