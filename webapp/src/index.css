@@ -69,6 +69,9 @@ body {
   }
   .concept-position {
     position: static;
+    margin-left: 10px;
+    text-indent: -10px;
+    margin-top: 5px;
   }
   
   .shrink {
@@ -226,7 +229,7 @@ body {
     background: var(--concept-color);
     border-radius:  50% / 10%;   
     color: rgb(58, 58, 58);
-    position: fixed;
+    /*position: fixed;*/
     /*transform: scale(0.5);*/
   }
   .concept:before {
@@ -259,7 +262,7 @@ body {
     font-weight: 600;
     text-indent: .5em;
     user-select: none;
-    overflow-x:scroll;
+    overflow-y:auto;
   }
   
   .concept-room::-webkit-scrollbar-thumb{

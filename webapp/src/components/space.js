@@ -307,7 +307,8 @@ class Space extends React.Component{
         this.updateRoom('work');
         this.updateShrink(false);
         this.moveBubble(e);
-        this.removeFromConcept(lastDragStart.id.toString())
+        this.removeFromConcept(lastDragStart.id.toString());
+        // console.log(this.state.bubbles);
     }
     
     handleConceptRoomDrop(e){
@@ -318,12 +319,12 @@ class Space extends React.Component{
     
     handleSubjectRoomDrop(e){
         this.updateRoom('subject');
-        this.removeFromConcept(lastDragStart.id.toString())
+        this.removeFromConcept(lastDragStart.id.toString());
     }
     
     handleConditionRoomDrop(e){
         this.updateRoom('condition');
-        this.removeFromConcept(lastDragStart.id.toString())
+        this.removeFromConcept(lastDragStart.id.toString());
     }
 
     updateRoom(roomValue){
