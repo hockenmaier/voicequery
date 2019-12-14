@@ -69,9 +69,9 @@ body {
   }
   .concept-position {
     position: static;
-    margin-left: 10px;
-    text-indent: -10px;
-    margin-top: 5px;
+    margin-left: -30px;
+    text-indent: -50px;
+    margin-top: 0px;
   }
   
   .shrink {
@@ -228,9 +228,8 @@ body {
   .concept {
     background: var(--concept-color);
     border-radius:  50% / 10%;   
-    color: rgb(58, 58, 58);
-    /*position: fixed;*/
-    /*transform: scale(0.5);*/
+    vertical-align: top;
+    color: var(--concept-color);
   }
   .concept:before {
     content: '';
@@ -261,6 +260,7 @@ body {
     color: var(--concept-text-light);
     font-weight: 600;
     text-indent: .5em;
+    text-align: left;
     user-select: none;
     overflow-y:auto;
   }
