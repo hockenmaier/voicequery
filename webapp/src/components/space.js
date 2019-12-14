@@ -519,9 +519,18 @@ class Space extends React.Component{
         };
         return flatBubbles;
     }
+    
+    getBubbles(ids){
+        let bubbleArray = [];
+        let id;
+        for (id in ids){
+            bubbleArray.push(this.getBubble(id));
+        }
+        return bubbleArray
+    }
 
     renderBubble(bub){
-        const conceptCount = bub.bubsInConcept.length
+        const conceptBubbles = this.getBubbles(bub.bubsInConcept)
         return (
             <Bubble key={bub.id}
                   internalID = {bub.internalId}
@@ -533,9 +542,9 @@ class Space extends React.Component{
                   xLocation= {bub.xLocation}
                   yLocation={bub.yLocation}
                   closestMatchText={bub.closestMatchText}
-                  conceptCount={conceptCount}
                   shrink={bub.shrink}
                   room={bub.room}
+                  conceptBubbles={conceptBubbles}
             />
         );
     }
