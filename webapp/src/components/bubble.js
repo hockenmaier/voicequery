@@ -92,17 +92,13 @@ class Bubble extends React.Component{
         const stringXLocation = xLocation + 'px';
 
         let typeBubble= this.props.room + '-position bubble ' + this.props.type //3 Styles here: room-position, bubble, and type
-        let titleClass = 'title ' + typeBubble + '-title' //1 Style here: type-title
+        let titleClass = typeBubble + '-title' //1 Style here: type-title
         if (this.props.shrink){
             titleClass = titleClass + ' grow'
             typeBubble = typeBubble + ' shrink'
         }
         
         const conceptTexts = this.getConceptTexts()
-        // if (this.props.room === 'concept'){
-        //     console.log('conceptTexts')
-        //     console.log(conceptTexts)
-        // }
         
         return(
             <button 
@@ -122,10 +118,10 @@ class Bubble extends React.Component{
                 }}
             ><span className={titleClass}>{this.props.name}</span>
             <span className='subtitle'>{subText}</span>
-            <span className='concept-text subject-concept-text'>{conceptTexts['subject']}</span>
-            <span className='concept-text condition-concept-text'>{conceptTexts['condition']}</span>
             <span className='concept-text info-field-concept-text'>{conceptTexts['info-field']}</span>
             <span className='concept-text info-value-concept-text'>{conceptTexts['info-value']}</span>
+            <span className='concept-text subject-concept-text'>{conceptTexts['subject']}</span>
+            <span className='concept-text condition-concept-text'>{conceptTexts['condition']}</span>
             </button>
         );
     }

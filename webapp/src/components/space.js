@@ -312,9 +312,13 @@ class Space extends React.Component{
     }
     
     handleConceptRoomDrop(e){
-        this.updateRoom('concept');
-        this.updateShrink(true);
-        this.moveBubble(e);
+        const draggedID = lastDragStart.id.toString();
+        const draggedType = this.getBubble(draggedID).type;
+        if (draggedType === 'concept'){
+            this.updateRoom('concept');
+            this.updateShrink(true);
+            this.moveBubble(e);
+        }
     }
     
     handleSubjectRoomDrop(e){

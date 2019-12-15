@@ -263,16 +263,17 @@ body {
     top: -25px;
   }
   
-  .condition-concept-text {
-    color: var(--condition-color);
-  }
-  
   .info-field-concept-text {
     color: var(--info-field-color);
+    font-size: 22px;
   }
   
   .info-value-concept-text {
     color: var(--info-value-color);
+    font-size: 22px;
+  }
+  .condition-concept-text {
+    color: var(--condition-color);
   }
   
   .subject-concept-text {
