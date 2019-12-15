@@ -115,7 +115,8 @@ class Bubble extends React.Component{
                     top: stringYLocation,
                     left: stringXLocation,
                 }}
-            ><span className={titleClass}>{this.props.name}<font size="1" color='#CFCFCF'>{subText}</font></span>
+            ><span className={titleClass}>{this.props.name}</span>
+            <span className='subtitle'>{subText}</span>
             <span className='concept-text subject-concept-text'>{conceptTexts['subject']}</span>
             <span className='concept-text condition-concept-text'>{conceptTexts['condition']}</span>
             <span className='concept-text info-field-concept-text'>{conceptTexts['info-field']}</span>

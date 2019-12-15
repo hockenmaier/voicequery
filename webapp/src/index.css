@@ -47,6 +47,17 @@ body {
     isolation: isolate;
   }
   
+  .subtitle {
+    position: relative;
+    text-align: center;
+    font-size: 10px;
+    color: #CFCFCF;
+    font-weight: 600;
+    white-space: pre-wrap;
+    display:block;
+    line-height: .6;
+  }
+  
   .concept-text {
     font-weight: 900;
     font-size: 22px;
