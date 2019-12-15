@@ -322,13 +322,21 @@ class Space extends React.Component{
     }
     
     handleSubjectRoomDrop(e){
-        this.updateRoom('subject');
-        this.removeFromConcept(lastDragStart.id.toString());
+        const draggedID = lastDragStart.id.toString();
+        const draggedType = this.getBubble(draggedID).type;
+        if (draggedType === 'subject'){
+            this.updateRoom('subject');
+            this.removeFromConcept(lastDragStart.id.toString());
+        }
     }
     
     handleConditionRoomDrop(e){
-        this.updateRoom('condition');
-        this.removeFromConcept(lastDragStart.id.toString());
+        const draggedID = lastDragStart.id.toString();
+        const draggedType = this.getBubble(draggedID).type;
+        if (draggedType === 'condition'){
+            this.updateRoom('condition');
+            this.removeFromConcept(lastDragStart.id.toString());
+        }
     }
 
     updateRoom(roomValue){
