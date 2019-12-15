@@ -55,8 +55,13 @@ class Bubble extends React.Component{
         let height;
         let width;
         if (this.props.type === 'concept'){
-            height = 30 + (this.props.conceptBubbles.length * 60)
-            width = layout.bubbleWidth['concept'];
+            if (this.props.shrink){
+                height = 20 + (this.props.conceptBubbles.length * 50)
+                width = layout.bubbleWidth['concept'];
+            }else{
+                height = 30 + (this.props.conceptBubbles.length * 60)
+                width = layout.bubbleWidth['concept'];
+            }
         }else{
             height = layout.bubbleHeight[this.props.type]
             width = layout.bubbleWidth[this.props.type]
