@@ -33,11 +33,23 @@ class Bubble extends React.Component{
         })
         this.props.onDrop(e)
     }
-
-    // handleDragStart(e){
-    //     console.log('drag start and this.props.id is: ' + this.props.id);
-    // }
-
+    
+    getConceptTexts(){
+        let conceptTexts = {
+            'subject': '',
+            'condition': '',
+            'info-field': '',
+            'info-value': '',
+        }
+        let item;
+        if (this.props.room === 'concept'){
+            for (item in this.props.conceptBubbles){
+                conceptTexts[this.props.conceptBubbles[item].type] += '\n' + this.props.conceptBubbles[item].text;
+            }
+        }
+        return conceptTexts;
+    }
+    
     render(){
         //set base size by type        
         let height;
@@ -51,7 +63,7 @@ class Bubble extends React.Component{
         }
         let subText = ''
         if (this.props.type === 'subject' | this.props.type === 'condition'){
-            subText = 'close: ' + this.props.closestMatchText
+            subText = '\n' + 'close: ' + this.props.closestMatchText
         }
         //modify size based on dragover event
         const dragScale = 1.15;
@@ -81,6 +93,12 @@ class Bubble extends React.Component{
             typeBubble = typeBubble + ' shrink'
         }
         
+        const conceptTexts = this.getConceptTexts()
+        if (this.props.room === 'concept'){
+            console.log('conceptTexts')
+            console.log(conceptTexts)
+        }
+        
         return(
             <button 
                 id = {this.props.id}
@@ -97,7 +115,11 @@ class Bubble extends React.Component{
                     top: stringYLocation,
                     left: stringXLocation,
                 }}
-            ><span className={titleClass}>{this.props.name}<br/><font size="1" color='#CFCFCF'>{subText}</font></span>
+            ><span className={titleClass}>{this.props.name}<font size="1" color='#CFCFCF'>{subText}</font></span>
+            <span className='concept-text subject-concept-text'>{conceptTexts['subject']}</span>
+            <span className='concept-text condition-concept-text'>{conceptTexts['condition']}</span>
+            <span className='concept-text info-field-concept-text'>{conceptTexts['info-field']}</span>
+            <span className='concept-text info-value-concept-text'>{conceptTexts['info-value']}</span>
             </button>
         );
     }

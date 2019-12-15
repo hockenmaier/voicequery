@@ -411,7 +411,8 @@ class Space extends React.Component{
                 let outerBubble = newBubbles[outer];
                 outerBubble.xLocation = X + this.getConceptXOffset(outerBubble.type);
                 outerBubble.yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(outerBubble.id)*nextYOffset);
-                outerBubble.room = (concept.room == 'concept' ? 'work' : concept.room);
+                // outerBubble.room = (concept.room == 'concept' ? 'work' : concept.room);
+                outerBubble.room = (concept.room);
             }      
             if (newBubbles[outer].bubbles.length > 0){
                 for (let inner = 0; inner < newBubbles[outer].bubbles.length; inner++){
@@ -419,7 +420,8 @@ class Space extends React.Component{
                         let innerBubble = newBubbles[outer].bubbles[inner];
                         innerBubble.xLocation = X + this.getConceptXOffset(innerBubble.type);
                         innerBubble.yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(innerBubble.id)*nextYOffset);
-                        innerBubble.room = (concept.room == 'concept' ? 'work' : concept.room);
+                        // innerBubble.room = (concept.room == 'concept' ? 'work' : concept.room);
+                        innerBubble.room = (concept.room);
                     }   
                 }
             }
@@ -524,7 +526,7 @@ class Space extends React.Component{
         let bubbleArray = [];
         let id;
         for (id in ids){
-            bubbleArray.push(this.getBubble(id));
+            bubbleArray.push(this.getBubble(ids[id]));
         }
         return bubbleArray
     }
@@ -571,7 +573,9 @@ class Space extends React.Component{
             if (flatBubbles[bubblePos].room == 'info')
                 infoRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
             if (flatBubbles[bubblePos].room == 'concept')
-                conceptRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
+                if (flatBubbles[bubblePos].type == 'concept'){
+                    conceptRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
+                }
         };
         
         return(
