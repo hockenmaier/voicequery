@@ -603,6 +603,18 @@ class Space extends React.Component{
                     }}
                     >
                 </div>
+                <div
+                    className="query-response"
+                    onDrop={this.handleWorkRoomDrop.bind(this)}
+                    onDragOver={this.handleWorkRoomDragOver}
+                    style={{
+                        width: layout.queryResponseWidth,
+                        top: layout.queryResponseTop,
+                        left: layout.queryResponseLeft,
+                    }}
+                    dangerouslySetInnerHTML={ {__html: this.state.queryResponseHTML} }
+                >
+                </div>
                 <div className = "top-bar"
                     style={{
                         top: layout.topbarY,
@@ -686,16 +698,6 @@ class Space extends React.Component{
                             left: layout.queryLeft + layout.queryWidth + 20,
                         }}
                     >Ask</button>
-                    <div
-                        className="query-response"
-                        style={{
-                            width: layout.queryResponseWidth,
-                            top: layout.queryResponseTop,
-                            left: layout.queryResponseLeft,
-                        }}
-                        dangerouslySetInnerHTML={ {__html: this.state.queryResponseHTML} }
-                    >
-                    </div>
                 </div>                
             </div>
         );
