@@ -599,7 +599,7 @@ class Space extends React.Component{
                         width: window.innerWidth,
                         }}
                 ></div>                
-                <div className = "subject-room"
+                <div className = "room subject-room"
                     onDrop={this.handleSubjectRoomDrop.bind(this)}
                     onDragOver={this.handleWorkRoomDragOver}
                     style={{
@@ -612,7 +612,7 @@ class Space extends React.Component{
                     New Subjects
                     {subjectRoomBubbleArray}
                 </div>
-                <div className = "condition-room"
+                <div className = "room condition-room"
                     onDrop={this.handleConditionRoomDrop.bind(this)}
                     onDragOver={this.handleWorkRoomDragOver}
                     style={{
@@ -625,7 +625,7 @@ class Space extends React.Component{
                     New Conditions
                     {conditionRoomBubbleArray}
                 </div>
-                <div className = "info-room"
+                <div className = "room info-room"
                     style={{
                         width: layout.infoWidth,
                         bottom: layout.bottomMargin,
@@ -636,7 +636,7 @@ class Space extends React.Component{
                     Available Info
                     {infoRoomBubbleArray}
                 </div>
-                <div className = "concept-room"
+                <div className = "room concept-room"
                     onDrop={this.handleConceptRoomDrop.bind(this)}
                     onDragOver={this.handleWorkRoomDragOver}
                     style={{

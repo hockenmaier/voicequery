@@ -91,18 +91,18 @@ class Bubble extends React.Component{
         const stringYLocation = yLocation + 'px';
         const stringXLocation = xLocation + 'px';
 
-        let typeBubble= this.props.room + '-position bubble ' + this.props.type
-        let titleClass = typeBubble + '-title'
+        let typeBubble= this.props.room + '-position bubble ' + this.props.type //3 Styles here: room-position, bubble, and type
+        let titleClass = 'title ' + typeBubble + '-title' //1 Style here: type-title
         if (this.props.shrink){
             titleClass = titleClass + ' grow'
             typeBubble = typeBubble + ' shrink'
         }
         
         const conceptTexts = this.getConceptTexts()
-        if (this.props.room === 'concept'){
-            console.log('conceptTexts')
-            console.log(conceptTexts)
-        }
+        // if (this.props.room === 'concept'){
+        //     console.log('conceptTexts')
+        //     console.log(conceptTexts)
+        // }
         
         return(
             <button 

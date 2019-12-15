@@ -20,6 +20,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/*** UNIVERSAL SYLES ***/
+
   ::-webkit-scrollbar {
       width: 12px;
     }
@@ -33,18 +36,23 @@ body {
     border: 2px solid var(--room-background);
   }
   
-  .work-room {
-    background: var(--main-background);
-    position: fixed;
-    user-select: none;
-  }
-  
   .bubble {
     color: white;
     border: 0px;
     padding: 0px;
     outline: none;
     isolation: isolate;
+  }
+  
+  .room {
+    background: var(--room-background);
+    border-radius: 10px;
+    position: fixed;
+    font-weight: 600;
+    text-indent: .5em;
+    text-align: left;
+    user-select: none;
+    overflow-y: auto;
   }
   
   .subtitle {
@@ -58,47 +66,36 @@ body {
     line-height: .6;
   }
   
-  .concept-text {
-    font-weight: 800;
-    font-size: 20px;
-    text-align: center;
-    position: relative;
-    white-space: pre-wrap;
-    top: -25px;
+/** WORK ROOM (main black area for drag/drop) STYLES **/
+  
+  .work-room {
+    background: var(--main-background);
+    position: fixed;
+    user-select: none;
   }
   
   .work-position {
     position: absolute;
     margin: 0px;
   }
-  .info-position {
-    position: absolute;
-    margin-left: 10px;
+
+/*** BUBBLE AND ROOM SYLES BY TYPE ***/
+/** SUBJECTS **/
+
+  .subject-room {
+    border: 3px solid var(--subject-color);
+    color: var(--subject-text-light);
   }
+  
+  .subject-room::-webkit-scrollbar-thumb{
+    background: var(--subject-color);
+  }
+  
   .subject-position {
     position: static;
     margin-left: 10px;
     text-indent: -10px;
     margin-top: 5px;
-  }
-  .condition-position {
-    position: static;
-    margin-left: 10px;
-    text-indent: -10px;
-    margin-top: 5px;
-  }
-  .concept-position {
-    position: static;
-    margin-left: -30px;
-    text-indent: -50px;
-    margin-top: 0px;
-  }
-  
-  .shrink {
-    transform: scale(0.5);
-  }
-  .grow {
-    transform: scale(1.0);
   }
 
   .subject {
@@ -115,25 +112,23 @@ body {
     display:block;
     line-height: 1;
   }
+  
+/** CONDITIONS **/  
 
-  .subject-room {
-    background: var(--room-background);
-    border-radius: 10px;
-    border: 3px solid var(--subject-color);
-    position: fixed;
-    color: var(--subject-text-light);
-    font-weight: 500;
-    text-indent: .5em;
-    user-select: none;
-    overflow-y:auto;
+  .condition-room {
+    border: 3px solid var(--condition-color);
+    color: var(--condition-text-light);
   }
   
-  .subject-room::-webkit-scrollbar-thumb{
-    background: var(--subject-color);
+  .condition-room::-webkit-scrollbar-thumb{
+    background: var(--condition-color);
   }
   
-  .subject-concept-text {
-    color: var(--subject-color);
+  .condition-position {
+    position: static;
+    margin-left: 10px;
+    text-indent: -10px;
+    margin-top: 5px;
   }
   
   .condition {
@@ -145,33 +140,30 @@ body {
   .condition-title {
     position: relative;
     text-align: center;
-    transform: none;
     font-size: 14px;
     font-weight: 600;
     white-space: pre-wrap;
     display:block;
     line-height: 1;
   }
+  
+/** INFORMATION **/
 
-  .condition-room {
-    background: var(--room-background);
-    border-radius: 10px;
-    border: 3px solid var(--condition-color);
-    position: fixed;
-    color: var(--condition-text-light);
-    font-weight: 700;
-    text-indent: .5em;
-    user-select: none;
-    overflow-y:auto;
+  .info-room {
+    border: 3px solid var(--info-field-color);
+    color: var(--info-text-light);
   }
   
-  .condition-room::-webkit-scrollbar-thumb{
-    background: var(--condition-color);
+  .info-room::-webkit-scrollbar-thumb{
+    background: var(--info-field-color);
   }
   
-  .condition-concept-text {
-    color: var(--condition-color);
+  .info-position {
+    position: absolute;
+    margin-left: 10px;
   }
+
+/* INFO-FIELDS */
 
   .info-field {
     background: var(--info-field-color);
@@ -180,12 +172,15 @@ body {
   }
   
   .info-field-title {
+    font-size: 16px;
     position: relative;
     text-align: center;
-    font-size: 16px;
+    white-space: pre-wrap;
     display:block;
     line-height: 1;
   }
+  
+/* INFO-VALUES */
   
   .info-value {
     background: var(--info-value-color);
@@ -195,27 +190,81 @@ body {
   }
   
   .info-value-title {
+    font-size: 12px;
     position: relative;
     text-align: center;
-    font-size: 12px;
+    white-space: pre-wrap;
     display:block;
     line-height: 1;
   }
-  
-  .info-room {
-    background: var(--room-background);
-    border-radius: 10px;
-    border: 3px solid var(--info-field-color);
-    position: fixed;
-    color: var(--info-text-light);
-    font-weight: 600;
-    text-indent: .5em;
-    user-select: none;
-    overflow-y:auto;
+
+/** CONCEPT ROOM STYLES **/
+
+  .concept-room {
+    border: 3px solid var(--concept-color);
+    color: var(--concept-text-light);
   }
   
-  .info-room::-webkit-scrollbar-thumb{
-    background: var(--info-field-color);
+  .concept-room::-webkit-scrollbar-thumb{
+    background: var(--concept-color);
+  }
+  
+  .concept-position { 
+    position: static;
+    margin-left: -30px;
+    text-indent: -50px;
+    margin-top: 0px;
+  }
+  
+/** CONCEPT BUBBLE STYLES **/
+
+  .concept {
+    background: var(--concept-color);
+    border-radius:  50% / 10%;   
+    vertical-align: top;
+    color: var(--concept-color);
+  }
+  .concept:before {
+    content: '';
+    position: absolute;
+    top: 9%;
+    bottom: 9%;
+    right: -5%;
+    left: -5%;
+    background: inherit;
+    border-radius: 5% / 50%;
+  }
+  
+  .concept-title {
+    font-weight: 700;
+    font-size: 16px;
+    display: block;
+    position: absolute; 
+    top: -25px;
+    text-align: center;
+    text-indent: 2.8em;
+  }
+  
+  .shrink {
+    transform: scale(0.5);
+  }
+  .grow {
+    transform: scale(1.0);
+  }
+  
+/* CONCEPT TEXT STYLES FOR SHRUNKEN CONCEPTS */
+
+  .concept-text {
+    font-weight: 800;
+    font-size: 20px;
+    text-align: center;
+    position: relative;
+    white-space: pre-wrap;
+    top: -25px;
+  }
+  
+  .condition-concept-text {
+    color: var(--condition-color);
   }
   
   .info-field-concept-text {
@@ -225,6 +274,12 @@ body {
   .info-value-concept-text {
     color: var(--info-value-color);
   }
+  
+  .subject-concept-text {
+    color: var(--subject-color);
+  }
+
+/** QUERY BAR STYLES**/
 
   .query-input{    
     border-radius: 9px;
@@ -254,6 +309,8 @@ body {
     font-weight: 400;
     outline: none;
   }
+  
+/** ANSWER RESPONSE SYLES **/
 
   .res-subject{
     position: static;
@@ -271,50 +328,5 @@ body {
     background:var(--top-bar);
     position: fixed;
   }
-
-  .concept {
-    background: var(--concept-color);
-    border-radius:  50% / 10%;   
-    vertical-align: top;
-    color: var(--concept-color);
-  }
-  .concept:before {
-    content: '';
-    position: absolute;
-    top: 9%;
-    bottom: 9%;
-    right: -5%;
-    left: -5%;
-    background: inherit;
-    border-radius: 5% / 50%;
-  }
-  
-  .concept-title {
-    font-weight: 700;
-    font-size: 16px;
-    display: block;
-    position: absolute; 
-    top: -25px;
-    text-align: center;
-    text-indent: 2.8em;
-  }
-  
-  .concept-room {
-    background: var(--room-background);
-    border-radius: 10px;
-    border: 3px solid var(--concept-color);
-    position: fixed;
-    color: var(--concept-text-light);
-    font-weight: 600;
-    text-indent: .5em;
-    text-align: left;
-    user-select: none;
-    overflow-y:auto;
-  }
-  
-  .concept-room::-webkit-scrollbar-thumb{
-    background: var(--concept-color);
-  }
-
   
 
