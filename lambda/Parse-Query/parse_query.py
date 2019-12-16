@@ -445,10 +445,9 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
                             similarity = 0
                             if(lexSyn.pos() == dataSyn.pos()):
                                 if ((lexSyn.pos() != 's') & (lexSyn.pos() != 'a') & (lexSyn.pos() != 'r')):
-                                    similarity = lexSyn.res_similarity(dataSyn,semcor_ic)
+                                    similarity = lexSyn.res_similarity(dataSyn,semcor_ic) # This is the core similarity evaluation -------------
                             if similarity:
                                 maxSimilarity = addToMatches(dataPack,lex,similarity,dataPacksMatched,maxSimilarity,dataSyn,lexSyn)
-                            
                             # if dataPack.text == 'Female':
                             #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
 
