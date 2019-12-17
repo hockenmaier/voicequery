@@ -92,6 +92,25 @@ class Space extends React.Component{
             console.log(error);
         });
     }
+    
+    saveConcept(concept){
+        console.log('Sending save_concept http call')
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
+            workspace: this.state.workspace,
+            text: concept.name,
+            internal_ID: concept.internalID,
+            concept_items: this.getBubbles(concept.bubsInConcept)
+        },
+        )
+        .then(function(response){
+            console.log('save_concept http successful')
+        })
+        .catch(function(error){
+            console.log('save_concept http error')
+            console.log(error);
+        });
+    }
 
     createBubbleDeets(bubbles){
         //initializing full bubbledeets object for each top-level bubble in incoming payload
@@ -199,7 +218,8 @@ class Space extends React.Component{
 
         const newConcept = new BubbleDeets('','Concept','concept',[],'','','',newX,newY,newbubsInConcept)
         newBubbles.unshift(newConcept);
-        console.log(newBubbles);
+        // console.log(newBubbles);
+        this.saveConcept(newConcept);
         this.setState({   // Have to refactor everywhere now since i am actually setting state directly by assigning an array to the state array
             bubbles: newBubbles
         }, this.positionConceptBubbles(newConcept,newX,newY))  //we need to pass positionConceptBubbles as a callback since setState is Async
