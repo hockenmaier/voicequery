@@ -10,17 +10,18 @@ def lambda_handler(event, context):
     
 def save_concept(event):
     table = setup_dynamo()
-    if(event['internalID'] == ''): #This denotes a brand new concept
+    if(event['internal_ID'] == ''): #This denotes a brand new concept
         conceptID = str(uuid.uuid4())
         put = table.put_item(
-            Item={
+            Item=convert_empty_values({
                 'item_id': conceptID,
                 'text': event['text'],
                 'storage_source': 'save_concept',
                 'query_part': 'concept',
                 'create_time': str(datetime.datetime.now()),
                 'workspace': event['workspace'],
-            }
+                'concept_items': event['concept_items']
+            })
         )
     else: #This denotes we need to update an existing concept
         conceptID = event['internalID']
@@ -42,9 +43,20 @@ def save_concept(event):
         
     return {
         'statusCode': 200,
-        'body': json.dumps('Hello from Lambda!')
+        'body': json.dumps('Concept saved successfully')
     }
 
 def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
+    
+def convert_empty_values(dictionary):
+    for key, value in dictionary.items():
+        if isinstance(value, dict):
+            convert_empty_values(value)
+        elif isinstance(value, list):
+            for item in value:
+                convert_empty_values(item)
+        elif value == "":
+            dictionary[key] = None
+    return dictionary

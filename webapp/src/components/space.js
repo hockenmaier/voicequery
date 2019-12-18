@@ -97,14 +97,15 @@ class Space extends React.Component{
         console.log('Sending save_concept http call')
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
-            workspace: this.state.workspace,
-            text: concept.name,
             internal_ID: concept.internalID,
+            workspace: this.state.workspace,
+            text: concept.text,
             concept_items: this.getBubbles(concept.bubsInConcept)
         },
         )
         .then(function(response){
             console.log('save_concept http successful')
+            console.log(response);
         })
         .catch(function(error){
             console.log('save_concept http error')
