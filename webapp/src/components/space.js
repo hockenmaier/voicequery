@@ -106,7 +106,7 @@ class Space extends React.Component{
         .then(function(response){
             console.log('save_concept http successful')
             console.log(response);
-            this.updateInternalID(concept.id,response['conceptID'])
+            self.updateInternalID(concept.id,response['data']['conceptID'])
         })
         .catch(function(error){
             console.log('save_concept http error')

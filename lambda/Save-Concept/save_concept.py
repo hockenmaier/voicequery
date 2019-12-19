@@ -27,7 +27,7 @@ def save_concept(event):
         )
         responseText = 'Concept created successfully'
     else: #This denotes we need to update an existing concept
-        conceptID = event['internalID']
+        conceptID = event['internal_ID']
         
         #TODO: update logic
         response = table.update_item( #-----------------SAMPLE from AWS
