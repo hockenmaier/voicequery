@@ -10,6 +10,8 @@ def lambda_handler(event, context):
     
 def save_concept(event):
     table = setup_dynamo()
+    responseText = ''
+    conceptID = ''
     if(event['internal_ID'] == ''): #This denotes a brand new concept
         conceptID = str(uuid.uuid4())
         put = table.put_item(
@@ -23,27 +25,28 @@ def save_concept(event):
                 'concept_items': event['concept_items']
             })
         )
+        responseText = 'Concept created successfully'
     else: #This denotes we need to update an existing concept
         conceptID = event['internalID']
         
         #TODO: update logic
-        # response = table.update_item( #-----------------SAMPLE from AWS
-        #     Key={
-        #         'year': year,
-        #         'title': title
-        #     },
-        #     UpdateExpression="set info.rating = :r, info.plot=:p, info.actors=:a",
-        #     ExpressionAttributeValues={
-        #         ':r': decimal.Decimal(5.5),
-        #         ':p': "Everything happens all at once.",
-        #         ':a': ["Larry", "Moe", "Curly"]
-        #     },
-        #     ReturnValues="UPDATED_NEW"
-        # )
-        
+        response = table.update_item( #-----------------SAMPLE from AWS
+            Key={
+                'item_id': conceptID
+            },
+            UpdateExpression="set update_time = :update_time, 'text'=:'text', 'concept_items' = :'concept_items'",
+            ExpressionAttributeValues={
+                'update_time': str(datetime.datetime.now()),
+                'text': event['text'],
+                'concept_items': event['concept_items']
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+        responseText = 'Concept updated successfully'
     return {
         'statusCode': 200,
-        'body': json.dumps('Concept saved successfully')
+        'body': json.dumps(responseText),
+        'conceptID': conceptID
     }
 
 def setup_dynamo():

@@ -93,8 +93,8 @@ class Space extends React.Component{
         });
     }
     
-    saveConcept(concept){
-        console.log('Sending save_concept http call')
+    saveConcept = (concept) => {
+        console.log('Sending save_concept http call with internal ID: ' + concept.internalID)
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
@@ -106,6 +106,7 @@ class Space extends React.Component{
         .then(function(response){
             console.log('save_concept http successful')
             console.log(response);
+            this.updateInternalID(concept.id,response['conceptID'])
         })
         .catch(function(error){
             console.log('save_concept http error')
@@ -259,6 +260,8 @@ class Space extends React.Component{
                 }
             }
         }
+        this.saveConcept(droppedConcept);
+        
         this.setState({
             bubbles: newBubbles
         })
@@ -275,15 +278,15 @@ class Space extends React.Component{
                         //now removing concept if it contains no bubs:
                         if(newBubbles[iter].bubsInConcept.length === 0){
                             newBubbles.splice(iter,1);
+                            // TODO: send delete concept API call
                         }else{
                             this.positionConceptBubbles(newBubbles[iter], newBubbles[iter].xLocation, newBubbles[iter].yLocation);
+                            this.saveConcept(newBubbles[iter]); //Update the concept with new set of bubbles
                         }
                     }
                 }
             }
         }
-        
-        //console.log(newBubbles);
         this.setState({
             bubbles: newBubbles
         })
@@ -395,6 +398,18 @@ class Space extends React.Component{
                 for (let iter2 = 0; iter2 < newBubbles[iter].bubsInConcept.length; iter2++){
                     this.getBubble(newBubbles[iter].bubsInConcept[iter2]).shrink = shrinkValue
                 }
+            }
+        }
+        this.setState({
+            bubbles: newBubbles
+        })
+    }
+    
+    updateInternalID(bubbleID, internalID){ //ONLY TOP_LEVEL BUBBLES
+        let newBubbles = this.state.bubbles.slice(0);
+        for (let iter = 0; iter < newBubbles.length; iter++){
+            if (newBubbles[iter].id === bubbleID){
+                newBubbles[iter].internalID = internalID;
             }
         }
         this.setState({
