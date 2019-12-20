@@ -220,8 +220,8 @@ class Space extends React.Component{
 
         const newConcept = new BubbleDeets('','Concept','concept',[],'','','',newX,newY,newbubsInConcept)
         newBubbles.unshift(newConcept);
-        // console.log(newBubbles);
         this.saveConcept(newConcept);
+        console.log(newBubbles);
         this.setState({   // Have to refactor everywhere now since i am actually setting state directly by assigning an array to the state array
             bubbles: newBubbles
         }, this.positionConceptBubbles(newConcept,newX,newY))  //we need to pass positionConceptBubbles as a callback since setState is Async

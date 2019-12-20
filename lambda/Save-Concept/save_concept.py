@@ -28,18 +28,23 @@ def save_concept(event):
         responseText = 'Concept created successfully'
     else: #This denotes we need to update an existing concept
         conceptID = event['internal_ID']
-        
-        #TODO: update logic
+        oldText = event['text'] #TODO remove sort key or get the old value from frontend explicitely
         response = table.update_item( #-----------------SAMPLE from AWS
             Key={
-                'item_id': conceptID
+                'item_id': conceptID,
+                'text': oldText
             },
-            UpdateExpression="set update_time = :update_time, 'text'=:'text', 'concept_items' = :'concept_items'",
+            # UpdateExpression="set update_time = :u, #text=:t, concept_items = :c",
+            UpdateExpression="set update_time = :u, concept_items = :c",
+            
             ExpressionAttributeValues={
-                'update_time': str(datetime.datetime.now()),
-                'text': event['text'],
-                'concept_items': event['concept_items']
+                ':u': str(datetime.datetime.now()),
+                # ':t': event['text'],
+                ':c': event['concept_items']
             },
+            # ExpressionAttributeNames={
+            #     "#text": "text"
+            # },
             ReturnValues="UPDATED_NEW"
         )
         responseText = 'Concept updated successfully'
@@ -63,3 +68,10 @@ def convert_empty_values(dictionary):
         elif value == "":
             dictionary[key] = None
     return dictionary
+
+# # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+# with open('test_payloads/test1.json') as f:
+#     data = json.load(f)
+#     save_concept(data)
+# # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+
