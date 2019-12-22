@@ -26,10 +26,10 @@ def save_concept(event):
             })
         )
         responseText = 'Concept created successfully'
-    else: #This denotes we need to update an existing concept
+    elif (event['concept_items']): #This denotes we need to update an existing concept
         conceptID = event['internal_ID']
         oldText = event['text'] #TODO remove sort key or get the old value from frontend explicitely
-        response = table.update_item( #-----------------SAMPLE from AWS
+        response = table.update_item(
             Key={
                 'item_id': conceptID,
                 'text': oldText
@@ -37,17 +37,28 @@ def save_concept(event):
             # UpdateExpression="set update_time = :u, #text=:t, concept_items = :c",
             UpdateExpression="set update_time = :u, concept_items = :c",
             
-            ExpressionAttributeValues={
+            ExpressionAttributeValues=convert_empty_values({
                 ':u': str(datetime.datetime.now()),
                 # ':t': event['text'],
                 ':c': event['concept_items']
-            },
+            }),
             # ExpressionAttributeNames={
             #     "#text": "text"
             # },
             ReturnValues="UPDATED_NEW"
         )
         responseText = 'Concept updated successfully'
+    else: #A populated internal ID and blank concept items denotes we need to delete the concept
+        conceptID = event['internal_ID']
+        oldText = event['text'] #TODO remove sort key or get the old value from frontend explicitely
+        response = table.delete_item(
+            Key={
+                'item_id': conceptID,
+                'text': oldText
+            },
+            ReturnValues="ALL_OLD"
+        )
+        responseText = 'Concept deleted successfully' 
     return {
         'statusCode': 200,
         'body': json.dumps(responseText),
@@ -69,9 +80,9 @@ def convert_empty_values(dictionary):
             dictionary[key] = None
     return dictionary
 
-# # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
-# with open('test_payloads/test1.json') as f:
-#     data = json.load(f)
-#     save_concept(data)
-# # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+# #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+with open('test_payloads/test2.json') as f:
+    data = json.load(f)
+    save_concept(data)
+# #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 

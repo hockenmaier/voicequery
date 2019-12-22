@@ -94,7 +94,7 @@ class Space extends React.Component{
     }
     
     saveConcept = (concept) => {
-        console.log('Sending save_concept http call with internal ID: ' + concept.internalID)
+        console.log('Sending create/update save_concept http call with internal ID: ' + concept.internalID)
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
@@ -107,6 +107,26 @@ class Space extends React.Component{
             console.log('save_concept http successful')
             console.log(response);
             self.updateInternalID(concept.id,response['data']['conceptID'])
+        })
+        .catch(function(error){
+            console.log('save_concept http error')
+            console.log(error);
+        });
+    }
+    
+    saveDeleteConcept = (concept) => {
+        console.log('Sending delete save_concept http call with internal ID: ' + concept.internalID)
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
+            internal_ID: concept.internalID,
+            workspace: this.state.workspace,
+            text: concept.text,
+            concept_items: ''
+        },
+        )
+        .then(function(response){
+            console.log('save_concept http successful')
+            console.log(response);
         })
         .catch(function(error){
             console.log('save_concept http error')
@@ -277,8 +297,8 @@ class Space extends React.Component{
                         newBubbles[iter].bubsInConcept.splice(iter2,1);
                         //now removing concept if it contains no bubs:
                         if(newBubbles[iter].bubsInConcept.length === 0){
+                            this.saveDeleteConcept(newBubbles[iter]);
                             newBubbles.splice(iter,1);
-                            // TODO: send delete concept API call
                         }else{
                             this.positionConceptBubbles(newBubbles[iter], newBubbles[iter].xLocation, newBubbles[iter].yLocation);
                             this.saveConcept(newBubbles[iter]); //Update the concept with new set of bubbles
