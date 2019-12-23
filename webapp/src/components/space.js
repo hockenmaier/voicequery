@@ -100,7 +100,8 @@ class Space extends React.Component{
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
             text: concept.text,
-            concept_items: this.getBubbles(concept.bubsInConcept)
+            // concept_items: this.getBubbles(concept.bubsInConcept)
+            concept_items: concept.bubsInConcept
         },
         )
         .then(function(response){
@@ -763,7 +764,7 @@ class Space extends React.Component{
 let bubblesInitialized = false;
 
 class BubbleDeets{
-    constructor(internalId,text,typetext,bubbles,parentBubbleId,closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept){ //last three are not set on construction
+    constructor(internalID,text,typetext,bubbles,parentBubbleId,closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept){ //last three are not set on construction
         let room = typetext;
         if(typetext == 'info-field' | typetext == 'info-value'){
             room = 'info'
@@ -771,8 +772,8 @@ class BubbleDeets{
         if(typetext == 'concept'){
             room = 'work'
         }
-        this.internalID = internalId;
-        this.id = getNextBubbleID();
+        this.internalID = internalID;
+        this.id = ((internalID == '') ? getNextBubbleID() : internalID);
         this.text = text;
         this.type = typetext;        
         this.bubbles = bubbles;

@@ -51,9 +51,9 @@ def package_JSON(dataset, unique_value_limit):
         unique = dataset[col].unique()
         uniqueLength = len(unique)
         cardinalityRatio = uniqueLength/length
-        
+        fieldID = str(uuid.uuid4())
         bubble = {}
-        bubble['internalID'] = ""
+        bubble['internalID'] = fieldID
         bubble['name'] = str(col)
         bubble['type'] = 'info-field'
         bubble['dataType'] = datatype
@@ -63,8 +63,9 @@ def package_JSON(dataset, unique_value_limit):
         if (len(unique) < unique_value_limit):
             for value in unique:
                 # print('unique value: ' + value)
+                valueID = str(uuid.uuid4())
                 subBubble = {}
-                subBubble['internalID'] = ""
+                subBubble['internalID'] = valueID
                 subBubble['name'] = str(value)
                 subBubble['type'] = 'info-value'
                 subBubble['bubbles'] = []
@@ -93,11 +94,10 @@ def map_numpy_datatypes(dtype):
 
 def store_fields(jsonData, table, workspace, file_name, unique_value_limit):
     for col in jsonData['bubbles']:
-        fieldID = str(uuid.uuid4())
         put = table.put_item(
             Item={
-                'item_id': fieldID,
-                'field_id': fieldID,
+                'item_id': col['internalID'],
+                'field_id': col['internalID'],
                 'text': col['name'],
                 'storage_source': 'dataset',
                 'query_part': 'info-field',
@@ -111,11 +111,10 @@ def store_fields(jsonData, table, workspace, file_name, unique_value_limit):
             }
         )
         for value in col['bubbles']:
-            valueID = str(uuid.uuid4())
             put = table.put_item(
                 Item={
-                    'item_id': valueID,
-                    'parent_field_id': fieldID,
+                    'item_id': value['internalID'],
+                    'parent_field_id': col['internalID'],
                     'parent_field_name': col['name'],
                     'text': value['name'],
                     'storage_source': 'dataset',

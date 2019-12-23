@@ -12,7 +12,8 @@ def save_concept(event):
     table = setup_dynamo()
     responseText = ''
     conceptID = ''
-    if(event['internal_ID'] == ''): #This denotes a brand new concept
+    if(event['internal_ID'] == ''): 
+    # - CREATE ---- A blank ID denotes a brand new concept
         conceptID = str(uuid.uuid4())
         put = table.put_item(
             Item=convert_empty_values({
@@ -22,11 +23,12 @@ def save_concept(event):
                 'query_part': 'concept',
                 'create_time': str(datetime.datetime.now()),
                 'workspace': event['workspace'],
-                'concept_items': event['concept_items']
+                'concept_items': str(event['concept_items'])
             })
         )
         responseText = 'Concept created successfully'
-    elif (event['concept_items']): #This denotes we need to update an existing concept
+    elif (event['concept_items']): 
+    # - UPDATE ---- A populated ID and populated concept_items field means we need to update an existing concept
         conceptID = event['internal_ID']
         oldText = event['text'] #TODO remove sort key or get the old value from frontend explicitely
         response = table.update_item(
@@ -40,7 +42,7 @@ def save_concept(event):
             ExpressionAttributeValues=convert_empty_values({
                 ':u': str(datetime.datetime.now()),
                 # ':t': event['text'],
-                ':c': event['concept_items']
+                ':c': str(event['concept_items'])
             }),
             # ExpressionAttributeNames={
             #     "#text": "text"
@@ -48,7 +50,8 @@ def save_concept(event):
             ReturnValues="UPDATED_NEW"
         )
         responseText = 'Concept updated successfully'
-    else: #A populated internal ID and blank concept items denotes we need to delete the concept
+    else:
+    # - DELETE ---- A populated internal ID and blank concept items denotes we need to delete the concept
         conceptID = event['internal_ID']
         oldText = event['text'] #TODO remove sort key or get the old value from frontend explicitely
         response = table.delete_item(
@@ -80,9 +83,9 @@ def convert_empty_values(dictionary):
             dictionary[key] = None
     return dictionary
 
-# #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
-with open('test_payloads/test2.json') as f:
-    data = json.load(f)
-    save_concept(data)
+# # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+# with open('test_payloads/test2.json') as f:
+#     data = json.load(f)
+#     save_concept(data)
 # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
