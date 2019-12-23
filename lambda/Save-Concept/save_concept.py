@@ -23,7 +23,7 @@ def save_concept(event):
                 'query_part': 'concept',
                 'create_time': str(datetime.datetime.now()),
                 'workspace': event['workspace'],
-                'concept_items': str(event['concept_items'])
+                'concept_items': event['concept_items']
             })
         )
         responseText = 'Concept created successfully'
@@ -42,7 +42,7 @@ def save_concept(event):
             ExpressionAttributeValues=convert_empty_values({
                 ':u': str(datetime.datetime.now()),
                 # ':t': event['text'],
-                ':c': str(event['concept_items'])
+                ':c': event['concept_items']
             }),
             # ExpressionAttributeNames={
             #     "#text": "text"
@@ -72,20 +72,26 @@ def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
     
-def convert_empty_values(dictionary):
-    for key, value in dictionary.items():
-        if isinstance(value, dict):
-            convert_empty_values(value)
-        elif isinstance(value, list):
-            for item in value:
-                convert_empty_values(item)
-        elif value == "":
-            dictionary[key] = None
-    return dictionary
+def convert_empty_values(dictOrList):  #Use this function wrapped around a dyanmo create/update dict in order to make sure there are no empty strings
+    if isinstance(dictOrList, dict):
+        for key, value in dictOrList.items():
+            if isinstance(value, dict) | isinstance(value, list):
+                convert_empty_values(value)
+            elif value == "":
+                dictOrList[key] = None
+    elif isinstance(dictOrList, list):
+        for value in dictOrList:
+            if isinstance(value, dict) | isinstance(value, list):
+                convert_empty_values(value)
+            elif value == "":
+                dictOrList.remove(value)
+                dictOrList.append(None)
+    return dictOrList
+    
 
-# # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
-# with open('test_payloads/test2.json') as f:
-#     data = json.load(f)
-#     save_concept(data)
+# #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+with open('test_payloads/test1.json') as f:
+    data = json.load(f)
+    save_concept(data)
 # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
