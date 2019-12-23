@@ -755,14 +755,16 @@ let bubblesInitialized = false;
 class BubbleDeets{
     constructor(internalID,text,typetext,bubbles,parentBubbleId, parentFrontendID, closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept,fromServer){ //last three are not set on construction
         let room = typetext;
+        let shrink = false;
         if(typetext == 'info-field' | typetext == 'info-value'){
-            room = 'info'
+            room = 'info';
         }
         if(typetext == 'concept'){
             if (fromServer){
-                room = 'concept'
+                room = 'concept';
+                shrink = true;
             }else{
-                room = 'work'
+                room = 'work';
             }
         }
         const frontendID = getNextBubbleID();
@@ -777,7 +779,7 @@ class BubbleDeets{
         this.room = room;
         this.closestMatchId = closestMatchId;
         this.closestMatchText = closestMatchText;
-        this.shrink = false;
+        this.shrink = shrink;
         if (bubsInConcept){
             this.bubsInConcept = bubsInConcept;
         }else{
