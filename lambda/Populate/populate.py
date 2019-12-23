@@ -18,7 +18,9 @@ def setup_dynamo():
 
 def get_workspace_data(table, workspace):
     foundItems = table.scan(
+        # FilterExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('subject') | Key('query_part').eq('condition') | Key('query_part').eq('concept'))
         FilterExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('subject') | Key('query_part').eq('condition'))
+
     )
     return foundItems['Items']
     

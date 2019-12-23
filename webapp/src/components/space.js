@@ -138,12 +138,12 @@ class Space extends React.Component{
     createBubbleDeets(bubbles){
         //initializing full bubbledeets object for each top-level bubble in incoming payload
         const newBubbles = bubbles.map((bub) => {
-            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"",bub.closestMatchId,bub.closestMatchText);
+            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"","",bub.closestMatchId,bub.closestMatchText);
 
             //Now we do the same for sub-bubbles
             if(newBub.bubbles.length > 0){
                 newBub.bubbles = newBub.bubbles.map((intBub) => {
-                    const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id,bub.closestMatchId,bub.closestMatchText);
+                    const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id,newBub.frontendID,bub.closestMatchId,bub.closestMatchText);
                     return newIntBub;
                 })
             }
@@ -239,7 +239,7 @@ class Space extends React.Component{
         newbubsInConcept.push(dragged.id);
         newbubsInConcept.push(dropped.id);
 
-        const newConcept = new BubbleDeets('','Concept','concept',[],'','','',newX,newY,newbubsInConcept)
+        const newConcept = new BubbleDeets('','Concept','concept',[],'','','','',newX,newY,newbubsInConcept)
         newBubbles.unshift(newConcept);
         this.saveConcept(newConcept);
         console.log(newBubbles);
@@ -764,7 +764,7 @@ class Space extends React.Component{
 let bubblesInitialized = false;
 
 class BubbleDeets{
-    constructor(internalID,text,typetext,bubbles,parentBubbleId,closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept){ //last three are not set on construction
+    constructor(internalID,text,typetext,bubbles,parentBubbleId, parentFrontendID, closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept){ //last three are not set on construction
         let room = typetext;
         if(typetext == 'info-field' | typetext == 'info-value'){
             room = 'info'
@@ -772,12 +772,15 @@ class BubbleDeets{
         if(typetext == 'concept'){
             room = 'work'
         }
+        const frontendID = getNextBubbleID();
         this.internalID = internalID;
-        this.id = ((internalID == '') ? getNextBubbleID() : internalID);
+        this.frontendID = frontendID;
+        this.id = ((internalID == '') ? frontendID : internalID);
         this.text = text;
         this.type = typetext;        
         this.bubbles = bubbles;
         this.parentBubbleId = parentBubbleId;
+        this.parentFrontendID = parentFrontendID;
         this.room = room;
         this.closestMatchId = closestMatchId;
         this.closestMatchText = closestMatchText;
@@ -790,12 +793,12 @@ class BubbleDeets{
         if(xLocation){
             this.xLocation = xLocation;
         }else{
-            this.xLocation = nextXLocation(this.type,this.id,this.parentBubbleId);
+            this.xLocation = nextXLocation(this.type,this.frontendID,this.parentFrontendID);
         }
         if(xLocation){
             this.yLocation = yLocation;
         }else{
-            this.yLocation = nextYLocation(this.type,this.id,this.parentBubbleId);
+            this.yLocation = nextYLocation(this.type,this.frontendID,this.parentFrontendID);
         }
     }
 }
