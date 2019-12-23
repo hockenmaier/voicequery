@@ -19,16 +19,14 @@ class Space extends React.Component{
       }
 
     componentDidMount(){
-        // console.log(bubblesPayload);
-        // const rawBubs = this.state.bubbles;
-        // console.log(rawBubs);
-        // const stringifiedBubs = JSON.stringify(rawBubs);
-        // console.log(stringifiedBubs);
-        // console.log(JSON.parse(stringifiedBubs));
-        
         this.initializeBubbles(this.state.bubbles);
         this.sendParseLambdaBootMessage()
         bubblesInitialized = true;
+    }
+
+    initializeBubbles(bubbles){
+        this.getWorkspaceLexiconBubbles()
+        this.getWorkspaceDataBubbles()
     }
 
     sendParseLambdaBootMessage = () => {
@@ -46,15 +44,6 @@ class Space extends React.Component{
             console.log('http error')
             console.log(error);
         });
-    }
-
-    initializeBubbles(bubbles){        
-        // const newBubbles = this.createBubbleDeets(bubbles);
-        this.getWorkspaceLexiconBubbles()
-        this.getWorkspaceDataBubbles()
-        // this.setState({
-        //     bubbles: newBubbles
-        // })
     }
 
     getWorkspaceLexiconBubbles = () => {
@@ -138,7 +127,7 @@ class Space extends React.Component{
     createBubbleDeets(bubbles){
         //initializing full bubbledeets object for each top-level bubble in incoming payload
         const newBubbles = bubbles.map((bub) => {
-            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"","",bub.closestMatchId,bub.closestMatchText);
+            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"","",bub.closestMatchId,bub.closestMatchText,"","",bub.concept_items);
 
             //Now we do the same for sub-bubbles
             if(newBub.bubbles.length > 0){
