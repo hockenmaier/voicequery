@@ -420,6 +420,7 @@ class Space extends React.Component{
         for (let iter = 0; iter < newBubbles.length; iter++){
             if (newBubbles[iter].id === bubbleID){
                 newBubbles[iter].internalID = internalID;
+                newBubbles[iter].id = internalID;
             }
         }
         this.setState({
@@ -631,9 +632,9 @@ class Space extends React.Component{
             if (flatBubbles[bubblePos].room == 'info')
                 infoRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
             if (flatBubbles[bubblePos].room == 'concept')
-                if (flatBubbles[bubblePos].type == 'concept'){
+                // if (flatBubbles[bubblePos].type == 'concept'){
                     conceptRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
-                }
+                // }
         };
         
         return(
