@@ -34,10 +34,10 @@ def package_JSON(workspaceItems):
             bubble['internalID'] = item['item_id']
             bubble['name'] = item['text']
             bubble['type'] = item['query_part']
-            bubble['closestMatchId'] = item['closest_match_id']
-            bubble['closestMatchText'] = item['closest_match_text']
-            bubble['bubbles'] = []
-            bubble['concept_items'] = item['concept_items']
+            bubble['closestMatchId'] = item['closest_match_id'] if ('closest_match_id' in item) else ''
+            bubble['closestMatchText'] = item['closest_match_text'] if ('closest_match_text' in item) else '' 
+            bubble['bubbles'] = [] if ('bubbles' in item) else '' 
+            bubble['concept_items'] = item['concept_items'] if ('concept_items' in item) else ''
             bubbles.append(bubble)
         data['bubbles'] = bubbles
         return data   #.replace('\/', r'/')

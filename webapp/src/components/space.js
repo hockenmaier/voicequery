@@ -127,12 +127,12 @@ class Space extends React.Component{
     createBubbleDeets(bubbles){
         //initializing full bubbledeets object for each top-level bubble in incoming payload
         const newBubbles = bubbles.map((bub) => {
-            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"","",bub.closestMatchId,bub.closestMatchText,"","",bub.concept_items);
+            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"","",bub.closestMatchId,bub.closestMatchText,"","",bub.concept_items,true);
 
             //Now we do the same for sub-bubbles
             if(newBub.bubbles.length > 0){
                 newBub.bubbles = newBub.bubbles.map((intBub) => {
-                    const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id,newBub.frontendID,bub.closestMatchId,bub.closestMatchText);
+                    const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id,newBub.frontendID,bub.closestMatchId,bub.closestMatchText,"","","",true);
                     return newIntBub;
                 })
             }
@@ -228,7 +228,7 @@ class Space extends React.Component{
         newbubsInConcept.push(dragged.id);
         newbubsInConcept.push(dropped.id);
 
-        const newConcept = new BubbleDeets('','Concept','concept',[],'','','','',newX,newY,newbubsInConcept)
+        const newConcept = new BubbleDeets('','Concept','concept',[],'','','','',newX,newY,newbubsInConcept,false)
         newBubbles.unshift(newConcept);
         this.saveConcept(newConcept);
         console.log(newBubbles);
@@ -753,13 +753,17 @@ class Space extends React.Component{
 let bubblesInitialized = false;
 
 class BubbleDeets{
-    constructor(internalID,text,typetext,bubbles,parentBubbleId, parentFrontendID, closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept){ //last three are not set on construction
+    constructor(internalID,text,typetext,bubbles,parentBubbleId, parentFrontendID, closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept,fromServer){ //last three are not set on construction
         let room = typetext;
         if(typetext == 'info-field' | typetext == 'info-value'){
             room = 'info'
         }
         if(typetext == 'concept'){
-            room = 'work'
+            if (fromServer){
+                room = 'concept'
+            }else{
+                room = 'work'
+            }
         }
         const frontendID = getNextBubbleID();
         this.internalID = internalID;
