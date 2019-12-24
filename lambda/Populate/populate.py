@@ -24,7 +24,7 @@ def get_workspace_data(table, workspace, getItems):
     foundItems = table.scan(
         FilterExpression = chosenExpression
     )
-    return foundItems['Items']
+    return sorted(foundItems['Items'], key = lambda i: i['create_time']) # frontend already reverses list so that new items show up on top, so we sort this list by date ascending (without reversing)
     
 def package_JSON(workspaceItems):
         data = {}

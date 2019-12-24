@@ -731,7 +731,7 @@ class Space extends React.Component{
                     }}
                     >
                     New Subjects
-                    {subjectRoomBubbleArray}
+                    {subjectRoomBubbleArray.reverse()}
                 </div>
                 <div className = "room condition-room"
                     onDrop={this.handleConditionRoomDrop.bind(this)}
@@ -744,7 +744,7 @@ class Space extends React.Component{
                     }}
                     >
                     New Conditions
-                    {conditionRoomBubbleArray}
+                    {conditionRoomBubbleArray.reverse()}
                 </div>
                 <div className = "room info-room"
                     style={{
