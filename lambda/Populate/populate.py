@@ -3,12 +3,12 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 
 def lambda_handler(event, context):
-    jsonData = populate(event['workspace'])
+    jsonData = populate(event['workspace'],event['getItems'])
     return jsonData
     
-def populate(workspace):
+def populate(workspace,getItems):
     table = setup_dynamo()
-    workspaceItems = get_workspace_data(table, workspace)
+    workspaceItems = get_workspace_data(table, workspace, getItems)
     jsonData = package_JSON(workspaceItems)
     return jsonData
 
@@ -16,11 +16,13 @@ def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
 
-def get_workspace_data(table, workspace):
+def get_workspace_data(table, workspace, getItems):
+    if (getItems == 'lexicon'):
+        chosenExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('subject') | Key('query_part').eq('condition'))
+    elif (getItems == 'concepts'):
+        chosenExpression=Key('workspace').eq(workspace) & Key('query_part').eq('concept')
     foundItems = table.scan(
-        FilterExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('subject') | Key('query_part').eq('condition') | Key('query_part').eq('concept'))
-        # FilterExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('subject') | Key('query_part').eq('condition'))
-
+        FilterExpression = chosenExpression
     )
     return foundItems['Items']
     

@@ -50,7 +50,8 @@ class Space extends React.Component{
         console.log('Sending populate http call with query: ' + this.state.workspace)
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/populate', {
-            workspace: this.state.workspace
+            workspace: this.state.workspace,
+            getItems: 'lexicon'
         },
         )
         .then(function(response){
@@ -75,9 +76,30 @@ class Space extends React.Component{
             console.log('read-dataset http successful')
             //console.log(response)
             self.updateBubbles(response.data)
+            self.getWorkspaceConceptBubbles()
         })
         .catch(function(error){
             console.log('read-dataset http error')
+            console.log(error);
+        });
+    }
+    
+    getWorkspaceConceptBubbles = () => {
+        console.log('Sending populate http call with query: ' + this.state.workspace)
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/populate', {
+            workspace: this.state.workspace,
+            getItems: 'concepts'
+        },
+        )
+        .then(function(response){
+            console.log('populate http successful')
+            //console.log(response)
+            self.updateBubbles(response.data)
+            self.formatConceptBubbles()
+        })
+        .catch(function(error){
+            console.log('populate http error')
             console.log(error);
         });
     }
@@ -122,6 +144,27 @@ class Space extends React.Component{
             console.log('save_concept http error')
             console.log(error);
         });
+    }
+    
+    formatConceptBubbles(){
+        let newBubbles = this.state.bubbles;
+        let bubble;
+        for (bubble in newBubbles){
+            if (newBubbles[bubble].type === 'concept'){
+                this.updateRoom(newBubbles[bubble].id, 'concept');
+                this.updateShrink(newBubbles[bubble].id, true);
+                let conceptBubID;
+                for (conceptBubID in newBubbles[bubble].bubsInConcept){
+                    this.updateRoom(newBubbles[bubble].bubsInConcept[conceptBubID], 'concept');
+                    this.updateShrink(newBubbles[bubble].bubsInConcept[conceptBubID], true);
+                }
+                console.log("formatting concept: " + bubble.id)
+            }
+        }
+        this.setState({
+            bubbles: newBubbles
+        })
+        console.log('formatted concepts');
     }
 
     createBubbleDeets(bubbles){
@@ -338,8 +381,8 @@ class Space extends React.Component{
     }
 
     handleWorkRoomDrop(e){
-        this.updateRoom('work');
-        this.updateShrink(false);
+        this.updateLastDraggedRoom('work');
+        this.updateLastDraggedShrink(false);
         this.moveBubble(e);
         this.removeFromConcept(lastDragStart.id.toString());
         // console.log(this.state.bubbles);
@@ -349,8 +392,8 @@ class Space extends React.Component{
         const draggedID = lastDragStart.id.toString();
         const draggedType = this.getBubble(draggedID).type;
         if (draggedType === 'concept'){
-            this.updateRoom('concept');
-            this.updateShrink(true);
+            this.updateLastDraggedRoom('concept');
+            this.updateLastDraggedShrink(true);
             this.moveBubble(e);
         }
     }
@@ -359,7 +402,7 @@ class Space extends React.Component{
         const draggedID = lastDragStart.id.toString();
         const draggedType = this.getBubble(draggedID).type;
         if (draggedType === 'subject'){
-            this.updateRoom('subject');
+            this.updateLastDraggedRoom('subject');
             this.removeFromConcept(lastDragStart.id.toString());
         }
     }
@@ -368,42 +411,44 @@ class Space extends React.Component{
         const draggedID = lastDragStart.id.toString();
         const draggedType = this.getBubble(draggedID).type;
         if (draggedType === 'condition'){
-            this.updateRoom('condition');
+            this.updateLastDraggedRoom('condition');
             this.removeFromConcept(lastDragStart.id.toString());
         }
     }
 
-    updateRoom(roomValue){
+    updateLastDraggedRoom(roomValue){
         const draggedID = lastDragStart.id.toString();
+        this.updateRoom(draggedID,roomValue);
+    }
+    
+    updateRoom(id,roomValue){
         let newBubbles = this.state.bubbles.slice(0);
-        for (let iter = 0; iter < newBubbles.length; iter++){
-            if (newBubbles[iter].id === draggedID){
-                newBubbles[iter].room = roomValue;
+        let topBubble;
+        for (topBubble in newBubbles){
+            if (newBubbles[topBubble].id === id){
+                newBubbles[topBubble].room = roomValue;
             }
-            for (let iter2 = 0; iter2 < newBubbles[iter].bubbles.length; iter2++){
-                if (newBubbles[iter].bubbles[iter2].id === draggedID){
-                    newBubbles[iter].bubbles[iter2].room = roomValue;
+            let subBubble;
+            for (subBubble in newBubbles[topBubble].bubbles){
+                if (newBubbles[topBubble].bubbles[subBubble].id === id){
+                    newBubbles[topBubble].bubbles[subBubble].room = roomValue;
                 }
             }
         }
-        // for (let outer = 0; outer < newBubbles.length; outer++){            
-        //     newBubbles[outer].room = roomValue;
-        //     if (newBubbles[outer].newBubbles.length > 0){
-        //         for (let inner = 0; inner < newBubbles[outer].newBubbles.length; inner++){
-        //             this.getBubble(newBubbles[outer].bubsInConcept[inner]).room = roomValue;
-        //         }
-        //     }
-        // };
         this.setState({
             bubbles: newBubbles
         })
     }
     
-    updateShrink(shrinkValue){
+    updateLastDraggedShrink(shrinkValue){
         const draggedID = lastDragStart.id.toString();
+        this.updateShrink(draggedID,shrinkValue)
+    }
+    
+    updateShrink(id,shrinkValue){
         let newBubbles = this.state.bubbles.slice(0);
         for (let iter = 0; iter < newBubbles.length; iter++){
-            if (newBubbles[iter].id === draggedID){
+            if (newBubbles[iter].id === id){
                 newBubbles[iter].shrink = shrinkValue;
                 for (let iter2 = 0; iter2 < newBubbles[iter].bubsInConcept.length; iter2++){
                     this.getBubble(newBubbles[iter].bubsInConcept[iter2]).shrink = shrinkValue
@@ -617,6 +662,7 @@ class Space extends React.Component{
         }
 
         let workRoomBubbleArray = [];
+        let workRoomConceptArray = [];
         let subjectRoomBubbleArray = [];
         let conditionRoomBubbleArray = [];
         let infoRoomBubbleArray = [];
@@ -624,7 +670,11 @@ class Space extends React.Component{
         let flatBubbles = this.bubbleFlattener(this.state.bubbles);
         for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
             if (flatBubbles[bubblePos].room == 'work')
-                workRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));
+                if (flatBubbles[bubblePos].type == 'concept'){
+                    workRoomConceptArray.push(this.renderBubble(flatBubbles[bubblePos]));
+                }else{
+                    workRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));
+                }
             if (flatBubbles[bubblePos].room == 'subject')
                 subjectRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));   
             if (flatBubbles[bubblePos].room == 'condition')
@@ -632,9 +682,9 @@ class Space extends React.Component{
             if (flatBubbles[bubblePos].room == 'info')
                 infoRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
             if (flatBubbles[bubblePos].room == 'concept')
-                // if (flatBubbles[bubblePos].type == 'concept'){
+                if (flatBubbles[bubblePos].type == 'concept'){
                     conceptRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
-                // }
+                }
         };
         
         return(
@@ -720,6 +770,7 @@ class Space extends React.Component{
                     Concept Storage
                     {conceptRoomBubbleArray}
                 </div>
+                {workRoomConceptArray}
                 {workRoomBubbleArray}
                 <div className = "query"
                     >
@@ -761,12 +812,12 @@ class BubbleDeets{
             room = 'info';
         }
         if(typetext == 'concept'){
-            if (fromServer){
-                room = 'concept';
-                shrink = true;
-            }else{
+            // if (fromServer){
+            //     room = 'concept';
+            //     shrink = true;
+            // }else{
                 room = 'work';
-            }
+            // }
         }
         const frontendID = getNextBubbleID();
         this.internalID = internalID;
