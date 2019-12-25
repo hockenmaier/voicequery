@@ -12,13 +12,15 @@ def lambda_handler(event, context):
     return jsonData
     
 def read_dataset(workspace):
-    table = setup_dynamo()
     file_name = "sample-data/HRData_QuickSightSample.csv"
     # file_name = "sample-data/index_2013.csv"
     unique_value_limit = 15
+    
     dataset = setup_S3_source(workspace, file_name)
+    table = setup_dynamo()
+    available_data = get_workspace_data(table,workspace)
     jsonData = package_JSON(dataset, unique_value_limit)
-    delete_old_fields(table, workspace,file_name)
+    # clearWorkspaceData(table, workspace,file_name)
     store_fields(jsonData, table, workspace, file_name, unique_value_limit)
     print(jsonData)
     return jsonData
@@ -36,6 +38,42 @@ def setup_S3_source(workspace, file_name):
 def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
     return dynamodb.Table('lexicon')
+
+def get_datatype(df,col):
+    dataType = map_numpy_datatypes(df[col].dtype)
+    if dataType == 'string':
+        try:
+            df[col] = pd.to_datetime(df[col])
+            dataType = 'datetime'
+        except ValueError:
+            pass
+    return dataType
+    
+def map_numpy_datatypes(dtype):
+    stringedType = str(dtype)
+    if (stringedType == 'object'):
+        return 'string'
+    else:
+        return stringedType
+        
+def get_workspace_data(table, workspace):
+    foundItems = table.scan(
+        FilterExpression=Key('workspace').eq(workspace) & Key('storage_source').eq('dataset')
+    )
+    return foundItems['Items']
+
+def delete_workspace_data(table,workspace,file_name):
+    foundItems = table.scan(
+                FilterExpression=Key('workspace').eq(workspace) & Key('data_set_name').eq(file_name)
+            )
+    if(foundItems['Items']):
+        for item in foundItems['Items']:
+            table.delete_item(
+                Key={
+                    'item_id': item['item_id'],
+                    'text': item['text'],
+                }
+            )
 
 def package_JSON(dataset, unique_value_limit):
     data = {}
@@ -75,23 +113,6 @@ def package_JSON(dataset, unique_value_limit):
     #print(data)
     return data
     
-def get_datatype(df,col):
-    dataType = map_numpy_datatypes(df[col].dtype)
-    if dataType == 'string':
-        try:
-            df[col] = pd.to_datetime(df[col])
-            dataType = 'datetime'
-        except ValueError:
-            pass
-    return dataType
-    
-def map_numpy_datatypes(dtype):
-    stringedType = str(dtype)
-    if (stringedType == 'object'):
-        return 'string'
-    else:
-        return stringedType
-
 def store_fields(jsonData, table, workspace, file_name, unique_value_limit):
     for col in jsonData['bubbles']:
         put = table.put_item(
@@ -125,19 +146,6 @@ def store_fields(jsonData, table, workspace, file_name, unique_value_limit):
                 }
         )
 
-def delete_old_fields(table,workspace,file_name):
-    foundItems = table.scan(
-                FilterExpression=Key('workspace').eq(workspace) & Key('data_set_name').eq(file_name)
-            )
-    if(foundItems['Items']):
-        for item in foundItems['Items']:
-            table.delete_item(
-                Key={
-                    'item_id': item['item_id'],
-                    'text': item['text'],
-                }
-            )
-            
 #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
 # read_dataset('1')
