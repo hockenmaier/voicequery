@@ -31,7 +31,7 @@ class Space extends React.Component{
 
     sendParseLambdaBootMessage = () => {
         console.log('Sending lambda boot parse http call')
-        var self = this;
+        // var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
             query: '.'
         },
@@ -66,7 +66,7 @@ class Space extends React.Component{
     }
 
     getWorkspaceDataBubbles = () => {
-        console.log('Sending read-dataset http call with query: ' + '')
+        console.log('Sending read-dataset http call with query: ')
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/read-dataset', {
             workspace: this.state.workspace
@@ -128,7 +128,7 @@ class Space extends React.Component{
     
     saveDeleteConcept = (concept) => {
         console.log('Sending delete save_concept http call with internal ID: ' + concept.internalID)
-        var self = this;
+        // var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
@@ -158,13 +158,11 @@ class Space extends React.Component{
                     this.updateRoom(newBubbles[bubble].bubsInConcept[conceptBubID], 'concept');
                     this.updateShrink(newBubbles[bubble].bubsInConcept[conceptBubID], true);
                 }
-                console.log("formatting concept: " + bubble.id)
             }
         }
         this.setState({
             bubbles: newBubbles
         })
-        console.log('formatted concepts');
     }
 
     createBubbleDeets(bubbles){
@@ -235,7 +233,7 @@ class Space extends React.Component{
         }
         else{
             console.log('concept creation');
-            const newConcept = this.createConcept(dragged,dropped,e)
+            this.createConcept(dragged,dropped,e)
             // this.positionConceptBubbles(newConcept,newConcept.xLocation,newConcept.yLocation)
         }
     }
@@ -274,7 +272,7 @@ class Space extends React.Component{
         const newConcept = new BubbleDeets('','Concept','concept',[],'','','','',newX,newY,newbubsInConcept,false)
         newBubbles.unshift(newConcept);
         this.saveConcept(newConcept);
-        console.log(newBubbles);
+        // console.log(newBubbles);
         this.setState({   // Have to refactor everywhere now since i am actually setting state directly by assigning an array to the state array
             bubbles: newBubbles
         }, this.positionConceptBubbles(newConcept,newX,newY))  //we need to pass positionConceptBubbles as a callback since setState is Async
@@ -592,7 +590,7 @@ class Space extends React.Component{
     }
 
     detectLambdaBoot = () => {
-        if(this.state.queryResponseHTML == '<p>...</p>'){
+        if(this.state.queryResponseHTML === '<p>...</p>'){
             const responseWaitingText = '<p>Booting natural language processing server...</p>';
 
             this.setState({
@@ -676,20 +674,20 @@ class Space extends React.Component{
         let conceptRoomBubbleArray = [];
         let flatBubbles = this.bubbleFlattener(this.state.bubbles);
         for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
-            if (flatBubbles[bubblePos].room == 'work')
-                if (flatBubbles[bubblePos].type == 'concept'){
+            if (flatBubbles[bubblePos].room === 'work')
+                if (flatBubbles[bubblePos].type === 'concept'){
                     workRoomConceptArray.push(this.renderBubble(flatBubbles[bubblePos]));
                 }else{
                     workRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));
                 }
-            if (flatBubbles[bubblePos].room == 'subject')
+            if (flatBubbles[bubblePos].room === 'subject')
                 subjectRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos]));   
-            if (flatBubbles[bubblePos].room == 'condition')
+            if (flatBubbles[bubblePos].room === 'condition')
                 conditionRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
-            if (flatBubbles[bubblePos].room == 'info')
+            if (flatBubbles[bubblePos].room === 'info')
                 infoRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
-            if (flatBubbles[bubblePos].room == 'concept')
-                if (flatBubbles[bubblePos].type == 'concept'){
+            if (flatBubbles[bubblePos].room === 'concept')
+                if (flatBubbles[bubblePos].type === 'concept'){
                     conceptRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
                 }
         };
@@ -816,10 +814,10 @@ class BubbleDeets{
     constructor(internalID,text,typetext,bubbles,parentBubbleId, parentFrontendID, closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept,fromServer){ //last three are not set on construction
         let room = typetext;
         let shrink = false;
-        if(typetext == 'info-field' | typetext == 'info-value'){
+        if(typetext === 'info-field' | typetext === 'info-value'){
             room = 'info';
         }
-        if(typetext == 'concept'){
+        if(typetext === 'concept'){
             // if (fromServer){
             //     room = 'concept';
             //     shrink = true;
@@ -830,7 +828,7 @@ class BubbleDeets{
         const frontendID = getNextBubbleID();
         this.internalID = internalID;
         this.frontendID = frontendID;
-        this.id = ((internalID == '') ? frontendID : internalID);
+        this.id = ((internalID === '') ? frontendID : internalID);
         this.text = text;
         this.type = typetext;        
         this.bubbles = bubbles;
