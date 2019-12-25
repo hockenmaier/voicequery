@@ -415,6 +415,13 @@ class Space extends React.Component{
             this.removeFromConcept(lastDragStart.id.toString());
         }
     }
+    
+    handleInputKeyPress = (e) => {
+        let code = e.keyCode || e.which;
+        if(code === 13) { //13 is the enter keycode
+            this.handleQuerySubmit()
+        } 
+    }
 
     updateLastDraggedRoom(roomValue){
         const draggedID = lastDragStart.id.toString();
@@ -778,7 +785,8 @@ class Space extends React.Component{
                         className="query-input"
                         type="text"
                         placeholder={this.state.sampleQuery} 
-                        onChange={this.handleQueryChange}                        
+                        onChange={this.handleQueryChange}    
+                        onKeyPress={this.handleInputKeyPress}
                         value={this.state.queryInput}
                         style={{
                             width: layout.queryWidth,
