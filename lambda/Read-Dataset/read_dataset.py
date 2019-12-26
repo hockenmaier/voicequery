@@ -19,7 +19,7 @@ def read_dataset(workspace):
     
     context.dataset = setup_S3_source(context)
     context.table = setup_dynamo()
-    available_data = get_workspace_data(context)
+    context.available_data = get_workspace_data(context)
     
     context.jsonData = package_JSON(context)
     delete_workspace_data(context)
@@ -35,6 +35,7 @@ class contextObject:
         self.dataset = None
         self.table = None
         self.jsonData = {}
+        self.available_data = {}
         
 
 def create_context(workspace):
@@ -92,6 +93,30 @@ def delete_workspace_data(context):
                 }
             )
 
+def getFieldID(col, columnName, context):
+    existingFieldRecord = searchFields(columnName,context.available_data)
+    if existingFieldRecord:
+        return existingFieldRecord[0]['item_id']
+    else:
+        return str(uuid.uuid4())
+
+def searchFields(columnName,data):
+    return [element for element in data if (element['query_part'] == 'info-field') & (element['text'] == columnName)]
+    
+def getValueID(value, valueName, col, columnName, context):
+    existingValueRecord = findFirstMatchingValue(valueName,columnName,context.available_data)
+    if existingValueRecord:
+        return existingValueRecord['item_id']
+    else:
+        return str(uuid.uuid4())
+
+def findFirstMatchingValue(valueName,columnName,data):
+    for element in data:
+        if (element['query_part'] == 'info-value'):
+            if (element['parent_field_name'] == columnName) & (element['text'] == valueName):
+                return element
+                
+
 def package_JSON(context):
     data = {}
     data['statusCode'] = '200'
@@ -103,13 +128,14 @@ def package_JSON(context):
     for col in columns:
         # print('column: ' + col)
         datatype = get_datatype(context.dataset,col)
+        columnName = str(col)
         unique = context.dataset[col].unique()
         uniqueLength = len(unique)
         cardinalityRatio = uniqueLength/length
-        fieldID = str(uuid.uuid4())
+        fieldID = getFieldID(col,columnName,context)
         bubble = {}
         bubble['internalID'] = fieldID
-        bubble['name'] = str(col)
+        bubble['name'] = columnName
         bubble['type'] = 'info-field'
         bubble['dataType'] = datatype
         bubble['bubbles'] = []
@@ -117,11 +143,12 @@ def package_JSON(context):
         bubble['cardinality_ratio'] = str(cardinalityRatio)
         if (len(unique) < context.unique_value_limit):
             for value in unique:
+                valueName = str(value)
                 # print('unique value: ' + value)
-                valueID = str(uuid.uuid4())
+                valueID = getValueID(value,valueName,col,columnName,context)
                 subBubble = {}
                 subBubble['internalID'] = valueID
-                subBubble['name'] = str(value)
+                subBubble['name'] = valueName
                 subBubble['type'] = 'info-value'
                 subBubble['bubbles'] = []
                 bubble['bubbles'].append(subBubble)
@@ -163,9 +190,9 @@ def store_fields(context):
                 }
         )
 
-#-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+# # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-# read_dataset('1')
+read_dataset('1')
 
-#-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+# # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
