@@ -1,22 +1,14 @@
 # Code for tagging temporal expressions in text
 # For details of the TIMEX format, see http://timex2.mitre.org/
-
+# Converted to Python3 by Brian Hockenmaier in 2019
 import re
 import string
 import os
 import sys
 from datetime import datetime, timedelta
-# sys.path.append(os.path.abspath("/mx/DateTime"))
-# from mx.DateTime import *
 
-# Requires eGenix.com mx Base Distribution
+# Python3 version no longer requires eGenix.com mx Base Distribution
 # http://www.egenix.com/products/python/mxBase/
-# try:
-#     from mx.DateTime import *
-# except ImportError:
-#     print("""
-# Requires eGenix.com mx Base Distribution
-# http://www.egenix.com/products/python/mxBase/""")
 
 # Predefined strings.
 numbers = "(^a(?=\s)|one|two|three|four|five|six|seven|eight|nine|ten| \
