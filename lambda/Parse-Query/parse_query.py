@@ -45,6 +45,7 @@ def parse_query(parseObject, inputQuery):
     table = setup_dynamo()
     setup_nltk_data()
     available_data = get_workspace_data(table,workspace)
+    user_concepts = get_workspace_concepts(table,workspace)
     
     print('')
     print('query: ' + query)
@@ -84,6 +85,10 @@ def parse_query(parseObject, inputQuery):
     # Detect Query Type and remove query type trigger words from lexicon:
     queryType = findAndFilterQueryTerms(query, posTaggedQuery, conditionsAndPOS,subjectsAndPOS)
     print('Query Type: ' + queryType['type'] + ', specifically: ' + queryType['term'])
+    
+    # Pair each condition and subject with matching concept values, if they exist
+    get_matching_concept_info(conditionsAndPOS, user_concepts, dataSynsetPacks)
+    get_matching_concept_info(subjectsAndPOS, user_concepts, dataSynsetPacks)
     
     # Pair each condition and subject with similar field names and values found from stored dataset info
     get_most_similar_info(conditionsAndPOS, dataSynsetPacks)
@@ -180,6 +185,12 @@ def printPhraseObj(obj):
         print('~~~Great Matches Found~~~')
         for match in obj.greatMatches:
             printPhraseObj(match)
+            
+    if obj.conceptMatch:
+        print('')
+        print('~~~~~~~User Concept Match Found~~~~~~~')
+        printPhraseObj(obj.conceptMatch)
+        
     if (obj.phraseType == 'condition')|(obj.phraseType == 'subject'):
         print('^------------------END LEXICON------------------^ ' + obj.text)
     else:
@@ -218,6 +229,12 @@ def setup_dynamo():
 def get_workspace_data(table, workspace):
     foundItems = table.scan(
         FilterExpression=Key('workspace').eq(workspace) & Key('storage_source').eq('dataset')
+    )
+    return foundItems['Items']
+
+def get_workspace_concepts(table, workspace):
+    foundItems = table.scan(
+        FilterExpression=Key('workspace').eq(workspace) & Key('query_part').eq('concept')
     )
     return foundItems['Items']
 
@@ -418,6 +435,25 @@ def get_default_date_field(dataSynsetPacks,context):
     if defaultDate:
         context.workToShow = show_work("Found highest cardinality date field to use as default: " + str(defaultDate.text))
     context.defaultDate = defaultDate
+    
+def get_matching_concept_info(lex_objects,user_concepts,data_packs):
+    for lex in lex_objects:
+        for concept in user_concepts:
+            for concept_item in concept['concept_item_detail']:
+                if lex.text == concept_item['text']:
+                    findAndAddDataConceptMatch(lex,concept,data_packs)
+                    
+def findAndAddDataConceptMatch(lex,concept,data_packs):
+    data_id = ''
+    for concept_item in concept['concept_item_detail']:
+        if (concept_item['query_part'] == 'info-field') | (concept_item['query_part'] == 'info-value'):
+            data_id = concept_item['item_id']
+            # print("found data: " + data_id)
+    for pack in data_packs:
+        if pack.id:
+            if pack.id == data_id:
+                lex.conceptMatch = pack
+                return
 
 def get_most_similar_info(lexObjects,dataSynsetPacks):
     # printPhraseObjState(dataSynsetPacks)
@@ -506,6 +542,7 @@ class PhraseAndPOS:
         self.cardinalityRatio = 0
         self.dateValue = ''
         self.id = ''
+        self.conceptMatch = None
     def toJSON(self):
         data = {}
         data['phraseType'] = self.phraseType
@@ -523,6 +560,9 @@ class PhraseAndPOS:
         data['parentFieldName'] = self.parentFieldName
         data['dateValue'] = self.dateValue.__str__()
         data['id'] = self.id
+        data['conceptMatch'] = None
+        if self.conceptMatch:
+            data['conceptMatch'] = self.conceptMatch.toJSON()
         return data
 
 def get_data_synset_pack(data):
@@ -711,7 +751,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 
 # SIMPLE TESTS
 
-# parse_query(None,"What is the median tenure for female VP's who have MS degrees?")
+parse_query(None,"What is the median tenure for female VP's who have MS degrees?")
 # parse_query(None,"How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 # parse_query(None,"How many visitors came on the lot during the month of May 2019?")
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
