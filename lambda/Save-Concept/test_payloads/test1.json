@@ -1,8 +1,9 @@
 {
-  "internal_ID": "4423f488-cd51-4fef-8fe6-bf2cf64c791f",
+  "internal_ID": "06751bfa-f00a-473c-b612-c36e0df3e569",
   "workspace": "1",
   "text": "Concept",
-  "concept_items": [{
+  "concept_items": ["5678",""],
+  "concept_item_detail": [{
       "internal_ID": "test",
       "workspace": "",
       "text": "Concept",

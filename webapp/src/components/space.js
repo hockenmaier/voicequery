@@ -111,7 +111,7 @@ class Space extends React.Component{
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
             text: concept.text,
-            // concept_items: this.getBubbles(concept.bubsInConcept)
+            concept_item_detail: this.getBubbles(concept.bubsInConcept),
             concept_items: concept.bubsInConcept
         },
         )

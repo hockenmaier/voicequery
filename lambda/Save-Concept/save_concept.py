@@ -23,7 +23,8 @@ def save_concept(event):
                 'query_part': 'concept',
                 'create_time': str(datetime.datetime.now()),
                 'workspace': event['workspace'],
-                'concept_items': event['concept_items']
+                'concept_items': event['concept_items'],
+                'concept_item_detail': event['concept_item_detail']
             })
         )
         responseText = 'Concept created successfully'
@@ -37,12 +38,13 @@ def save_concept(event):
                 'text': oldText
             },
             # UpdateExpression="set update_time = :u, #text=:t, concept_items = :c",
-            UpdateExpression="set update_time = :u, concept_items = :c",
+            UpdateExpression="set update_time = :u, concept_items = :c, concept_item_detail = :d",
             
             ExpressionAttributeValues=convert_empty_values({
                 ':u': str(datetime.datetime.now()),
                 # ':t': event['text'],
-                ':c': event['concept_items']
+                ':c': event['concept_items'],
+                ':d': event['concept_item_detail']
             }),
             # ExpressionAttributeNames={
             #     "#text": "text"
@@ -89,9 +91,9 @@ def convert_empty_values(dictOrList):  #Use this function wrapped around a dyanm
     return dictOrList
     
 
-# #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
-with open('test_payloads/test1.json') as f:
-    data = json.load(f)
-    save_concept(data)
-# #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+# # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+# with open('test_payloads/test1.json') as f:
+#     data = json.load(f)
+#     save_concept(data)
+# # #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
