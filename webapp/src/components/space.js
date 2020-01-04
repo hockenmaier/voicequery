@@ -111,7 +111,7 @@ class Space extends React.Component{
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
             text: concept.text,
-            concept_item_detail: this.getBubbles(concept.bubsInConcept),
+            concept_item_detail: this.getBubblesForAPI(concept.bubsInConcept),
             concept_items: concept.bubsInConcept
         },
         )
@@ -133,6 +133,7 @@ class Space extends React.Component{
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
             text: concept.text,
+            concept_item_detail: '',
             concept_items: ''
         },
         )
@@ -638,6 +639,28 @@ class Space extends React.Component{
             bubbleArray.push(this.getBubble(ids[id]));
         }
         return bubbleArray
+    }
+    
+    getBubblesForAPI(ids){
+        let bubbleArray = [];
+        let apiArray = [];
+        let id;
+        for (id in ids){
+            bubbleArray.push(this.getBubble(ids[id]));
+        }
+        let bubble;
+        for (bubble in bubbleArray){
+            let newItem = {
+                'text': bubbleArray[bubble].text,
+                'query_part': bubbleArray[bubble].type,
+                'item_id': bubbleArray[bubble].internalID,
+                'closest_match_text': bubbleArray[bubble].closestMatchText,
+                'closest_match_id': bubbleArray[bubble].closestMatchId
+            }
+            apiArray.push(newItem)
+        }
+        console.log(apiArray);
+        return apiArray
     }
 
     renderBubble(bub){
