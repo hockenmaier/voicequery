@@ -101,6 +101,7 @@ def count(context):
 
 def filter_by_lex(context, lexicon):
     for lex in lexicon:
+        #TODO use concept Matches first
         if (lex['closestMatchSimilarity'] > .85):
             # print('found a good enough match for filtering: ' + lex['text'] + ': ' + lex['closestMatch']['text'] + ': ' + str(lex['closestMatchSimilarity']))
             # print('length before filter = ' + str(len(df)))
@@ -164,11 +165,15 @@ def prepareForMath(context):
     chosenSub,chosenField = None,None
     if numericSubs:
         for sub in numericSubs:
-            if (sub['matchtype'] == 'closestMatch'):
-                chosenSub = sub['sub'] #the first closestMatch numberic subject is the one we will do math on
+            if (sub['matchtype'] == 'conceptMatch'):
+                chosenSub = sub['sub'] #the first conceptMatch numberic subject is the one we will do math on
                 chosenField = sub['field']
         if not chosenSub:
-            chosenSub = numericSubs[0]['sub'] #the first numberic subject is the one we will do math on if all are greatMatches
+            if (sub['matchtype'] == 'closestMatch'):
+                chosenSub = sub['sub'] #If no concept matches exist, the first closestMatch numberic subject is the one we will do math on
+                chosenField = sub['field']
+        if not chosenSub:
+            chosenSub = numericSubs[0]['sub'] #the first numberic subject is the one we will do math on if all matches are greatMatches
             chosenField = numericSubs[0]['field']
     else:
         return "I can't find any numeric subjects in your question to average"
@@ -192,6 +197,12 @@ def get_numeric_lex(context,lexicon):
     numericLex = []
     print('getting numeric text')
     for lex in lexicon:
+        if (lex['conceptMatch']):
+            print('concept match not empty')
+            if (lex['conceptMatch']['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
+                if np.issubdtype(context.df[lex['conceptMatch']['text']].dtype, np.number): #check if column is numeric
+                    context.workToShow += show_work("Concept Match Numeric Subject Found: " + lex['text'] + " with column: " + lex['conceptMatch']['text'])
+                    numericLex.append({'sub': lex, 'field': lex['conceptMatch'],'matchtype': 'conceptMatch'})
         if (lex['closestMatch']):
             print('closest match not empty')
             if (lex['closestMatch']['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
