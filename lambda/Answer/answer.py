@@ -113,7 +113,8 @@ def filter_by_lex(context, lexicon):
         if (lex['greatMatches']):
             for match in lex['greatMatches']:
                 if (match['phraseType'] == 'info-value'): #make sure lexicon match both exists and is a field
-                    context.workToShow += show_work("Good auto-detected match found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + match['text'])
+                    if not chosenMatches:
+                        context.workToShow += show_work("Good auto-detected match found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + match['text'])
                     chosenMatches.append(match)
         if chosenMatches:
             chosenMatch = chosenMatches[0] #because we added matches in priority order, the first in the list will be the best option
@@ -168,15 +169,6 @@ def prepareForMath(context):
     numericSubs = get_numeric_lex(context,subjects)
     chosenSub,chosenField = None,None
     if numericSubs:
-        # for sub in numericSubs:
-        #     if (sub['matchtype'] == 'conceptMatch'):
-        #         chosenSub = sub['sub'] #the first conceptMatch numberic subject is the one we will do math on
-        #         chosenField = sub['field']
-        # if not chosenSub:
-        #     if (sub['matchtype'] == 'closestMatch'):
-        #         chosenSub = sub['sub'] #If no concept matches exist, the first closestMatch numberic subject is the one we will do math on
-        #         chosenField = sub['field']
-        # if not chosenSub:
         chosenSub = numericSubs[0]['sub'] #the first numberic subject is the highest priority according to list append order
         chosenField = numericSubs[0]['field']
     else:
@@ -217,7 +209,8 @@ def get_numeric_lex(context,lexicon):
             for match in lex['greatMatches']:
                 if (match['phraseType'] == 'info-field'):
                     if np.issubdtype(context.df[match['text']].dtype, np.number):
-                        context.workToShow += show_work("Good auto-detected Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
+                        if not numericLex:
+                            context.workToShow += show_work("Good auto-detected Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
                         numericLex.append({'sub': lex, 'field': match,'matchtype': 'greatMatch'})
     return numericLex
 
