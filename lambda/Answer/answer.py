@@ -101,25 +101,29 @@ def count(context):
 
 def filter_by_lex(context, lexicon):
     for lex in lexicon:
-        #TODO use concept Matches first
+        chosenMatches = []
+        if lex['conceptMatch']:
+            if (lex['conceptMatch']['phraseType'] == 'info-value'): #phrase type in the case of fields s info-field or info-value
+                context.workToShow += show_work("Concept match found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + lex['conceptMatch']['text'])
+                chosenMatches.append(lex['conceptMatch'])
         if (lex['closestMatchSimilarity'] > .85):
-            # print('found a good enough match for filtering: ' + lex['text'] + ': ' + lex['closestMatch']['text'] + ': ' + str(lex['closestMatchSimilarity']))
-            # print('length before filter = ' + str(len(df)))
-            context.workToShow += show_work("Similar match (" + str(lex['closestMatchSimilarity']) + ") found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + lex['closestMatch']['text'])
-            # print('shown work:')
-            # print(context.workToShow)
-            closestMatch = lex['closestMatch']
-            if (closestMatch['phraseType'] == 'info-value'): #phrase type in the case of fields s info-field or info-value
-                fieldName = closestMatch['parentFieldName']
-                fieldValue = closestMatch['text']
-                # print('value = ' + fieldValue)
-                isValue = context.df[fieldName]==fieldValue
-                context.df = context.df[isValue]
-                # print('length after filter = ' + str(len(df)))
-                context.workToShow += show_work("Applying filter on field " + fieldName + " for unique value: " + fieldValue + ". Number of records is now: " + str(len(context.df)))
+            if (lex['closestMatch']['phraseType'] == 'info-value'): #phrase type in the case of fields s info-field or info-value
+                context.workToShow += show_work("Closest auto-detected match (" + str(lex['closestMatchSimilarity']) + ") found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + lex['closestMatch']['text'])
+                chosenMatches.append(lex['closestMatch'])
+        if (lex['greatMatches']):
+            for match in lex['greatMatches']:
+                if (match['phraseType'] == 'info-value'): #make sure lexicon match both exists and is a field
+                    context.workToShow += show_work("Good auto-detected match found for " + lex['phraseType'] + ' ' + lex['text'] + ': ' + match['text'])
+                    chosenMatches.append(match)
+        if chosenMatches:
+            chosenMatch = chosenMatches[0] #because we added matches in priority order, the first in the list will be the best option
+            fieldName = chosenMatch['parentFieldName']
+            fieldValue = chosenMatch['text']
+            isValue = context.df[fieldName]==fieldValue
+            context.df = context.df[isValue]
+            context.workToShow += show_work("Applying filter on field " + fieldName + " for unique value: " + fieldValue + ". Number of records is now: " + str(len(context.df)))
         else:
             context.workToShow += show_work("No good matches found for " + lex['phraseType'] + ' ' + lex['text'])
-            # print('this one didnt find anything decent: ' + lex['text'] + ': ' + str(lex['closestMatchSimilarity']))
 
 def filter_by_time(context,timeConditions):
     for timeCondition in timeConditions:
@@ -164,17 +168,17 @@ def prepareForMath(context):
     numericSubs = get_numeric_lex(context,subjects)
     chosenSub,chosenField = None,None
     if numericSubs:
-        for sub in numericSubs:
-            if (sub['matchtype'] == 'conceptMatch'):
-                chosenSub = sub['sub'] #the first conceptMatch numberic subject is the one we will do math on
-                chosenField = sub['field']
-        if not chosenSub:
-            if (sub['matchtype'] == 'closestMatch'):
-                chosenSub = sub['sub'] #If no concept matches exist, the first closestMatch numberic subject is the one we will do math on
-                chosenField = sub['field']
-        if not chosenSub:
-            chosenSub = numericSubs[0]['sub'] #the first numberic subject is the one we will do math on if all matches are greatMatches
-            chosenField = numericSubs[0]['field']
+        # for sub in numericSubs:
+        #     if (sub['matchtype'] == 'conceptMatch'):
+        #         chosenSub = sub['sub'] #the first conceptMatch numberic subject is the one we will do math on
+        #         chosenField = sub['field']
+        # if not chosenSub:
+        #     if (sub['matchtype'] == 'closestMatch'):
+        #         chosenSub = sub['sub'] #If no concept matches exist, the first closestMatch numberic subject is the one we will do math on
+        #         chosenField = sub['field']
+        # if not chosenSub:
+        chosenSub = numericSubs[0]['sub'] #the first numberic subject is the highest priority according to list append order
+        chosenField = numericSubs[0]['field']
     else:
         return "I can't find any numeric subjects in your question to average"
     context.workToShow += show_work("The numeric subject chosen for math is: " + chosenSub['text'] + " with column: " + chosenField['text'])
@@ -189,8 +193,6 @@ def separate_conditions(context):
             conditions.append(condition)
         elif condition['phraseType'] == 'timeCondition':
             timeConditions.append(condition)
-    print(conditions)
-    print(timeConditions)
     return conditions, timeConditions
 
 def get_numeric_lex(context,lexicon):
@@ -198,24 +200,24 @@ def get_numeric_lex(context,lexicon):
     print('getting numeric text')
     for lex in lexicon:
         if (lex['conceptMatch']):
-            print('concept match not empty')
             if (lex['conceptMatch']['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
                 if np.issubdtype(context.df[lex['conceptMatch']['text']].dtype, np.number): #check if column is numeric
                     context.workToShow += show_work("Concept Match Numeric Subject Found: " + lex['text'] + " with column: " + lex['conceptMatch']['text'])
                     numericLex.append({'sub': lex, 'field': lex['conceptMatch'],'matchtype': 'conceptMatch'})
+                else:
+                    context.workToShow += show_work("Concept match for " + lex['text'] + " was not a numeric field")
+            else:
+                context.workToShow += show_work("Concept match for " + lex['text'] + " was not a field")
         if (lex['closestMatch']):
-            print('closest match not empty')
-            if (lex['closestMatch']['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
-                if np.issubdtype(context.df[lex['closestMatch']['text']].dtype, np.number): #check if column is numeric
-                    context.workToShow += show_work("ClosestMatch Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
+            if (lex['closestMatch']['phraseType'] == 'info-field'):
+                if np.issubdtype(context.df[lex['closestMatch']['text']].dtype, np.number):
+                    context.workToShow += show_work("Best auto-detected Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
                     numericLex.append({'sub': lex, 'field': lex['closestMatch'],'matchtype': 'closestMatch'})
         if (lex['greatMatches']):
-            print('greatMatches was not empty')
             for match in lex['greatMatches']:
-                if (match['phraseType'] == 'info-field'): #make sure lexicon match both exists and is a field
-                    print('greatMatches is a field')
-                    if np.issubdtype(context.df[match['text']].dtype, np.number): #check if column is numeric
-                        context.workToShow += show_work("GreatMatch Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
+                if (match['phraseType'] == 'info-field'):
+                    if np.issubdtype(context.df[match['text']].dtype, np.number):
+                        context.workToShow += show_work("Good auto-detected Numeric Subject Found: " + lex['text'] + " with column: " + lex['closestMatch']['text'])
                         numericLex.append({'sub': lex, 'field': match,'matchtype': 'greatMatch'})
     return numericLex
 
