@@ -275,6 +275,11 @@ def get_parse_tree(posTaggedQuery):
       """
     parser = nltk.RegexpParser(baseGrammar)
     return parser.parse(posTaggedQuery)
+    
+    chartGrammar = nltk.CFG.fromstring("""
+    
+    
+    """)
 
 def traverse_tree(tree, parent, conditionsAndPOS, subjectsAndPOS):
     if tree.label() == 'NP':
@@ -751,7 +756,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 
 # SIMPLE TESTS
 
-parse_query(None,"What is the median tenure for female VP's who have MS degrees?")
+# parse_query(None,"What is the median tenure for female VP's who have MS degrees?")
 # parse_query(None,"How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
 # parse_query(None,"How many visitors came on the lot during the month of May 2019?")
 # parse_query(None,"What is the average pay of our female employees with BS degrees?")
@@ -769,6 +774,8 @@ parse_query(None,"What is the median tenure for female VP's who have MS degrees?
 # parse_query(None, 'What is the average salary of managers in the quality department who have MS degrees?')
 # parse_query(None,'what is the average tenure of managers who are women with a high school degree?')
 # parse_query(None,'what\'s the median tenure of employees in sales?')
+
+parse_query(None, 'What was the median revenue in the US for won opportunities?')
 
 # TIME TESTS
 
