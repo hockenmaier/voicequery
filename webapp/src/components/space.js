@@ -3,7 +3,8 @@ import Bubble from './bubble.js';
 import {lastDragStart, layout, initializeLayout} from './helpers.js';
 //import bubblesPayload from '../sample-payloads/bubblesv3.json';
 //import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
-import axios from 'axios'
+import axios from 'axios';
+import AudioRecorder from 'react-audio-recorder';
 
 class Space extends React.Component{
     constructor(props){
