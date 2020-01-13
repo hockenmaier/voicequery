@@ -684,7 +684,7 @@ def package_JSON(outputQuery,reducedConditionsAndPOS,reducedSubjectsAndPOS, pret
     for condition in reducedConditionsAndPOS:
         if condition.phraseType != 'timeCondition':
             bubble = {}
-            bubble['internalID'] = ""
+            bubble['internalID'] = condition.id
             bubble['name'] = condition.text
             bubble['type'] = condition.phraseType
             closest_match_id,closest_match_text = get_clean_closest_match(condition)
@@ -694,7 +694,7 @@ def package_JSON(outputQuery,reducedConditionsAndPOS,reducedSubjectsAndPOS, pret
             bubbles.append(bubble)
     for subject in reducedSubjectsAndPOS:
         bubble = {}
-        bubble['internalID'] = ""
+        bubble['internalID'] = subject.id
         bubble['name'] = subject.text
         bubble['type'] = "subject"
         closest_match_id,closest_match_text = get_clean_closest_match(subject)
@@ -735,11 +735,12 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
                 FilterExpression=Key('text').eq(phrase.text) & Key('workspace').eq(workspace) & Key('query_part').eq(lexType)
             )
             if not(foundItems['Items']):
+                phrase.id = str(uuid.uuid4())
                 reducedPhraseList.append(phrase)
                 closest_match_id,closest_match_text = get_clean_closest_match(phrase)
                 put = table.put_item(
                 Item={
-                    'item_id': str(uuid.uuid4()),
+                    'item_id': phrase.id,
                     'text': phrase.text,
                     'storage_source': 'parse',
                     'query_id': queryID,
@@ -775,7 +776,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'what is the average tenure of managers who are women with a high school degree?')
 # parse_query(None,'what\'s the median tenure of employees in sales?')
 
-parse_query(None, 'What was the median revenue in the US for won opportunities?')
+# parse_query(None, 'What was the median revenue in the US for won opportunities?')
 
 # TIME TESTS
 
