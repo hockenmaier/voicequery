@@ -826,6 +826,15 @@ class Space extends React.Component{
                             left: layout.queryLeft + layout.queryWidth + 20,
                         }}
                     >Ask</button>
+                    <AudioRecorder
+                    className="query-button"
+                        onClick={this.handleQuerySubmit}
+                        style={{
+                            width: 50,
+                            top: layout.queryTop,
+                            left: layout.queryLeft + layout.queryWidth + 100,
+                        }}
+                    >Audio</AudioRecorder>
                 </div>                
             </div>
         );
