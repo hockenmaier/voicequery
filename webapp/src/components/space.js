@@ -4,7 +4,8 @@ import {lastDragStart, layout, initializeLayout} from './helpers.js';
 //import bubblesPayload from '../sample-payloads/bubblesv3.json';
 //import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
 import axios from 'axios';
-import AudioRecorder from 'react-audio-recorder';
+// import AudioRecorder from 'react-audio-recorder';
+// import WebAudioRecorder from 'web-audio-recorder-js';
 
 class Space extends React.Component{
     constructor(props){
@@ -748,7 +749,8 @@ class Space extends React.Component{
                         height: layout.topbarHeight,
                         width: window.innerWidth,
                         }}
-                ></div>                
+                >
+                </div>                
                 <div className = "room subject-room"
                     onDrop={this.handleSubjectRoomDrop.bind(this)}
                     onDragOver={this.handleWorkRoomDragOver}
@@ -826,15 +828,7 @@ class Space extends React.Component{
                             left: layout.queryLeft + layout.queryWidth + 20,
                         }}
                     >Ask</button>
-                    <AudioRecorder
-                    className="query-button"
-                        onClick={this.handleQuerySubmit}
-                        style={{
-                            width: 50,
-                            top: layout.queryTop,
-                            left: layout.queryLeft + layout.queryWidth + 100,
-                        }}
-                    >Audio</AudioRecorder>
+                    
                 </div>                
             </div>
         );
