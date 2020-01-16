@@ -302,6 +302,16 @@ body {
     font-size: 18px;
     outline: none;
   }
+  
+  .query-audio-button{
+    position: fixed;
+    color: white;
+    background: var(--main-background);
+    border-radius: 3px;
+    border-width: 0px;
+    font-size: 18px;
+    outline: none;
+  }
 
 
 /** ANSWER RESPONSE SYLES **/

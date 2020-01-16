@@ -6,6 +6,8 @@ import {lastDragStart, layout, initializeLayout} from './helpers.js';
 import axios from 'axios';
 // import AudioRecorder from 'react-audio-recorder';
 // import WebAudioRecorder from 'web-audio-recorder-js';
+import { RecordRTC } from 'recordrtc';
+import navigator from 'navigator';
 
 class Space extends React.Component{
     constructor(props){
@@ -591,6 +593,31 @@ class Space extends React.Component{
             queryResponseHTML: responseWaitingText,                
         })
     }
+    
+    handleRecord = () => {
+        navigator.mediaDevices.getUserMedia({
+        video: false,
+        audio: true
+    }).then(async function(stream) {
+        let recorder = RecordRTC(stream, {
+            type: 'video'
+        });
+        recorder.startRecording();
+    
+        const sleep = m => new Promise(r => setTimeout(r, m));
+        await sleep(3000);
+    
+        recorder.stopRecording(function() {
+            let blob = recorder.getBlob();
+            this.sendRecording(blob);
+        });
+    });
+    }
+    
+    sendRecording(blob){
+        console.log('got blob')
+    }
+    
 
     detectLambdaBoot = () => {
         if(this.state.queryResponseHTML === '<p>...</p>'){
@@ -828,7 +855,15 @@ class Space extends React.Component{
                             left: layout.queryLeft + layout.queryWidth + 20,
                         }}
                     >Ask</button>
-                    
+                    <button
+                        className="query-audio-button"
+                        onClick={this.handleRecord}
+                        style={{
+                            width: 80,
+                            top: layout.queryTop,
+                            left: layout.queryLeft + layout.queryWidth + 120,
+                        }}
+                    >Record</button>
                 </div>                
             </div>
         );
