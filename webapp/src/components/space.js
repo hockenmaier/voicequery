@@ -7,7 +7,7 @@ import axios from 'axios';
 // import AudioRecorder from 'react-audio-recorder';
 // import WebAudioRecorder from 'web-audio-recorder-js';
 import { RecordRTC } from 'recordrtc';
-import navigator from 'navigator';
+// import navigator from 'navigator';
 
 class Space extends React.Component{
     constructor(props){
@@ -595,23 +595,44 @@ class Space extends React.Component{
     }
     
     handleRecord = () => {
-        navigator.mediaDevices.getUserMedia({
-        video: false,
-        audio: true
-    }).then(async function(stream) {
-        let recorder = RecordRTC(stream, {
-            type: 'video'
-        });
-        recorder.startRecording();
-    
-        const sleep = m => new Promise(r => setTimeout(r, m));
-        await sleep(3000);
-    
-        recorder.stopRecording(function() {
-            let blob = recorder.getBlob();
-            this.sendRecording(blob);
-        });
+        if (this.hasGetUserMedia()) {
+            // let stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+            // let recorder = new RecordRTCPromisesHandler(stream, {
+            //     type: 'video'
+            // });
+            // recorder.startRecording();
+            
+            // const sleep = m => new Promise(r => setTimeout(r, m));
+            // await sleep(3000);
+            
+            // await recorder.stopRecording();
+            // let blob = await recorder.getBlob();
+            // invokeSaveAsDialog(blob);
+            
+            navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true
+}).then(async function(stream) {
+    let recorder = RecordRTC(stream, {
+        type: 'video'
     });
+    recorder.startRecording();
+
+    const sleep = m => new Promise(r => setTimeout(r, m));
+    await sleep(3000);
+
+    recorder.stopRecording(function() {
+        let blob = recorder.getBlob();
+        this.sendRecording(blob);
+    });
+});
+        } else {
+            alert('getUserMedia() is not supported by your browser');
+        }
+    }
+    
+    hasGetUserMedia() {
+        return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
     
     sendRecording(blob){
