@@ -6,7 +6,7 @@ import {lastDragStart, layout, initializeLayout} from './helpers.js';
 import axios from 'axios';
 // import AudioRecorder from 'react-audio-recorder';
 // import WebAudioRecorder from 'web-audio-recorder-js';
-import { RecordRTC } from 'recordrtc';
+import { RecordRTC, RecordRTCPromisesHandler } from 'recordrtc';
 // import navigator from 'navigator';
 
 class Space extends React.Component{
@@ -594,38 +594,20 @@ class Space extends React.Component{
         })
     }
     
-    handleRecord = () => {
+    async handleRecord(){
         if (this.hasGetUserMedia()) {
-            // let stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
-            // let recorder = new RecordRTCPromisesHandler(stream, {
-            //     type: 'video'
-            // });
-            // recorder.startRecording();
+            let stream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
+            let recorder = new RecordRTCPromisesHandler(stream, {
+                type: 'audio'
+            });
+            recorder.startRecording();
             
-            // const sleep = m => new Promise(r => setTimeout(r, m));
-            // await sleep(3000);
+            const sleep = m => new Promise(r => setTimeout(r, m));
+            await sleep(3000);
             
-            // await recorder.stopRecording();
-            // let blob = await recorder.getBlob();
-            // invokeSaveAsDialog(blob);
-            
-            navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true
-}).then(async function(stream) {
-    let recorder = RecordRTC(stream, {
-        type: 'video'
-    });
-    recorder.startRecording();
-
-    const sleep = m => new Promise(r => setTimeout(r, m));
-    await sleep(3000);
-
-    recorder.stopRecording(function() {
-        let blob = recorder.getBlob();
-        this.sendRecording(blob);
-    });
-});
+            await recorder.stopRecording();
+            let blob = await recorder.getBlob();
+            console.log('got blob')
         } else {
             alert('getUserMedia() is not supported by your browser');
         }
@@ -878,7 +860,7 @@ class Space extends React.Component{
                     >Ask</button>
                     <button
                         className="query-audio-button"
-                        onClick={this.handleRecord}
+                        onClick={this.handleRecord.bind(this)}
                         style={{
                             width: 80,
                             top: layout.queryTop,
