@@ -607,7 +607,7 @@ class Space extends React.Component{
             
             await recorder.stopRecording();
             let blob = await recorder.getBlob();
-            console.log('got blob')
+            this.sendRecording(blob);
         } else {
             alert('getUserMedia() is not supported by your browser');
         }
@@ -618,7 +618,10 @@ class Space extends React.Component{
     }
     
     sendRecording(blob){
-        console.log('got blob')
+        console.log('got blob');
+        // download.download(blob);
+        let url = window.URL.createObjectURL(blob);
+        console.log(url);
     }
     
 
