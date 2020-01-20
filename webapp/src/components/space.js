@@ -19,6 +19,8 @@ class Space extends React.Component{
             queryInput: '',
             queryResponseHTML: '',
             workspace: '1',
+            recording: false,
+            recorder: null
           };   
       }
 
@@ -596,18 +598,29 @@ class Space extends React.Component{
     
     async handleRecord(){
         if (this.hasGetUserMedia()) {
-            let stream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
-            let recorder = new RecordRTCPromisesHandler(stream, {
-                type: 'audio'
-            });
-            recorder.startRecording();
-            
-            const sleep = m => new Promise(r => setTimeout(r, m));
-            await sleep(3000);
-            
-            await recorder.stopRecording();
-            let blob = await recorder.getBlob();
-            this.sendRecording(blob);
+            if (!this.state.recording){
+                let stream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
+                let recorder = new RecordRTCPromisesHandler(stream, {
+                    type: 'audio'
+                });
+                recorder.startRecording();
+                
+                this.setState({
+                    recording: true,
+                    recorder: recorder,
+                })
+                // const sleep = m => new Promise(r => setTimeout(r, m));
+                // await sleep(3000);
+            }else{
+                await this.state.recorder.stopRecording();
+                let blob = await this.state.recorder.getBlob();
+                this.sendRecording(blob);
+                
+                this.setState({
+                    recording: false,
+                    recorder: null,
+                })
+            }
         } else {
             alert('getUserMedia() is not supported by your browser');
         }
@@ -750,6 +763,8 @@ class Space extends React.Component{
                 }
         };
         
+        let recordText = (this.state.recording ? '🔴' : '🎤');
+        
         return(
             <div className = "space">                
                 <div className = "work-room"
@@ -865,11 +880,12 @@ class Space extends React.Component{
                         className="query-audio-button"
                         onClick={this.handleRecord.bind(this)}
                         style={{
-                            width: 80,
+                            width: 35,
+                            height: 23,
                             top: layout.queryTop,
-                            left: layout.queryLeft + layout.queryWidth + 120,
+                            left: layout.queryLeft + layout.queryWidth + 110,
                         }}
-                    >Record</button>
+                    >{recordText}</button>
                 </div>                
             </div>
         );
