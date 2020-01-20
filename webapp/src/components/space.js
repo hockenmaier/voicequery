@@ -155,8 +155,12 @@ class Space extends React.Component{
     
     sendRecording(blob){
         console.log('Sending blob to transcribe API')
+        
+        // var debug = {hello: "world"};
+        // var blob = new Blob([JSON.stringify(debug, null, 2)], {type : 'application/json'});
+        
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
-            blob: blob,
+            blob: blob.text(),
             workspace: this.state.workspace,
         },
         )
