@@ -153,6 +153,23 @@ class Space extends React.Component{
         });
     }
     
+    sendRecording(blob){
+        console.log('Sending blob to transcribe API')
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
+            blob: blob,
+            workspace: this.state.workspace,
+        },
+        )
+        .then(function(response){
+            console.log('transcribe http successful')
+            console.log(response);
+        })
+        .catch(function(error){
+            console.log('transcribe http error')
+            console.log(error);
+        });
+    }
+    
     formatConceptBubbles(){
         let newBubbles = this.state.bubbles;
         let bubble;
@@ -629,14 +646,6 @@ class Space extends React.Component{
     hasGetUserMedia() {
         return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
-    
-    sendRecording(blob){
-        console.log('got blob');
-        // download.download(blob);
-        let url = window.URL.createObjectURL(blob);
-        console.log(url);
-    }
-    
 
     detectLambdaBoot = () => {
         if(this.state.queryResponseHTML === '<p>...</p>'){
