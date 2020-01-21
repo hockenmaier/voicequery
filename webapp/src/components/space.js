@@ -153,14 +153,22 @@ class Space extends React.Component{
         });
     }
     
-    sendRecording(blob){
+    async sendRecording(blob){
         console.log('Sending blob to transcribe API')
         
         // var debug = {hello: "world"};
         // var blob = new Blob([JSON.stringify(debug, null, 2)], {type : 'application/json'});
         
+        // var blob2 = new Blob(['abc123'], {type: 'text/plain'});
+        
+        // axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe',
+        //     blob,{
+        //     headers: { "content-type": blob.type }
+        // })
+        let blobText = await blob.text();
+        
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
-            blob: blob.text(),
+            blob: blobText,
             workspace: this.state.workspace,
         },
         )
@@ -622,7 +630,7 @@ class Space extends React.Component{
             if (!this.state.recording){
                 let stream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
                 let recorder = new RecordRTCPromisesHandler(stream, {
-                    type: 'audio'
+                    type: 'audio/wav'
                 });
                 recorder.startRecording();
                 
