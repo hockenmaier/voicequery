@@ -6,7 +6,7 @@ import {lastDragStart, layout, initializeLayout} from './helpers.js';
 import axios from 'axios';
 // import AudioRecorder from 'react-audio-recorder';
 // import WebAudioRecorder from 'web-audio-recorder-js';
-import { RecordRTC, RecordRTCPromisesHandler } from 'recordrtc';
+import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder} from 'recordrtc';
 // import navigator from 'navigator';
 
 class Space extends React.Component{
@@ -617,7 +617,6 @@ class Space extends React.Component{
             console.log(error);
         });
         window.setTimeout(this.detectLambdaBoot,1200);
-        //console.log('ask');
         const responseWaitingText = '<p>...</p>';
 
         this.setState({
@@ -630,7 +629,9 @@ class Space extends React.Component{
             if (!this.state.recording){
                 let stream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
                 let recorder = new RecordRTCPromisesHandler(stream, {
-                    type: 'audio/wav'
+                    type: 'audio',
+                    recorderType: StereoAudioRecorder,
+                    mimeType: 'audio/wav',
                 });
                 recorder.startRecording();
                 
@@ -638,11 +639,11 @@ class Space extends React.Component{
                     recording: true,
                     recorder: recorder,
                 })
-                // const sleep = m => new Promise(r => setTimeout(r, m));
-                // await sleep(3000);
             }else{
                 await this.state.recorder.stopRecording();
                 let blob = await this.state.recorder.getBlob();
+                
+                invokeSaveAsDialog(blob); //uncomment for save file dialog
                 this.sendRecording(blob);
                 
                 this.setState({
