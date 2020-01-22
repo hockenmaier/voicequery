@@ -167,9 +167,14 @@ class Space extends React.Component{
         // })
         let blobText = await blob.text();
         
+        // var form = new FormData();
+
+        // form.append('blob', blob);
+        
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
-            blob: blobText,
-            workspace: this.state.workspace,
+            blobdata: blobText,
+            workspace: 'test with text 3',
+            // workspace: this.state.workspace,
         },
         )
         .then(function(response){
