@@ -29,12 +29,15 @@ def create_context(blob,workspace):
 def store_blob_s3(context):
     bucket = "voicequery-transcribe"
     s3 = boto3.client('s3')
-    filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.wav'
+    filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.webm'
     # print('blobdata: ' + str(context.blobdata))
     print('workspace: ' + str(context.workspace))
     # print(context.blobdata[0])
     binary_data = context.blobdata.encode('utf-8')
     base64_data = codecs.encode(binary_data, 'base64')
+    print(type(context.blobdata))
+    print(type(binary_data))
+    print(type(base64_data))
     # fileBlob = blob.read()
     s3.put_object(Bucket= bucket, Body= binary_data, Key= filename)
 

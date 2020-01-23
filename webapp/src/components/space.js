@@ -6,7 +6,7 @@ import {lastDragStart, layout, initializeLayout} from './helpers.js';
 import axios from 'axios';
 // import AudioRecorder from 'react-audio-recorder';
 // import WebAudioRecorder from 'web-audio-recorder-js';
-import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder} from 'recordrtc';
+import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder, WebAssemblyRecorder, MediaStreamRecorder} from 'recordrtc';
 // import navigator from 'navigator';
 
 class Space extends React.Component{
@@ -635,8 +635,9 @@ class Space extends React.Component{
                 let stream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
                 let recorder = new RecordRTCPromisesHandler(stream, {
                     type: 'audio',
+                    // recorderType: MediaStreamRecorder,
                     recorderType: StereoAudioRecorder,
-                    mimeType: 'audio/wav',
+                    mimeType: 'audio/ogg',
                 });
                 recorder.startRecording();
                 
@@ -649,6 +650,8 @@ class Space extends React.Component{
                 let blob = await this.state.recorder.getBlob();
                 
                 invokeSaveAsDialog(blob); //uncomment for save file dialog
+                
+                // var ffmpeg = require('ffmpeg')
                 this.sendRecording(blob);
                 
                 this.setState({
