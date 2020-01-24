@@ -2,9 +2,11 @@ import json
 import boto3
 import uuid
 import codecs
+import base64
 
 def lambda_handler(event, context):
     jsonData = transcribe(event['blobdata'], event['workspace'])
+    # jsonData = transcribe(event, '1')
     return jsonData
 
 def transcribe(blob, workspace):
@@ -27,19 +29,23 @@ def create_context(blob,workspace):
     return newContext
 
 def store_blob_s3(context):
+    print(type(context.blobdata))
     bucket = "voicequery-transcribe"
     s3 = boto3.client('s3')
-    filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.webm'
+    filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.wav'
     # print('blobdata: ' + str(context.blobdata))
     print('workspace: ' + str(context.workspace))
     # print(context.blobdata[0])
-    binary_data = context.blobdata.encode('utf-8')
-    base64_data = codecs.encode(binary_data, 'base64')
-    print(type(context.blobdata))
-    print(type(binary_data))
-    print(type(base64_data))
+    # binary_data = context.blobdata.encode('utf-8')
+    # print(type(binary_data))
+    # base64_data = codecs.decode(binary_data, 'base64')
+    # print(type(base64_data))
+    base64_decoded_data = base64.standard_b64decode(context.blobdata)
+    print(type(base64_decoded_data))
+    # base64_decoded_data = base64.standard_b64decode(context.blobdata + "===")
+    # base64_decoded_data = base64.b64decode(context.blobdata + "===")
     # fileBlob = blob.read()
-    s3.put_object(Bucket= bucket, Body= binary_data, Key= filename)
+    s3.put_object(Bucket= bucket, Body= base64_decoded_data, Key= filename)
 
 # # # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 

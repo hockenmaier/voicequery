@@ -156,6 +156,7 @@ class Space extends React.Component{
     async sendRecording(blob){
         console.log('Sending blob to transcribe API')
         
+        // ---Some ways of creating binary variables:
         // var debug = {hello: "world"};
         // var blob = new Blob([JSON.stringify(debug, null, 2)], {type : 'application/json'});
         
@@ -165,14 +166,56 @@ class Space extends React.Component{
         //     blob,{
         //     headers: { "content-type": blob.type }
         // })
-        let blobText = await blob.text();
+        
         
         // var form = new FormData();
 
         // form.append('blob', blob);
         
+        // ---Option 2: send blob as whole body (errors on send)
+        // axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', blob, {
+        //     headers: { "content-type": blob.type }
+        // },
+        // )
+        // .then(function(response){
+        //     console.log('transcribe http successful')
+        //     console.log(response);
+        // })
+        // .catch(function(error){
+        //     console.log('transcribe http error')
+        //     console.log(error);
+        // });
+        
+        // ---Option 3: send blob encoded to b64 with FileReader
+        // let reader = new FileReader();
+        // reader.readAsDataURL(blob); // converts the blob to base64 and calls onload
+        
+        // reader.onload = function() {
+        //     axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
+        //         blobdata: reader.result,
+        //         workspace: 'test with text 3',
+        //         // workspace: this.state.workspace,
+        //     },
+        //     )
+        //     .then(function(response){
+        //         console.log('transcribe http successful')
+        //         console.log(response);
+        //     })
+        //     .catch(function(error){
+        //         console.log('transcribe http error')
+        //         console.log(error);
+        //     });
+        // };
+        
+        // ---Option 1: encode to UTF-8 using blob.text()
+        // let encBlob = await blob.text();
+        
+        // ---Option 4: encode to b64 using btoa
+        let encBlob = window.btoa(blob);
+        
+        // --- Axios operation for options 1 or 4
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
-            blobdata: blobText,
+            blobdata: encBlob,
             workspace: 'test with text 3',
             // workspace: this.state.workspace,
         },
@@ -637,7 +680,7 @@ class Space extends React.Component{
                     type: 'audio',
                     // recorderType: MediaStreamRecorder,
                     recorderType: StereoAudioRecorder,
-                    mimeType: 'audio/ogg',
+                    mimeType: 'audio/wav',
                 });
                 recorder.startRecording();
                 
