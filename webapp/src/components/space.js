@@ -8,6 +8,7 @@ import axios from 'axios';
 // import WebAudioRecorder from 'web-audio-recorder-js';
 import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder, WebAssemblyRecorder, MediaStreamRecorder} from 'recordrtc';
 // import navigator from 'navigator';
+import Dropdown from 'react-dropdown';
 
 class Space extends React.Component{
     constructor(props){
@@ -710,6 +711,10 @@ class Space extends React.Component{
     hasGetUserMedia() {
         return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
+    
+    handleWorkspaceSelect(e){
+        console.log(e);
+    }
 
     detectLambdaBoot = () => {
         if(this.state.queryResponseHTML === '<p>...</p>'){
@@ -837,6 +842,8 @@ class Space extends React.Component{
         };
         
         let recordText = (this.state.recording ? '🔴' : '🎤');
+        let workspaces = ['1','2','potatoe'];
+        let workspaceDefault = '1';
         
         return(
             <div className = "space">                
@@ -959,6 +966,17 @@ class Space extends React.Component{
                             left: layout.queryLeft + layout.queryWidth + 110,
                         }}
                     >{recordText}</button>
+                    <div className = "query-workspace-dropdown-container"
+                    >
+                        <Dropdown 
+                            className="query-workspace-dropdown"
+                            options={workspaces}
+                            onChange={this.handleWorkspaceSelect}
+                            value={workspaceDefault}
+                            placeholder="Workspace" 
+                            
+                        ></Dropdown>
+                    </div>
                 </div>                
             </div>
         );

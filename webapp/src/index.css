@@ -312,6 +312,26 @@ body {
     font-size: 14px;
     outline: none;
   }
+  
+  .query-workspace-dropdown{
+    
+    color: white;
+    background: var(--main-background);
+    border-radius: 3px;
+    border-width: 0px;
+    font-size: 14px;
+  }
+  
+  .query-workspace-dropdown-container{
+    position: fixed;
+    width: 200;
+    height: 23;
+    top: 20;
+    left: 900;
+  }
+
+
+
 
 
 /** ANSWER RESPONSE SYLES **/
