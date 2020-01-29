@@ -27,10 +27,10 @@ import copy
 
 
 def lambda_handler(event, context):
-    jsonData = parse_query(event, event['query'])
+    jsonData = parse_query(event, event['query'], event['workspace'])
     return jsonData
 
-def parse_query(parseObject, inputQuery):
+def parse_query(parseObject, inputQuery, workspace):
     #Create initial context variables
     context = create_context(parseObject)
     query = inputQuery.lower()
@@ -39,7 +39,6 @@ def parse_query(parseObject, inputQuery):
     checks, errData = initial_checks(query)
     if (checks == False):
         return errData
-    workspace = '1'
     
     # Set up nltk data, dynamo connection, and get dataset values from dynamo
     table = setup_dynamo()

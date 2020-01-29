@@ -317,22 +317,21 @@ body {
     
     color: white;
     background: var(--main-background);
+    border: 2px black;
     border-radius: 3px;
     border-width: 0px;
-    font-size: 14px;
+    font-size: 18px;
+    visibility: visible;
   }
   
   .query-workspace-dropdown-container{
+    color: var(--top-bar);
+    visibility: hidden;
+    border: none;
     position: fixed;
     width: 200;
-    height: 23;
-    top: 20;
-    left: 900;
+    height: 21;
   }
-
-
-
-
 
 /** ANSWER RESPONSE SYLES **/
 

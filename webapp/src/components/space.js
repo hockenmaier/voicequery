@@ -26,12 +26,12 @@ class Space extends React.Component{
       }
 
     componentDidMount(){
-        this.initializeBubbles(this.state.bubbles);
+        this.initializeBubbles();
         this.sendParseLambdaBootMessage()
         bubblesInitialized = true;
     }
 
-    initializeBubbles(bubbles){
+    initializeBubbles(){
         this.getWorkspaceLexiconBubbles()
         this.getWorkspaceDataBubbles()
     }
@@ -40,7 +40,8 @@ class Space extends React.Component{
         console.log('Sending lambda boot parse http call')
         // var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
-            query: '.'
+            query: '.',
+            workspace: this.state.workspace
         },
         )
         .then(function(response){
@@ -73,7 +74,7 @@ class Space extends React.Component{
     }
 
     getWorkspaceDataBubbles = () => {
-        console.log('Sending read-dataset http call with query: ')
+        console.log('Sending read-dataset http call with query: ' + this.state.workspace)
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/read-dataset', {
             workspace: this.state.workspace
@@ -652,7 +653,8 @@ class Space extends React.Component{
         console.log('Sending parse http call with query: ' + this.state.queryInput)
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
-            query: this.state.queryInput
+            query: this.state.queryInput,
+            workspace: this.state.workspace
         },
         )
         .then(function(response){
@@ -712,8 +714,17 @@ class Space extends React.Component{
         return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
     
-    handleWorkspaceSelect(e){
-        console.log(e);
+    handleWorkspaceSelect = (e) =>{
+        // console.log(this.state.bubbles)
+        resetCounts();
+        this.setState({
+            workspace: e.value,
+            bubbles: []
+        },
+        this.initializeBubbles //pass in function to get new workspace bubbles as a callback to resetting the state
+        )
+        
+        
     }
 
     detectLambdaBoot = () => {
@@ -843,7 +854,7 @@ class Space extends React.Component{
         
         let recordText = (this.state.recording ? '🔴' : '🎤');
         let workspaces = ['1','2','potatoe'];
-        let workspaceDefault = '1';
+        let workspaceDefault = this.state.workspace;
         
         return(
             <div className = "space">                
@@ -966,17 +977,22 @@ class Space extends React.Component{
                             left: layout.queryLeft + layout.queryWidth + 110,
                         }}
                     >{recordText}</button>
-                    <div className = "query-workspace-dropdown-container"
-                    >
-                        <Dropdown 
-                            className="query-workspace-dropdown"
-                            options={workspaces}
-                            onChange={this.handleWorkspaceSelect}
-                            value={workspaceDefault}
-                            placeholder="Workspace" 
-                            
-                        ></Dropdown>
-                    </div>
+                    <button
+                        className="query-workspace-dropdown-container"
+                        style={{
+                            width: 130,
+                            height: 30,
+                            top: layout.queryTop - 4,
+                            right: layout.rightMargin,
+                        }}
+                    ><Dropdown 
+                        className="query-workspace-dropdown"
+                        options={workspaces}
+                        onChange={this.handleWorkspaceSelect}
+                        value={workspaceDefault}
+                        placeholder="Workspace"
+                    ></Dropdown></button>
+                    
                 </div>                
             </div>
         );
@@ -1054,8 +1070,14 @@ function randomSampleQuery(){
     return queries[randomInt];
 }
 
-let subjectCount = 0;
-let conditionCount = 0;
+function resetCounts(){
+    // subjectCount = 0;
+    // conditionCount = 0;
+    infoFieldCount = 0;
+}
+
+// let subjectCount = 0;
+// let conditionCount = 0;
 let infoFieldCount = 0;
 const infoValueRows = 3;
 
@@ -1076,17 +1098,17 @@ function nextXLocation(type,id,parentId){
 
 function nextYLocation(type,id,parentId){
     //console.log(type);
-    if (type === 'subject'){
-        const nextY =  layout.BubbleTopMargin + subjectCount*60;
-        subjectCount++;
-        return nextY;
-    }
-    else if (type === 'condition'){
-        const nextY = layout.conditionBubbleTopMargin + conditionCount*60;
-        conditionCount++;
-        return nextY;
-    }
-    else if (type === 'info-field'){
+    // if (type === 'subject'){
+    //     const nextY =  layout.BubbleTopMargin + subjectCount*60;
+    //     subjectCount++;
+    //     return nextY;
+    // }
+    // else if (type === 'condition'){
+    //     const nextY = layout.conditionBubbleTopMargin + conditionCount*60;
+    //     conditionCount++;
+    //     return nextY;
+    // }
+    if (type === 'info-field'){
         const nextY = layout.BubbleTopMargin + infoFieldCount*55;
         infoFieldCount++;
         return nextY;
