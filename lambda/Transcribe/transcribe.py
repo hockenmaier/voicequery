@@ -1,42 +1,82 @@
 import json
 import boto3
+from botocore.exceptions import ClientError
 import uuid
 import codecs
 import base64
 import time
 import urllib.request
+import logging
 
 def lambda_handler(event, context):
-    jsonData = transcribe(event['blobdata'], event['workspace'])
-    # jsonData = transcribe(event, '1')
+    jsonData = transcribe(event['workspace'], event['option'], event['filename'])
     return jsonData
 
-def transcribe(blob, workspace):
-    context = create_context(blob, workspace)
-    store_blob_s3(context)
-    call_transcribe(context)
-    data = {}
-    data['statusCode'] = '200'
-    data['version'] = "0.0.1"
-    return data
+def transcribe(workspace,option,filename):
+    context = create_context(workspace,option,filename)
+    # store_blob_s3(context)
+    if(option == 'geturl'):
+        url = create_presigned_url(context)
+        data = {}
+        data['statusCode'] = '200'
+        data['version'] = "0.0.1"
+        data['presignedurl'] = url
+        print(data)
+        return data
+    else:
+        transcription = call_transcribe(context)
+        data = {}
+        data['statusCode'] = '200'
+        data['version'] = "0.0.1"
+        data['transcription'] = transcription
+        print(data)
+        return data
     
 class contextObject:
     def __init__(self):
-        self.blobdata = None
+        # self.blobdata = None
         self.workspace = ''
         self.filename = ''
+        self.bucket = ''
+        self.s3 = None
 
-def create_context(blob,workspace):
+def create_context(workspace,option,filename):
     newContext = contextObject()
-    newContext.blobdata = blob
+    # newContext.blobdata = blob
     newContext.workspace = workspace
+    newContext.bucket = "voicequery-transcribe"
+    if(option == 'geturl'):
+        newContext.filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.wav'
+    else:
+        newContext.filename = filename
+    newContext.s3 = boto3.client('s3')
     return newContext
+    
+def create_presigned_url(context, expiration=3600):
+    """Generate a presigned URL to share an S3 object
+
+    :param bucket_name: string
+    :param object_name: string
+    :param expiration: Time in seconds for the presigned URL to remain valid
+    :return: Presigned URL as string. If error, returns None.
+    """
+
+    # Generate a presigned URL for the S3 object
+    try:
+        response = context.s3.generate_presigned_url('get_object',
+                                                    Params={'Bucket': context.bucket,
+                                                            'Key': context.filename},
+                                                    ExpiresIn=expiration)
+    except ClientError as e:
+        logging.error(e)
+        return None
+
+    # The response contains the presigned URL
+    return response
+    
 
 def store_blob_s3(context):
     print(type(context.blobdata))
-    bucket = "voicequery-transcribe"
-    s3 = boto3.client('s3')
-    context.filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.wav'
     # print('blobdata: ' + str(context.blobdata))
     print('workspace: ' + str(context.workspace))
     # print(context.blobdata[0])
@@ -49,8 +89,8 @@ def store_blob_s3(context):
     # base64_decoded_data = base64.standard_b64decode(context.blobdata + "===")
     # base64_decoded_data = base64.b64decode(context.blobdata + "===")
     # fileBlob = blob.read()
-    s3.put_object(Bucket= bucket, Body= base64_decoded_data, Key= context.filename)
-    
+    context.s3.put_object(Bucket= context.bucket, Body= base64_decoded_data, Key= context.filename)
+
 def call_transcribe(context):
     transcribe = boto3.client('transcribe')
     job_name = context.filename + '_job'
@@ -76,11 +116,12 @@ def call_transcribe(context):
     print('Contents: ')
     print(contents)
     print(contents['results']['transcripts']['transcript'])
+    return contents['results']['transcripts']['transcript']
 
 # # # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
 # # To use this test, the binary created here must be directly passed as the body to the s3 put command
 binary_data = b'\x00\xFF\x00\xFF'
-transcribe(binary_data, 'test')
+transcribe('test','geturl','')
 
 # # # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
