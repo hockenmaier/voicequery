@@ -22,6 +22,7 @@ def transcribe(workspace,option,filename):
         data['version'] = "0.0.1"
         data['presignedurl'] = url
         print(data)
+        call_transcribe(context)
         return data
     else:
         transcription = call_transcribe(context)
@@ -115,8 +116,13 @@ def call_transcribe(context):
     contents = json.loads(byte_contents.decode('utf-8'))
     print('Contents: ')
     print(contents)
-    print(contents['results']['transcripts']['transcript'])
-    return contents['results']['transcripts']['transcript']
+    print(type(contents))
+    print(contents['results']['transcripts'][0]['transcript'])
+    return contents['results']['transcripts'][0]['transcript']
+    
+def list_to_dict(lst): 
+    res_dct = {lst[i]: lst[i+1] for i in range(0, len(lst), 2)} 
+    return res_dct 
 
 # # # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
