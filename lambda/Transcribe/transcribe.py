@@ -22,7 +22,6 @@ def transcribe(workspace,option,filename):
         data['version'] = "0.0.1"
         data['presignedurl'] = url
         print(data)
-        call_transcribe(context)
         return data
     else:
         transcription = call_transcribe(context)
@@ -110,14 +109,10 @@ def call_transcribe(context):
         time.sleep(5)
     print('Status: ')
     print(status)
-    print(status['TranscriptionJob']['Transcript'])
-    print(status['TranscriptionJob']['Transcript']['TranscriptFileUri'])
     byte_contents = urllib.request.urlopen(status['TranscriptionJob']['Transcript']['TranscriptFileUri']).read()
     contents = json.loads(byte_contents.decode('utf-8'))
     print('Contents: ')
     print(contents)
-    print(type(contents))
-    print(contents['results']['transcripts'][0]['transcript'])
     return contents['results']['transcripts'][0]['transcript']
     
 def list_to_dict(lst): 

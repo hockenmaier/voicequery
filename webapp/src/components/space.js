@@ -6,8 +6,8 @@ import {lastDragStart, layout, initializeLayout} from './helpers.js';
 import axios from 'axios';
 // import AudioRecorder from 'react-audio-recorder';
 // import WebAudioRecorder from 'web-audio-recorder-js';
-import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder, WebAssemblyRecorder, MediaStreamRecorder} from 'recordrtc';
-// import navigator from 'navigator';
+// import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder, WebAssemblyRecorder, MediaStreamRecorder} from 'recordrtc';
+import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder} from 'recordrtc';
 import Dropdown from 'react-dropdown';
 
 class Space extends React.Component{
@@ -155,8 +155,42 @@ class Space extends React.Component{
         });
     }
     
-    async sendRecording(blob){
-        console.log('Sending blob to transcribe API')
+    getPresignedUrl = (blob) => {
+        console.log('Sending call for presigned url to transcribe API')
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
+            option: 'geturl',
+            workspace: this.state.workspace,
+            filename: ''
+        },
+        )
+        .then(function(response){
+            console.log('transcribe http successful');
+            console.log(response);
+            let presignedUrl = response.data.presignedurl;
+            self.uploadBlob(blob,presignedUrl);
+        })
+        .catch(function(error){
+            console.log('transcribe http error');
+            console.log(error);
+        });
+    }
+    
+    uploadBlob = (blob, presignedUrl) => {
+        console.log('Uploading File to S3')
+        var self = this;
+        axios.put(presignedUrl, {blob
+        },
+        )
+        .then(function(response){
+            console.log('upload http successful');
+            console.log(response);
+        })
+        .catch(function(error){
+            console.log('upload http error');
+            console.log(error);
+        });
+    }
         
         // ---Some ways of creating binary variables:
         // var debug = {hello: "world"};
@@ -213,24 +247,23 @@ class Space extends React.Component{
         // let encBlob = await blob.text();
         
         // ---Option 4: encode to b64 using btoa
-        let encBlob = window.btoa(blob);
+        // let encBlob = window.btoa(blob);
         
-        // --- Axios operation for options 1 or 4
-        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
-            blobdata: encBlob,
-            workspace: 'test with text 3',
-            // workspace: this.state.workspace,
-        },
-        )
-        .then(function(response){
-            console.log('transcribe http successful')
-            console.log(response);
-        })
-        .catch(function(error){
-            console.log('transcribe http error')
-            console.log(error);
-        });
-    }
+        // // --- Axios operation for options 1 or 4
+        // axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
+        //     blobdata: encBlob,
+        //     workspace: 'test with text 3',
+        //     // workspace: this.state.workspace,
+        // },
+        // )
+        // .then(function(response){
+        //     console.log('transcribe http successful')
+        //     console.log(response);
+        // })
+        // .catch(function(error){
+        //     console.log('transcribe http error')
+        //     console.log(error);
+        // });
     
     formatConceptBubbles(){
         let newBubbles = this.state.bubbles;
@@ -698,7 +731,7 @@ class Space extends React.Component{
                 invokeSaveAsDialog(blob); //uncomment for save file dialog
                 
                 // var ffmpeg = require('ffmpeg')
-                this.sendRecording(blob);
+                this.getPresignedUrl(blob);  //This triggers a series of calls to get a signed url, upload the blob there, and trigger the transcription
                 
                 this.setState({
                     recording: false,
