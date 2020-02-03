@@ -60,12 +60,14 @@ def create_presigned_url(context, expiration=3600):
     :param expiration: Time in seconds for the presigned URL to remain valid
     :return: Presigned URL as string. If error, returns None.
     """
-
     # Generate a presigned URL for the S3 object
     try:
-        response = context.s3.generate_presigned_url('get_object',
+        response = context.s3.generate_presigned_url('put_object',
                                                     Params={'Bucket': context.bucket,
-                                                            'Key': context.filename},
+                                                            'Key': context.filename,
+                                                            # 'ContentType': 'audio/wav',
+                                                            # 'ACL': 'public-read',
+                                                            'ContentMD5': 'false'},
                                                     ExpiresIn=expiration)
     except ClientError as e:
         logging.error(e)

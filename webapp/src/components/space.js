@@ -179,6 +179,7 @@ class Space extends React.Component{
     uploadBlob = (blob, presignedUrl) => {
         console.log('Uploading File to S3')
         var self = this;
+        console.log(presignedUrl)
         axios.put(presignedUrl, {blob
         },
         )
@@ -191,6 +192,8 @@ class Space extends React.Component{
             console.log(error);
         });
     }
+    
+    
         
         // ---Some ways of creating binary variables:
         // var debug = {hello: "world"};
