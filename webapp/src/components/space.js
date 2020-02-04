@@ -21,8 +21,9 @@ class Space extends React.Component{
             queryResponseHTML: '',
             workspace: '1',
             recording: false,
-            recorder: null
-          };   
+            recorder: null,
+            dataIsLoaded: false
+          };
       }
 
     componentDidMount(){
@@ -105,6 +106,10 @@ class Space extends React.Component{
             //console.log(response)
             self.updateBubbles(response.data)
             self.formatConceptBubbles()
+            self.setState({
+                dataIsLoaded: true
+            })
+            console.log('got here')
         })
         .catch(function(error){
             console.log('populate http error')
@@ -192,81 +197,6 @@ class Space extends React.Component{
             console.log(error);
         });
     }
-    
-    
-        
-        // ---Some ways of creating binary variables:
-        // var debug = {hello: "world"};
-        // var blob = new Blob([JSON.stringify(debug, null, 2)], {type : 'application/json'});
-        
-        // var blob2 = new Blob(['abc123'], {type: 'text/plain'});
-        
-        // axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe',
-        //     blob,{
-        //     headers: { "content-type": blob.type }
-        // })
-        
-        
-        // var form = new FormData();
-
-        // form.append('blob', blob);
-        
-        // ---Option 2: send blob as whole body (errors on send)
-        // axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', blob, {
-        //     headers: { "content-type": blob.type }
-        // },
-        // )
-        // .then(function(response){
-        //     console.log('transcribe http successful')
-        //     console.log(response);
-        // })
-        // .catch(function(error){
-        //     console.log('transcribe http error')
-        //     console.log(error);
-        // });
-        
-        // ---Option 3: send blob encoded to b64 with FileReader
-        // let reader = new FileReader();
-        // reader.readAsDataURL(blob); // converts the blob to base64 and calls onload
-        
-        // reader.onload = function() {
-        //     axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
-        //         blobdata: reader.result,
-        //         workspace: 'test with text 3',
-        //         // workspace: this.state.workspace,
-        //     },
-        //     )
-        //     .then(function(response){
-        //         console.log('transcribe http successful')
-        //         console.log(response);
-        //     })
-        //     .catch(function(error){
-        //         console.log('transcribe http error')
-        //         console.log(error);
-        //     });
-        // };
-        
-        // ---Option 1: encode to UTF-8 using blob.text()
-        // let encBlob = await blob.text();
-        
-        // ---Option 4: encode to b64 using btoa
-        // let encBlob = window.btoa(blob);
-        
-        // // --- Axios operation for options 1 or 4
-        // axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
-        //     blobdata: encBlob,
-        //     workspace: 'test with text 3',
-        //     // workspace: this.state.workspace,
-        // },
-        // )
-        // .then(function(response){
-        //     console.log('transcribe http successful')
-        //     console.log(response);
-        // })
-        // .catch(function(error){
-        //     console.log('transcribe http error')
-        //     console.log(error);
-        // });
     
     formatConceptBubbles(){
         let newBubbles = this.state.bubbles;
@@ -731,7 +661,7 @@ class Space extends React.Component{
                 await this.state.recorder.stopRecording();
                 let blob = await this.state.recorder.getBlob();
                 
-                invokeSaveAsDialog(blob); //uncomment for save file dialog
+                // invokeSaveAsDialog(blob); //uncomment for save file dialog
                 
                 // var ffmpeg = require('ffmpeg')
                 this.getPresignedUrl(blob);  //This triggers a series of calls to get a signed url, upload the blob there, and trigger the transcription
@@ -755,7 +685,8 @@ class Space extends React.Component{
         resetCounts();
         this.setState({
             workspace: e.value,
-            bubbles: []
+            bubbles: [],
+            dataIsLoaded: false
         },
         this.initializeBubbles //pass in function to get new workspace bubbles as a callback to resetting the state
         )
@@ -889,8 +820,13 @@ class Space extends React.Component{
         };
         
         let recordText = (this.state.recording ? '🔴' : '🎤');
-        let workspaces = ['1','2','potatoe'];
-        let workspaceDefault = this.state.workspace;
+        let workspaces = [
+        { value: '1', label: 'Workspace: 1' },
+        { value: '2', label: 'Workspace: 2' },
+        { value: '3', label: 'Workspace: 3' }]
+        ;
+        let workspaceDropdownDisablingClass = (this.state.dataIsLoaded ? 'query-workspace-dropdown' : 'query-workspace-dropdown-disable')
+        let workspaceDefault = (this.state.dataIsLoaded ? this.state.workspace : 'Loading: ' + this.state.workspace + '...');
         
         return(
             <div className = "space">                
@@ -1022,7 +958,7 @@ class Space extends React.Component{
                             right: layout.rightMargin,
                         }}
                     ><Dropdown 
-                        className="query-workspace-dropdown"
+                        className={workspaceDropdownDisablingClass}
                         options={workspaces}
                         onChange={this.handleWorkspaceSelect}
                         value={workspaceDefault}

@@ -314,14 +314,26 @@ body {
   }
   
   .query-workspace-dropdown{
-    
     color: white;
     background: var(--main-background);
     border: 2px black;
     border-radius: 3px;
     border-width: 0px;
-    font-size: 18px;
+    font-size: 16px;
     visibility: visible;
+    user-select: none;
+  }
+  
+  .query-workspace-dropdown-disable{
+    color: white;
+    background: grey;
+    border: 2px grey;
+    border-radius: 3px;
+    border-width: 0px;
+    font-size: 16px;
+    visibility: visible;
+    user-select: none;
+    pointer-events: none;
   }
   
   .query-workspace-dropdown-container{
@@ -359,4 +371,5 @@ body {
   .top-bar{
     background:var(--top-bar);
     position: fixed;
+    user-select: none;
   }
