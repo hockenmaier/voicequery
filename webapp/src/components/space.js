@@ -532,7 +532,6 @@ class Space extends React.Component{
 
     moveBubble(e){
         //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
-        //console.log(e.nativeEvent);        
         const newX = e.nativeEvent.clientX - lastDragStart.shiftX; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY; //SOLVED: I had a 3 px margin in my main bubble css class!
 
@@ -681,7 +680,6 @@ class Space extends React.Component{
     }
     
     handleWorkspaceSelect = (e) =>{
-        // console.log(this.state.bubbles)
         resetCounts();
         this.setState({
             workspace: e.value,
@@ -723,7 +721,6 @@ class Space extends React.Component{
     }
     
     bubbleFlattener(bubbles){
-        //console.log(bubbles);
         let flatBubbles = [];        
         for (let outer = 0; outer < bubbles.length; outer++){            
             flatBubbles.push(bubbles[outer]);
@@ -769,6 +766,7 @@ class Space extends React.Component{
 
     renderBubble(bub){
         const conceptBubbles = this.getBubbles(bub.bubsInConcept)
+        const dataIsLoaded = this.state.dataIsLoaded
         return (
             <Bubble key={bub.id}
                   internalID = {bub.internalId}
@@ -783,6 +781,7 @@ class Space extends React.Component{
                   shrink={bub.shrink}
                   room={bub.room}
                   conceptBubbles={conceptBubbles}
+                  dataIsLoaded={dataIsLoaded}
             />
         );
     }
@@ -1043,13 +1042,9 @@ function randomSampleQuery(){
 }
 
 function resetCounts(){
-    // subjectCount = 0;
-    // conditionCount = 0;
     infoFieldCount = 0;
 }
 
-// let subjectCount = 0;
-// let conditionCount = 0;
 let infoFieldCount = 0;
 const infoValueRows = 3;
 
@@ -1060,8 +1055,6 @@ function nextXLocation(type,id,parentId){
         // return layout.InfoBubbleLeft;
         return 0;
     }else if (type === 'info-value'){
-        //console.log(((parseInt(id)-parseInt(parentId))%infoValueRows + 1)*105);
-        // return layout.InfoBubbleLeft + 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
         return 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
     }else{
     return 300;
@@ -1069,17 +1062,6 @@ function nextXLocation(type,id,parentId){
 }
 
 function nextYLocation(type,id,parentId){
-    //console.log(type);
-    // if (type === 'subject'){
-    //     const nextY =  layout.BubbleTopMargin + subjectCount*60;
-    //     subjectCount++;
-    //     return nextY;
-    // }
-    // else if (type === 'condition'){
-    //     const nextY = layout.conditionBubbleTopMargin + conditionCount*60;
-    //     conditionCount++;
-    //     return nextY;
-    // }
     if (type === 'info-field'){
         const nextY = layout.BubbleTopMargin + infoFieldCount*55;
         infoFieldCount++;

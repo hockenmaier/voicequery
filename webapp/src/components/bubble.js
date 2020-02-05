@@ -97,6 +97,9 @@ class Bubble extends React.Component{
             titleClass = titleClass + ' grow'
             typeBubble = typeBubble + ' shrink'
         }
+        if (!this.props.dataIsLoaded){
+            typeBubble = typeBubble + ' lock'
+        }
         
         const conceptTexts = this.getConceptTexts()
         
