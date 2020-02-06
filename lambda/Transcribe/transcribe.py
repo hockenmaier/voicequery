@@ -21,6 +21,7 @@ def transcribe(workspace,option,filename):
         data['statusCode'] = '200'
         data['version'] = "0.0.1"
         data['presignedurl'] = url
+        data['fileName'] = context.filename
         print(data)
         return data
     else:
@@ -46,8 +47,8 @@ def create_context(workspace,option,filename):
     newContext.workspace = workspace
     newContext.bucket = "voicequery-transcribe"
     if(option == 'geturl'):
-        # newContext.filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.wav'
-        newContext.filename = 'temptranscribe_test1234.wav'
+        newContext.filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.wav'
+        # newContext.filename = 'temptranscribe_test1234.wav'
     else:
         newContext.filename = filename
     newContext.s3 = boto3.client('s3')

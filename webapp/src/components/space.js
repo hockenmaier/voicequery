@@ -173,7 +173,8 @@ class Space extends React.Component{
             console.log('transcribe http successful');
             console.log(response);
             let presignedUrl = response.data.presignedurl;
-            self.uploadBlob(blob,presignedUrl);
+            let fileName = response.data.fileName;
+            self.uploadBlob(blob,presignedUrl,fileName);
         })
         .catch(function(error){
             console.log('transcribe http error');
@@ -181,12 +182,19 @@ class Space extends React.Component{
         });
     }
     
-    uploadBlob = (blob, presignedUrl) => {
+    uploadBlob = (blob, presignedUrl, fileName) => {
         console.log('Uploading File to S3')
         var self = this;
+        var fileOfBlob = new File([blob], fileName)
         console.log(presignedUrl)
-        axios.put(presignedUrl, {blob
-        },
+        
+        let config = {
+          headers: {
+            'Content-Type': 'audio/wave',
+          }
+        }
+        axios.put(presignedUrl, {fileOfBlob
+        }, config,
         )
         .then(function(response){
             console.log('upload http successful');
