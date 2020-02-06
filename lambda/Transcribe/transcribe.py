@@ -46,7 +46,8 @@ def create_context(workspace,option,filename):
     newContext.workspace = workspace
     newContext.bucket = "voicequery-transcribe"
     if(option == 'geturl'):
-        newContext.filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.wav'
+        # newContext.filename = 'temptranscribe_'+ str(uuid.uuid4()) +'.wav'
+        newContext.filename = 'temptranscribe_test1234.wav'
     else:
         newContext.filename = filename
     newContext.s3 = boto3.client('s3')
@@ -65,9 +66,11 @@ def create_presigned_url(context, expiration=3600):
         response = context.s3.generate_presigned_url('put_object',
                                                     Params={'Bucket': context.bucket,
                                                             'Key': context.filename,
-                                                            # 'ContentType': 'audio/wav',
+                                                            # 'Region': 'us-west-2',
+                                                            'ContentType': 'audio/wave'},
                                                             # 'ACL': 'public-read',
-                                                            'ContentMD5': 'false'},
+                                                            # 'ContentMD5': 'false'},
+                                                    # HttpMethod='Put',
                                                     ExpiresIn=expiration)
     except ClientError as e:
         logging.error(e)
