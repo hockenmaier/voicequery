@@ -170,14 +170,14 @@ class Space extends React.Component{
         },
         )
         .then(function(response){
-            console.log('transcribe http successful');
+            console.log('transcribe get presigned url http successful');
             console.log(response);
             let presignedUrl = response.data.presignedurl;
             let fileName = response.data.fileName;
             self.uploadBlob(blob,presignedUrl,fileName);
         })
         .catch(function(error){
-            console.log('transcribe http error');
+            console.log('transcribe get presigned url http error');
             console.log(error);
         });
     }
@@ -185,17 +185,24 @@ class Space extends React.Component{
     uploadBlob = (blob, presignedUrl, fileName) => {
         console.log('Uploading File to S3')
         var self = this;
-        var fileOfBlob = new File([blob], fileName)
+        const filePropertyBag = {
+            type: 'audio/wave',
+            endings: 'native'
+        }
+        var fileOfBlob = new File([blob], fileName, filePropertyBag)
+        const formOfBlob = new FormData();
+        formOfBlob.append(blob, fileName);
+        console.log(fileName)
         console.log(presignedUrl)
-        
+        console.log(fileOfBlob.name)
+        console.log(fileOfBlob.type)
+        console.log(blob.type)
         let config = {
           headers: {
-            'Content-Type': 'audio/wave',
+            'Content-Type': fileOfBlob.type,
           }
         }
-        axios.put(presignedUrl, {fileOfBlob
-        }, config,
-        )
+        axios.put(presignedUrl, {fileOfBlob}, config)
         .then(function(response){
             console.log('upload http successful');
             console.log(response);
@@ -668,7 +675,7 @@ class Space extends React.Component{
                 await this.state.recorder.stopRecording();
                 let blob = await this.state.recorder.getBlob();
                 
-                // invokeSaveAsDialog(blob); //uncomment for save file dialog
+                invokeSaveAsDialog(blob); //uncomment for save file dialog
                 
                 // var ffmpeg = require('ffmpeg')
                 this.getPresignedUrl(blob);  //This triggers a series of calls to get a signed url, upload the blob there, and trigger the transcription
