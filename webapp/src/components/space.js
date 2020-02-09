@@ -184,9 +184,10 @@ class Space extends React.Component{
     
     uploadBlob = (blob, presignedUrl, fileName) => {
         console.log('Uploading File to S3')
+        invokeSaveAsDialog(blob,fileName); //uncomment for save file dialog
         var self = this;
         const filePropertyBag = {
-            type: 'audio/wave',
+            type: 'multipart/form-data',
             endings: 'native'
         }
         var fileOfBlob = new File([blob], fileName, filePropertyBag)
@@ -197,12 +198,14 @@ class Space extends React.Component{
         console.log(fileOfBlob.name)
         console.log(fileOfBlob.type)
         console.log(blob.type)
+        console.log(formOfBlob.type)
         let config = {
           headers: {
             'Content-Type': fileOfBlob.type,
+            // 'Content-Lenght': blob.length
           }
         }
-        axios.put(presignedUrl, {fileOfBlob}, config)
+        axios.put(presignedUrl, {formOfBlob}, config)
         .then(function(response){
             console.log('upload http successful');
             console.log(response);
@@ -674,8 +677,6 @@ class Space extends React.Component{
             }else{
                 await this.state.recorder.stopRecording();
                 let blob = await this.state.recorder.getBlob();
-                
-                invokeSaveAsDialog(blob); //uncomment for save file dialog
                 
                 // var ffmpeg = require('ffmpeg')
                 this.getPresignedUrl(blob);  //This triggers a series of calls to get a signed url, upload the blob there, and trigger the transcription

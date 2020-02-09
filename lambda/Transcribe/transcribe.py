@@ -68,7 +68,7 @@ def create_presigned_url(context, expiration=3600):
                                                     Params={'Bucket': context.bucket,
                                                             'Key': context.filename,
                                                             # 'Region': 'us-west-2',
-                                                            'ContentType': 'audio/wave'},
+                                                            'ContentType': 'multipart/form-data'},
                                                             # 'ACL': 'public-read',
                                                             # 'ContentMD5': 'false'},
                                                     # HttpMethod='Put',

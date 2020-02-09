@@ -204,6 +204,7 @@ body {
   .concept-room {
     border: 3px solid var(--concept-color);
     color: var(--concept-text-light);
+    text-align: bottom;
   }
   
   .concept-room::-webkit-scrollbar-thumb{
