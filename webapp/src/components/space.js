@@ -185,47 +185,70 @@ class Space extends React.Component{
     
     uploadBlob = (blob, presignedUrl, fileName) => {
         console.log('Uploading File to S3')
-        invokeSaveAsDialog(blob,fileName); //uncomment for save file dialog
+        // invokeSaveAsDialog(blob,fileName); //uncomment for save file dialog
         var self = this;
-        const filePropertyBag = {
-            type: 'audio/wav',
-            endings: 'native'
-        }
-        // var fileOfBlob = new File([blob], fileName, filePropertyBag)
-        var fileOfBlob = new File([blob], fileName, filePropertyBag)
-        const formOfBlob = new FormData();
-        formOfBlob.append('file', blob);
-        
-        const formOfFile = new FormData();
-        formOfFile.append('file', fileOfBlob);
-        console.log('filename: ' + fileName)
-        console.log('signed url: ' + presignedUrl)
-        // console.log(fileOfBlob.name)
-        // console.log(fileOfBlob.type)
-        // console.log(blob.type)
-        console.log('form of file: ' + formOfFile)
-        console.log(formOfFile)
-        let config = {
-          headers: {
-            // 'Content-Type': fileOfBlob.type,
-            'Content-Type': 'multipart/form-data',
-            // 'Content-Lenght': blob.length
-          }
-        }
-        
-        // axios.put(presignedUrl, {formOfBlob}, config)
-        // .then(function(response){
-        //     console.log('upload http successful');
-        //     console.log(response);
-        // })
-        // .catch(function(error){
-        //     console.log('upload http error');
-        //     console.log(error);
-        // });
-        
         fetch(presignedUrl, {method: "PUT", body: blob, headers: {
             'Content-Type': 'audio/wav',
-        }});
+        }})
+        .then((response) => {
+            console.log('fetch upload file http response');
+            console.log(response);
+            self.getTranscription(fileName);
+        });
+    };
+    
+    getTranscription = (fileName) => {
+        console.log('Sending call for transcription to transcribe API')
+        var self = this;
+        
+        const responseWaitingText = '<p>Transcribing your question...</p>';
+
+        this.setState({
+            queryResponseHTML: responseWaitingText,                
+        })
+        
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
+            option: 'gettranscription',
+            workspace: this.state.workspace,
+            filename: fileName
+        },
+        )
+        .then(function(response){
+            console.log('transcribe get presigned url http successful');
+            console.log(response);
+            let transcription = response.data.transcription;
+            console.log('transcription: ' + transcription);
+        })
+        .catch(function(error){
+            console.log('transcribe get presigned url http error');
+            console.log(error);
+        });
+    }
+    
+    handleQuerySubmit = () => {
+        console.log('Sending parse http call with query: ' + this.state.queryInput)
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
+            query: this.state.queryInput,
+            workspace: this.state.workspace
+        },
+        )
+        .then(function(response){
+            console.log('http successful')
+            //console.log(response)
+            self.updateBubbles(response.data)
+            self.updateQueryResponse(response.data)
+        })
+        .catch(function(error){
+            console.log('http error')
+            console.log(error);
+        });
+        window.setTimeout(this.detectLambdaBoot,1200);
+        const responseWaitingText = '<p>...</p>';
+
+        this.setState({
+            queryResponseHTML: responseWaitingText,                
+        })
     }
     
     formatConceptBubbles(){
@@ -642,32 +665,6 @@ class Space extends React.Component{
                 sampleQuery: randomSampleQuery(),         
             })
         }
-    }
-
-    handleQuerySubmit = () => {
-        console.log('Sending parse http call with query: ' + this.state.queryInput)
-        var self = this;
-        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
-            query: this.state.queryInput,
-            workspace: this.state.workspace
-        },
-        )
-        .then(function(response){
-            console.log('http successful')
-            //console.log(response)
-            self.updateBubbles(response.data)
-            self.updateQueryResponse(response.data)
-        })
-        .catch(function(error){
-            console.log('http error')
-            console.log(error);
-        });
-        window.setTimeout(this.detectLambdaBoot,1200);
-        const responseWaitingText = '<p>...</p>';
-
-        this.setState({
-            queryResponseHTML: responseWaitingText,                
-        })
     }
     
     async handleRecord(){

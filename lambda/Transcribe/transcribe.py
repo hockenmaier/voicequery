@@ -80,28 +80,12 @@ def create_presigned_url(context, expiration=3600):
 
     # The response contains the presigned URL
     return response
-    
-
-def store_blob_s3(context):
-    print(type(context.blobdata))
-    # print('blobdata: ' + str(context.blobdata))
-    print('workspace: ' + str(context.workspace))
-    # print(context.blobdata[0])
-    # binary_data = context.blobdata.encode('utf-8')
-    # print(type(binary_data))
-    # base64_data = codecs.decode(binary_data, 'base64')
-    # print(type(base64_data))
-    base64_decoded_data = base64.standard_b64decode(context.blobdata)
-    print(type(base64_decoded_data))
-    # base64_decoded_data = base64.standard_b64decode(context.blobdata + "===")
-    # base64_decoded_data = base64.b64decode(context.blobdata + "===")
-    # fileBlob = blob.read()
-    context.s3.put_object(Bucket= context.bucket, Body= base64_decoded_data, Key= context.filename)
 
 def call_transcribe(context):
     transcribe = boto3.client('transcribe')
     job_name = context.filename + '_job'
-    job_uri = "https://voicequery-transcribe.s3-us-west-2.amazonaws.com/female_doctorate_test.wav"
+    # job_uri = "https://voicequery-transcribe.s3-us-west-2.amazonaws.com/female_doctorate_test.wav"
+    job_uri = "https://voicequery-transcribe.s3-us-west-2.amazonaws.com/" + context.filename
     transcribe.start_transcription_job(
         TranscriptionJobName=job_name,
         Media={'MediaFileUri': job_uri},
@@ -128,8 +112,10 @@ def list_to_dict(lst):
 
 # # # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-# # To use this test, the binary created here must be directly passed as the body to the s3 put command
-binary_data = b'\x00\xFF\x00\xFF'
-transcribe('test','geturl','')
+# # # To use this test, the binary created here must be directly passed as the body to the s3 put command
+# binary_data = b'\x00\xFF\x00\xFF'
+# transcribe('test','geturl','')
+
+# transcribe('test','gettranscription','female_doctorate_test.wav')
 
 # # # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
