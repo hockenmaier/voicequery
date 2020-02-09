@@ -9,6 +9,7 @@ import axios from 'axios';
 // import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder, WebAssemblyRecorder, MediaStreamRecorder} from 'recordrtc';
 import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder} from 'recordrtc';
 import Dropdown from 'react-dropdown';
+// import fetch from 'fetch';
 
 class Space extends React.Component{
     constructor(props){
@@ -187,33 +188,44 @@ class Space extends React.Component{
         invokeSaveAsDialog(blob,fileName); //uncomment for save file dialog
         var self = this;
         const filePropertyBag = {
-            type: 'multipart/form-data',
+            type: 'audio/wav',
             endings: 'native'
         }
+        // var fileOfBlob = new File([blob], fileName, filePropertyBag)
         var fileOfBlob = new File([blob], fileName, filePropertyBag)
         const formOfBlob = new FormData();
-        formOfBlob.append(blob, fileName);
-        console.log(fileName)
-        console.log(presignedUrl)
-        console.log(fileOfBlob.name)
-        console.log(fileOfBlob.type)
-        console.log(blob.type)
-        console.log(formOfBlob.type)
+        formOfBlob.append('file', blob);
+        
+        const formOfFile = new FormData();
+        formOfFile.append('file', fileOfBlob);
+        console.log('filename: ' + fileName)
+        console.log('signed url: ' + presignedUrl)
+        // console.log(fileOfBlob.name)
+        // console.log(fileOfBlob.type)
+        // console.log(blob.type)
+        console.log('form of file: ' + formOfFile)
+        console.log(formOfFile)
         let config = {
           headers: {
-            'Content-Type': fileOfBlob.type,
+            // 'Content-Type': fileOfBlob.type,
+            'Content-Type': 'multipart/form-data',
             // 'Content-Lenght': blob.length
           }
         }
-        axios.put(presignedUrl, {formOfBlob}, config)
-        .then(function(response){
-            console.log('upload http successful');
-            console.log(response);
-        })
-        .catch(function(error){
-            console.log('upload http error');
-            console.log(error);
-        });
+        
+        // axios.put(presignedUrl, {formOfBlob}, config)
+        // .then(function(response){
+        //     console.log('upload http successful');
+        //     console.log(response);
+        // })
+        // .catch(function(error){
+        //     console.log('upload http error');
+        //     console.log(error);
+        // });
+        
+        fetch(presignedUrl, {method: "PUT", body: blob, headers: {
+            'Content-Type': 'audio/wav',
+        }});
     }
     
     formatConceptBubbles(){
