@@ -167,7 +167,8 @@ class Space extends React.Component{
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
             option: 'geturl',
             workspace: this.state.workspace,
-            filename: ''
+            filename: '',
+            jobName: ''
         },
         )
         .then(function(response){
@@ -193,12 +194,12 @@ class Space extends React.Component{
         .then((response) => {
             console.log('fetch upload file http response');
             console.log(response);
-            self.getTranscription(fileName);
+            self.startTranscription(fileName);
         });
     };
     
-    getTranscription = (fileName) => {
-        console.log('Sending call for transcription to transcribe API')
+    startTranscription = (fileName) => {
+        console.log('Sending call for transcription to start transcribing')
         var self = this;
         
         const responseWaitingText = '<p>Transcribing your question...</p>';
@@ -208,21 +209,57 @@ class Space extends React.Component{
         })
         
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
-            option: 'gettranscription',
+            option: 'starttranscription',
             workspace: this.state.workspace,
-            filename: fileName
+            filename: fileName,
+            jobName: ''
         },
         )
         .then(function(response){
-            console.log('transcribe get presigned url http successful');
+            console.log('transcribe start transcription http successful');
             console.log(response);
-            let transcription = response.data.transcription;
-            console.log('transcription: ' + transcription);
+            let jobName = response.data.jobName;
+            console.log('transcription job name: ' + jobName);
+            self.checkTranscription(jobName)
         })
         .catch(function(error){
-            console.log('transcribe get presigned url http error');
+            console.log('transcribe start transcription http error');
             console.log(error);
         });
+    }
+    
+    checkTranscription = (jobName) =>{
+        console.log('Sending call for transcription to check and see if it is done')
+        var self = this;
+        
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/transcribe', {
+            option: 'checktranscription',
+            workspace: this.state.workspace,
+            filename: '',
+            jobName: jobName
+        },
+        )
+        .then(function(response){
+            console.log('transcribe start transcription http successful');
+            console.log(response);
+            let isReady = response.data.isReady;
+            console.log('Is transcription ready: ' + isReady);
+            if(isReady){
+                let transcription = response.data.transcription
+                console.log('transcription: ' + transcription)
+            }else{
+                self.callCheckTranscription(jobName);
+            }
+        })
+        .catch(function(error){
+            console.log('transcribe start transcription http error');
+            console.log(error);
+        });
+    }
+    
+    async callCheckTranscription(jobName){
+        await new Promise(r => setTimeout(r, 5000));
+        this.checkTranscription(jobName)
     }
     
     handleQuerySubmit = () => {
