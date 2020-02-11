@@ -240,19 +240,22 @@ class Space extends React.Component{
         },
         )
         .then(function(response){
-            console.log('transcribe start transcription http successful');
+            console.log('transcribe check transcription http successful');
             console.log(response);
             let isReady = response.data.isReady;
             console.log('Is transcription ready: ' + isReady);
             if(isReady){
                 let transcription = response.data.transcription
                 console.log('transcription: ' + transcription)
+                self.setState({
+                    queryInput: transcription,                
+                }, self.handleQuerySubmit()) //set the input bar to the transcribed query and call 'submit' when that's done to ask it
             }else{
                 self.callCheckTranscription(jobName);
             }
         })
         .catch(function(error){
-            console.log('transcribe start transcription http error');
+            console.log('transcribe check transcription http error');
             console.log(error);
         });
     }
