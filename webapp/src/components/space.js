@@ -246,10 +246,7 @@ class Space extends React.Component{
             console.log('Is transcription ready: ' + isReady);
             if(isReady){
                 let transcription = response.data.transcription
-                console.log('transcription: ' + transcription)
-                self.setState({
-                    queryInput: transcription,                
-                }, self.handleQuerySubmit()) //set the input bar to the transcribed query and call 'submit' when that's done to ask it
+                self.setTranscriptAndSubmit(transcription).bind(self);
             }else{
                 self.callCheckTranscription(jobName);
             }
@@ -263,6 +260,14 @@ class Space extends React.Component{
     async callCheckTranscription(jobName){
         await new Promise(r => setTimeout(r, 5000));
         this.checkTranscription(jobName)
+    }
+    
+    async setTranscriptAndSubmit(transcription){
+        this.setState({
+            queryInput: transcription,                
+        })
+        await new Promise(r => setTimeout(r, 10)); // We have to add this delay because using setState's callback is not working
+        this.handleQuerySubmit() 
     }
     
     handleQuerySubmit = () => {
