@@ -754,7 +754,9 @@ class Space extends React.Component{
         this.setState({
             workspace: e.value,
             bubbles: [],
-            dataIsLoaded: false
+            dataIsLoaded: false,
+            queryInput: '',
+            queryResponseHTML: ''
         },
         this.initializeBubbles //pass in function to get new workspace bubbles as a callback to resetting the state
         )
