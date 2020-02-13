@@ -118,6 +118,9 @@ def list_to_dict(lst):
     res_dct = {lst[i]: lst[i+1] for i in range(0, len(lst), 2)} 
     return res_dct 
 
+def delete_used_audio_file(context):
+    context.s3.delete_object(Bucket= context.bucket, Key= context.filename)	
+
 # # # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
 # # # To use this test, the binary created here must be directly passed as the body to the s3 put command
