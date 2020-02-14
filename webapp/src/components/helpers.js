@@ -17,7 +17,6 @@ export function initializeLayout(){
     layout.topbarY = 0;
     layout.topbarHeight = 50;
     layout.queryTop = 15;
-    layout.queryLeft = 30;    
     layout.queryWidth = 700;
     
     layout.queryResponseTop = layout.topbarHeight - 1;
@@ -30,6 +29,7 @@ export function initializeLayout(){
     
     layout.subjectBottom = window.innerHeight/2 + (layout.roomBuffer/2);
     layout.lexWidth = 155;
+    layout.queryLeft = layout.lexWidth + layout.leftMargin;
     
     layout.queryResponseLeft = layout.leftMargin + layout.lexWidth + layout.roomBuffer;
     

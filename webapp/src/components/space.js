@@ -142,7 +142,7 @@ class Space extends React.Component{
     
     saveDeleteConcept = (concept) => {
         console.log('Sending delete save_concept http call with internal ID: ' + concept.internalID)
-        // var self = this;
+        var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
@@ -470,16 +470,19 @@ class Space extends React.Component{
     }
 
     removeFromConcept = (childID) => {
+        // console.log('Removing from Concept: ' + childID)
         let newBubbles = this.state.bubbles;
         for (let iter = 0; iter < newBubbles.length; iter++){
             if (newBubbles[iter].type === 'concept'){
                 for (let iter2 = 0; iter2 < newBubbles[iter].bubsInConcept.length; iter2++){
+                    // console.log("Length of bubsInConcept: " + newBubbles[iter].bubsInConcept.length)
                     if (newBubbles[iter].bubsInConcept[iter2] === childID){
                         newBubbles[iter].bubsInConcept.splice(iter2,1);
                         //now removing concept if it contains no bubs:
                         if(newBubbles[iter].bubsInConcept.length === 0){
                             this.saveDeleteConcept(newBubbles[iter]);
                             newBubbles.splice(iter,1);
+                            break;
                         }else{
                             this.positionConceptBubbles(newBubbles[iter], newBubbles[iter].xLocation, newBubbles[iter].yLocation);
                             this.saveConcept(newBubbles[iter]); //Update the concept with new set of bubbles
@@ -491,6 +494,7 @@ class Space extends React.Component{
         this.setState({
             bubbles: newBubbles
         })
+        // console.log('Successfully Removed from Concept: ' + childID)
     }
 
     removeBubble = (bubbleToRemove) => {
