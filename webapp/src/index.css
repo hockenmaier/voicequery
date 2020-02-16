@@ -288,6 +288,16 @@ body {
 
 /** QUERY BAR STYLES**/
 
+  .menu-button{
+    position: fixed;
+    color: white;
+    background: var(--main-background);
+    border-radius: 3px;
+    border-width: 0px;
+    font-size: 18px;
+    outline: none;
+  }
+  
   .query-input{    
     border-radius: 9px;
     color: var(--top-bar);

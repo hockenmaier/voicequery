@@ -9,7 +9,7 @@ import axios from 'axios';
 // import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder, WebAssemblyRecorder, MediaStreamRecorder} from 'recordrtc';
 import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder} from 'recordrtc';
 import Dropdown from 'react-dropdown';
-// import fetch from 'fetch';
+import { Link } from "react-router-dom";
 
 class Space extends React.Component{
     constructor(props){
@@ -991,6 +991,16 @@ class Space extends React.Component{
                 {workRoomBubbleArray}
                 <div className = "query"
                     >
+                    <Link to="/about">
+                        <button 
+                            className="menu-button"
+                            style={{
+                                width: 80,
+                                top: layout.queryTop,
+                                left: layout.leftMargin,
+                            }}
+                        >Home</button>
+                    </Link>
                     <input 
                         className="query-input"
                         type="text"
