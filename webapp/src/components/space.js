@@ -28,7 +28,8 @@ class Space extends React.Component{
       }
 
     componentDidMount(){
-        this.initializeBubbles();
+        this.resetAll(this.state.workspace); //This initializes Bubbles
+        // this.initializeBubbles();
         this.sendParseLambdaBootMessage()
         bubblesInitialized = true;
     }
@@ -754,9 +755,13 @@ class Space extends React.Component{
     }
     
     handleWorkspaceSelect = (e) =>{
+        this.resetAll(e.value);
+    }
+    
+    resetAll = (workspace) => {
         resetCounts();
         this.setState({
-            workspace: e.value,
+            workspace: workspace,
             bubbles: [],
             dataIsLoaded: false,
             queryInput: '',
@@ -764,8 +769,6 @@ class Space extends React.Component{
         },
         this.initializeBubbles //pass in function to get new workspace bubbles as a callback to resetting the state
         )
-        
-        
     }
 
     detectLambdaBoot = () => {
