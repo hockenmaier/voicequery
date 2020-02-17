@@ -998,9 +998,9 @@ class Space extends React.Component{
                         <button 
                             className="menu-button"
                             style={{
-                                width: 80,
+                                width: layout.homeWidth,
                                 top: layout.queryTop,
-                                left: layout.leftMargin,
+                                left: layout.homeLeft,
                             }}
                         >Home</button>
                     </Link>

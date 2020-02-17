@@ -30,6 +30,8 @@ export function initializeLayout(){
     layout.subjectBottom = window.innerHeight/2 + (layout.roomBuffer/2);
     layout.lexWidth = 155;
     layout.queryLeft = layout.lexWidth + layout.leftMargin;
+    layout.homeWidth = 70;
+    layout.homeLeft = layout.lexWidth/2 + layout.leftMargin - layout.homeWidth/2;
     
     layout.queryResponseLeft = layout.leftMargin + layout.lexWidth + layout.roomBuffer;
     
