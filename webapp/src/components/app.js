@@ -21,13 +21,7 @@ export default function App() {
       <div>
         <ul>
           <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/space">Space</Link>
-          </li>
-          <li>
-            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/space">Go to Workspace</Link>
           </li>
         </ul>
 
@@ -46,9 +40,6 @@ export default function App() {
           </Route>
           <Route path="/space">
             <Space />
-          </Route>
-          <Route path="/dashboard">
-            <Dashboard />
           </Route>
         </Switch>
       </div>
@@ -71,14 +62,6 @@ function SpaceLink() {
   return (
     <div>
       <h2>Space</h2>
-    </div>
-  );
-}
-
-function Dashboard() {
-  return (
-    <div>
-      <h2>Dashboard</h2>
     </div>
   );
 }
