@@ -994,7 +994,7 @@ class Space extends React.Component{
                 {workRoomBubbleArray}
                 <div className = "query"
                     >
-                    <Link to="/about">
+                    <Link to="/">
                         <button 
                             className="menu-button"
                             style={{

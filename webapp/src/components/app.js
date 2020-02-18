@@ -6,16 +6,15 @@ import {
   Link
 } from "react-router-dom";
 import Space from './space.js';
+import FileSelect from './file-select.js';
 
 export default function App() {
   return (
     <Router>
       <div>
-        <Link to="/space">Go to Workspace</Link>
-        <hr />
         <Switch>
           <Route exact path="/">
-            <Home />
+            <FileSelect />
           </Route>
           <Route path="/space">
             <Space />
