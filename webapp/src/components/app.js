@@ -2,8 +2,7 @@ import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 import Space from './space.js';
 import FileSelect from './file-select.js';
@@ -22,21 +21,5 @@ export default function App() {
         </Switch>
       </div>
     </Router>
-  );
-}
-
-function Home() {
-  return (
-    <div>
-      <h2>Home</h2>
-    </div>
-  );
-}
-
-function SpaceLink() {
-  return (
-    <div>
-      <h2>Space</h2>
-    </div>
   );
 }
