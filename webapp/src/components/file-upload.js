@@ -4,28 +4,37 @@ import './file-upload.css';
 import {useDropzone} from 'react-dropzone'
 
 
-function MyDropzone() {
+function FileDropzone() {
   const onDrop = useCallback(acceptedFiles => {
     console.log(acceptedFiles)
+    let fileSelected;
+    if (acceptedFiles.length > 0){
+        fileSelected = acceptedFiles[0]
+    }else{
+        console.log("no files selected")
+        return
+    }
+    console.log(fileSelected)
+    
   }, [])
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
  
   return (
     <div>
         <div {...getRootProps()}
-                className = 'drop-box'
-                style={{
-                      top: 100,
-                      left: 300,
-                      height: 70,
-                      width: window.innerWidth/3,
-                      }}
+            className = 'drop-box'
+            style={{
+                  top: 100,
+                  left: 300,
+                  height: 70,
+                  width: window.innerWidth/3,
+                  }}
             >
             <input {...getInputProps()} />
             {
             isDragActive ?
-              <p>Drop files here</p> :
-              <p>Drag and drop or click to select files</p>
+                <p>Drop files here</p> :
+                <p>Drag and drop a data file (or click to browse)</p>
             }
         </div>
     </div>
@@ -41,12 +50,12 @@ class FileUpload extends React.Component {
                     style={{
                             top: 100,
                             left: 300,
-                            height: 250,
+                            height: 200,
                             width: window.innerWidth/2,
                             }}
                     >
                     <h1>Upload a new dataset</h1>
-                    <MyDropzone />
+                    <FileDropzone />
                 </div>
             </div>
         );
