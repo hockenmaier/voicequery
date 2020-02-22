@@ -11,14 +11,22 @@ function MyDropzone() {
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
  
   return (
-    <div className = 'drop-box'>
-        <div {...getRootProps()}>
-          <input {...getInputProps()} />
-          {
+    <div>
+        <div {...getRootProps()}
+                className = 'drop-box'
+                style={{
+                      top: 100,
+                      left: 300,
+                      height: 70,
+                      width: window.innerWidth/3,
+                      }}
+            >
+            <input {...getInputProps()} />
+            {
             isDragActive ?
-              <p>Drop the files here ...</p> :
-              <p>Drag 'n' drop some files here, or click to select files</p>
-          }
+              <p>Drop files here</p> :
+              <p>Drag and drop or click to select files</p>
+            }
         </div>
     </div>
   )
@@ -33,7 +41,7 @@ class FileUpload extends React.Component {
                     style={{
                             top: 100,
                             left: 300,
-                            height: 150,
+                            height: 250,
                             width: window.innerWidth/2,
                             }}
                     >
