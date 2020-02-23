@@ -4,7 +4,7 @@ import './file-upload.css';
 import {useDropzone} from 'react-dropzone'
 
 
-function FileDropzone() {
+function FileDropzone(props) {
     const onDrop = useCallback(acceptedFiles => {
         console.log(acceptedFiles)
         let fileSelected;
@@ -16,7 +16,7 @@ function FileDropzone() {
         }
         let uploadOK = window.confirm("Upload " + fileSelected.name + " to the server?");
         if (uploadOK){
-            // sendFile(fileSelected)
+            props.sendFile(fileSelected)
         }
     
     }, [])
@@ -52,7 +52,7 @@ class FileUpload extends React.Component {
     }
     
     render(){
-                return(
+        return(
             <div>
                 <div className = 'file-upload-box'
                     style={{
@@ -63,7 +63,7 @@ class FileUpload extends React.Component {
                             }}
                     >
                     <h1>Upload a new dataset</h1>
-                    <FileDropzone />
+                    <FileDropzone sendFile={this.sendFile}/>
                 </div>
             </div>
         );
