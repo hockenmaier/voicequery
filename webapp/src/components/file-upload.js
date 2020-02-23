@@ -5,43 +5,51 @@ import {useDropzone} from 'react-dropzone'
 
 
 function FileDropzone() {
-  const onDrop = useCallback(acceptedFiles => {
-    console.log(acceptedFiles)
-    let fileSelected;
-    if (acceptedFiles.length > 0){
-        fileSelected = acceptedFiles[0]
-    }else{
-        console.log("no files selected")
-        return
-    }
-    console.log(fileSelected)
+    const onDrop = useCallback(acceptedFiles => {
+        console.log(acceptedFiles)
+        let fileSelected;
+        if (acceptedFiles.length > 0){
+            fileSelected = acceptedFiles[0]
+        }else{
+            console.log("no files selected")
+            return
+        }
+        let uploadOK = window.confirm("Upload " + fileSelected.name + " to the server?");
+        if (uploadOK){
+            // sendFile(fileSelected)
+        }
     
-  }, [])
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+    }, [])
+    const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
  
-  return (
-    <div>
-        <div {...getRootProps()}
-            className = 'drop-box'
-            style={{
-                  top: 100,
-                  left: 300,
-                  height: 70,
-                  width: window.innerWidth/3,
-                  }}
-            >
-            <input {...getInputProps()} />
-            {
-            isDragActive ?
-                <p>Drop files here</p> :
-                <p>Drag and drop a data file (or click to browse)</p>
-            }
+    return (
+        <div>
+            <div {...getRootProps()}
+                className = 'drop-box'
+                style={{
+                      top: 100,
+                      left: 300,
+                      height: 70,
+                      width: window.innerWidth/2.5,
+                      }}
+                >
+                <input {...getInputProps()} />
+                {
+                isDragActive ?
+                    <p>Drop files here</p> :
+                    <p>Drag and drop a data file (or click to browse)</p>
+                }
+            </div>
         </div>
-    </div>
-  )
+    )
 }
 
 class FileUpload extends React.Component {
+    
+    sendFile(file){
+        console.log('sending file');
+        console.log(file)
+    }
     
     render(){
                 return(
