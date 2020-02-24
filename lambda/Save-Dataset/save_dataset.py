@@ -5,10 +5,10 @@ import urllib.request
 import logging
 
 def lambda_handler(event, context):
-    jsonData = transcribe(event['workspace'],event['filename'])
+    jsonData = save_dataset(event['workspace'],event['filename'])
     return jsonData
 
-def transcribe(workspace,filename):
+def save_dataset(workspace,filename):
     context = create_context(workspace,filename)
     url = create_presigned_url(context)
     data = {}
@@ -47,10 +47,10 @@ def create_presigned_url(context, expiration=3600):
     try:
         response = context.s3.generate_presigned_url('put_object',
                                                     Params={'Bucket': context.bucket,
-                                                            'Key': context.filename},
-                                                            # 'Region': 'us-west-2',
+                                                            'Key': context.filename,
+                                                            # 'Workspace': context.workspace},
                                                             # 'ContentType': 'multipart/form-data'},
-                                                            # 'ContentType': 'audio/wav'},
+                                                            'ContentType': 'audio/wav'},
                                                             # 'ACL': 'public-read',
                                                             # 'ContentMD5': 'false'},
                                                     # HttpMethod='Put',
