@@ -37,7 +37,6 @@ class contextObject:
         self.table = None
         self.jsonData = {}
         self.available_data = {}
-        
 
 def create_context(workspace):
     newContext = contextObject()

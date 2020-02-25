@@ -1,8 +1,9 @@
 import json
 import boto3
 from botocore.exceptions import ClientError
-import urllib.request
 import logging
+# import magic
+
 
 def lambda_handler(event, context):
     jsonData = save_dataset(event['workspace'],event['filename'])
@@ -44,13 +45,14 @@ def create_presigned_url(context, expiration=3600):
     :return: Presigned URL as string. If error, returns None.
     """
     # Generate a presigned URL for the S3 object
+    # mime = magic.Magic(mime=True)
     try:
         response = context.s3.generate_presigned_url('put_object',
                                                     Params={'Bucket': context.bucket,
-                                                            'Key': context.filename,
+                                                            'Key': context.filename},
                                                             # 'Workspace': context.workspace},
                                                             # 'ContentType': 'multipart/form-data'},
-                                                            'ContentType': 'audio/wav'},
+                                                            # 'ContentType': mime.from_file(context.filename)},
                                                             # 'ACL': 'public-read',
                                                             # 'ContentMD5': 'false'},
                                                     # HttpMethod='Put',

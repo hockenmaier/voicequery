@@ -37,7 +37,7 @@ class FileUpload extends React.Component {
         var self = this;
         console.log(file.type);
         fetch(presignedUrl, {method: "PUT", body: file, headers: {
-            'Content-Type': 'audio/wav',
+            // 'Content-Type': 'audio/wav',
             // 'Workspace': 'test',
             // 'Content-Type': 'multipart/form-data',
         }})
