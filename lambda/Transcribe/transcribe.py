@@ -73,15 +73,15 @@ def create_presigned_url(context, expiration=3600):
     # Generate a presigned URL for the S3 object
     try:
         response = context.s3.generate_presigned_url('put_object',
-                                                    Params={'Bucket': context.bucket,
-                                                            'Key': context.filename,
-                                                            # 'Region': 'us-west-2',
-                                                            # 'ContentType': 'multipart/form-data'},
-                                                            'ContentType': 'audio/wav'},
-                                                            # 'ACL': 'public-read',
-                                                            # 'ContentMD5': 'false'},
-                                                    # HttpMethod='Put',
-                                                    ExpiresIn=expiration)
+            Params={'Bucket': context.bucket,
+                    'Key': context.filename,
+                    # 'Region': 'us-west-2',
+                    # 'ContentType': 'multipart/form-data'},
+                    'ContentType': 'audio/wav'},
+                    # 'ACL': 'public-read',
+                    # 'ContentMD5': 'false'},
+            # HttpMethod='Put',
+            ExpiresIn=expiration)
     except ClientError as e:
         logging.error(e)
         return None

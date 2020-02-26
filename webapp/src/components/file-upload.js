@@ -13,10 +13,16 @@ class FileUpload extends React.Component {
     getPresignedUrl = (file) => {
         console.log('Sending call for presigned url to save-dataset API')
         var self = this;
+        
+        var mime = require('mime-types')
+        var fileType = mime.lookup(file.name)
+        console.log("type: " + fileType)
+        
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-dataset', {
             option: 'geturl',
             workspace: 'test',
             filename: file.name,
+            filetype: fileType,
         },
         )
         .then(function(response){
@@ -24,7 +30,7 @@ class FileUpload extends React.Component {
             console.log(response);
             let presignedUrl = response.data.presignedurl;
             let fileName = response.data.fileName;
-            self.uploadFile(file,presignedUrl,fileName);
+            self.uploadFile(file,presignedUrl,fileName,fileType);
         })
         .catch(function(error){
             console.log('transcribe get presigned url http error');
@@ -32,12 +38,11 @@ class FileUpload extends React.Component {
         });
     }
     
-    uploadFile = (file, presignedUrl, fileName) => {
+    uploadFile = (file, presignedUrl, fileName, fileType) => {
         console.log('Uploading Dataset File to S3')
         var self = this;
-        console.log(file.type);
         fetch(presignedUrl, {method: "PUT", body: file, headers: {
-            // 'Content-Type': 'audio/wav',
+            'Content-Type': fileType,
             // 'Workspace': 'test',
             // 'Content-Type': 'multipart/form-data',
         }})
@@ -76,7 +81,7 @@ function FileDropzone(props) {
             console.log("no files selected")
             return
         }
-        let uploadOK = window.confirm("Upload " + fileSelected.name + " to the server?");
+        let uploadOK = window.confirm("Upload " + fileSelected.name + " for analysis?");
         if (uploadOK){
             props.sendFile(fileSelected)
         }
@@ -98,7 +103,7 @@ function FileDropzone(props) {
                 <input {...getInputProps()} />
                 {
                 isDragActive ?
-                    <p>Drop files here</p> :
+                    <p>Drop here!</p> :
                     <p>Drag and drop a data file (or click to browse)</p>
                 }
             </div>

@@ -6,17 +6,17 @@ import logging
 
 
 def lambda_handler(event, context):
-    jsonData = save_dataset(event['workspace'],event['filename'])
+    jsonData = save_dataset(event['workspace'],event['filename'],event['filetype'])
     return jsonData
 
-def save_dataset(workspace,filename):
-    context = create_context(workspace,filename)
+def save_dataset(workspace,filename, filetype):
+    context = create_context(workspace,filename,filetype)
     url = create_presigned_url(context)
     data = {}
     data['statusCode'] = '200'
     data['version'] = "0.0.1"
     data['presignedurl'] = url
-    data['fileName'] = context.filename
+    data['fileName'] = context.userID + '/' + context.filename
     print(data)
     return data
     
@@ -25,14 +25,18 @@ class contextObject:
         # self.blobdata = None
         self.workspace = ''
         self.filename = ''
+        self.filetype = ''
         self.bucket = ''
         self.s3 = None
+        self.userID = ''
 
-def create_context(workspace,filename):
+def create_context(workspace,filename,filetype):
     newContext = contextObject()
     newContext.workspace = workspace
     newContext.bucket = "voicequery-datasets"
+    newContext.userID = "test-userid-1988"
     newContext.filename = filename
+    newContext.filetype = filetype
     newContext.s3 = boto3.client('s3')
     return newContext
     
@@ -48,15 +52,17 @@ def create_presigned_url(context, expiration=3600):
     # mime = magic.Magic(mime=True)
     try:
         response = context.s3.generate_presigned_url('put_object',
-                                                    Params={'Bucket': context.bucket,
-                                                            'Key': context.filename},
-                                                            # 'Workspace': context.workspace},
-                                                            # 'ContentType': 'multipart/form-data'},
-                                                            # 'ContentType': mime.from_file(context.filename)},
-                                                            # 'ACL': 'public-read',
-                                                            # 'ContentMD5': 'false'},
-                                                    # HttpMethod='Put',
-                                                    ExpiresIn=expiration)
+            Params={'Bucket': context.bucket,
+                    # 'Key': context.filename},
+                    'Key': context.userID + '/' + context.filename,
+                    # 'Key': 'testfolder/drop.jpg'},
+                    # 'Workspace': context.workspace},
+                    'ContentType': context.filetype},
+                    # 'ContentType': mime.from_file(context.filename)},
+                    # 'ACL': 'public-read',
+                    # 'ContentMD5': 'false'},
+            # HttpMethod='Put',
+            ExpiresIn=expiration)
     except ClientError as e:
         logging.error(e)
         return None
