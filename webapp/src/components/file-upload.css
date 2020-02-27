@@ -49,3 +49,14 @@ body {
     outline: none;
   }
   
+  .submit-button{
+    color: black;
+    background: grey;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 3px;
+    border-width: 0px;
+    font-size: 24px;
+    font-weight: 900;
+    outline: none;
+  }

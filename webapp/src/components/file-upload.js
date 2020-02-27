@@ -5,9 +5,30 @@ import {useDropzone} from 'react-dropzone'
 import axios from 'axios';
 
 class FileUpload extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            newFile: undefined
+        };
+    }
     
-    sendFile = (file) => {
-        this.getPresignedUrl(file);
+    addFile = (file) => {
+        console.log('adding file')
+        this.setState({
+            newFile: file,          
+        })
+    }
+
+    sendFile = () => {
+        console.log(this.state.newFile)
+        if (this.state.newFile == undefined){
+            window.alert("Please select a data file and name it")
+        }else{
+            let uploadOK = window.confirm("Upload " + this.state.newFile.name + " for analysis?");
+            if (uploadOK){
+                this.getPresignedUrl(this.state.newFile);
+            }
+        }
     }
     
     getPresignedUrl = (file) => {
@@ -53,18 +74,27 @@ class FileUpload extends React.Component {
     };
     
     render(){
+        console.log('newfile:');
+        console.log(this.state.newFile);
         return(
             <div>
                 <div className = 'file-upload-box'
                     style={{
                             top: 100,
                             left: 300,
-                            height: 200,
+                            height: 350,
                             width: window.innerWidth/2,
                             }}
                     >
-                    <h1>Upload a new dataset</h1>
-                    <FileDropzone sendFile={this.sendFile}/>
+                    <h1>Create a New Dataset</h1>
+                    <FileDropzone addFile={this.addFile} newFile={this.state.newFile}/>
+                    <button
+                        className="submit-button"
+                        onClick={this.sendFile}
+                        style={{
+                            width: window.innerWidth/6
+                        }}
+                    >Upload</button>
                 </div>
             </div>
         );
@@ -81,14 +111,12 @@ function FileDropzone(props) {
             console.log("no files selected")
             return
         }
-        let uploadOK = window.confirm("Upload " + fileSelected.name + " for analysis?");
-        if (uploadOK){
-            props.sendFile(fileSelected)
-        }
+        props.addFile(fileSelected)
     
     }, [])
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
- 
+    let fileText = (props.newFile == undefined ? 'Drag and drop a data file (or click to browse)' : props.newFile.name)
+    
     return (
         <div>
             <div {...getRootProps()}
@@ -104,7 +132,7 @@ function FileDropzone(props) {
                 {
                 isDragActive ?
                     <p>Drop here!</p> :
-                    <p>Drag and drop a data file (or click to browse)</p>
+                    <p>{fileText}</p>
                 }
             </div>
         </div>
