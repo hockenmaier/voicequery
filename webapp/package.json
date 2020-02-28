@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "homepage": "./space",
   "private": true,
-  "homepage": ".",
   "dependencies": {
     "axios": "^0.19.0",
     "mime-types": "^2.1.26",
