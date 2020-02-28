@@ -15,12 +15,12 @@ class FileUpload extends React.Component {
     addFile = (file) => {
         console.log('adding file')
         this.setState({
-            newFile: file,          
+            newFile: file,
+            workspaceNameInput: '',
         })
     }
 
     sendFile = () => {
-        console.log(this.state.newFile)
         if (this.state.newFile == undefined){
             window.alert("Please select a data file and name it")
         }else{
@@ -73,21 +73,34 @@ class FileUpload extends React.Component {
         });
     };
     
+    handleWorkspaceNameChange = (e) => {
+        this.setState({workspaceNameInput: e.target.value})
+    }
+    
     render(){
-        console.log('newfile:');
-        console.log(this.state.newFile);
         return(
             <div>
                 <div className = 'file-upload-box'
                     style={{
                             top: 100,
                             left: 300,
-                            height: 350,
-                            width: window.innerWidth/2,
+                            height: 280,
+                            width: window.innerWidth/2.3,
                             }}
                     >
                     <h1>Create a New Dataset</h1>
                     <FileDropzone addFile={this.addFile} newFile={this.state.newFile}/>
+                    <input 
+                        className="workspace-name-input"
+                        type="text"
+                        placeholder="Name your dataset" 
+                        onChange={this.handleWorkspaceNameChange}
+                        style={{
+                            width: window.innerWidth/6,
+                        }}
+                    >
+                    </input> 
+                    <br/>
                     <button
                         className="submit-button"
                         onClick={this.sendFile}
@@ -112,7 +125,6 @@ function FileDropzone(props) {
             return
         }
         props.addFile(fileSelected)
-    
     }, [])
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
     let fileText = (props.newFile == undefined ? 'Drag and drop a data file (or click to browse)' : props.newFile.name)

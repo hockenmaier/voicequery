@@ -1,7 +1,7 @@
 {
   "name": "voicequery",
   "version": "0.1.0",
-  "homepage": "./space",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "axios": "^0.19.0",
