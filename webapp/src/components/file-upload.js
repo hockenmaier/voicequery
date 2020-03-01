@@ -8,7 +8,8 @@ class FileUpload extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            newFile: undefined
+            newFile: undefined,
+            workspaceNameInput: '',
         };
     }
     
@@ -16,22 +17,21 @@ class FileUpload extends React.Component {
         console.log('adding file')
         this.setState({
             newFile: file,
-            workspaceNameInput: '',
         })
     }
 
     sendFile = () => {
-        if (this.state.newFile == undefined){
+        if (this.state.newFile == undefined | this.state.workspaceNameInput == ''){
             window.alert("Please select a data file and name it")
         }else{
-            let uploadOK = window.confirm("Upload " + this.state.newFile.name + " for analysis?");
+            let uploadOK = window.confirm("Upload " + this.state.newFile.name + " under the name " + this.state.workspaceNameInput + " for analysis?");
             if (uploadOK){
-                this.getPresignedUrl(this.state.newFile);
+                this.getPresignedUrl(this.state.newFile, this.state.workspaceNameInput);
             }
         }
     }
     
-    getPresignedUrl = (file) => {
+    getPresignedUrl = (file, workspace) => {
         console.log('Sending call for presigned url to save-dataset API')
         var self = this;
         
@@ -41,7 +41,7 @@ class FileUpload extends React.Component {
         
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-dataset', {
             option: 'geturl',
-            workspace: 'test',
+            workspace: workspace,
             filename: file.name,
             filetype: fileType,
         },

@@ -2,14 +2,13 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 import logging
-# import magic
 
 
 def lambda_handler(event, context):
-    jsonData = save_dataset(event['workspace'],event['filename'],event['filetype'])
+    jsonData = save_dataset(event['workspace'], event['filename'], event['filetype'])
     return jsonData
 
-def save_dataset(workspace,filename, filetype):
+def save_dataset(workspace, filename, filetype):
     context = create_context(workspace,filename,filetype)
     url = create_presigned_url(context)
     data = {}
@@ -22,7 +21,6 @@ def save_dataset(workspace,filename, filetype):
     
 class contextObject:
     def __init__(self):
-        # self.blobdata = None
         self.workspace = ''
         self.filename = ''
         self.filetype = ''
@@ -34,7 +32,7 @@ def create_context(workspace,filename,filetype):
     newContext = contextObject()
     newContext.workspace = workspace
     newContext.bucket = "voicequery-datasets"
-    newContext.userID = "test-userid-1988"
+    newContext.userID = "voicequery-user"
     newContext.filename = filename
     newContext.filetype = filetype
     newContext.s3 = boto3.client('s3')
@@ -48,24 +46,14 @@ def create_presigned_url(context, expiration=3600):
     :param expiration: Time in seconds for the presigned URL to remain valid
     :return: Presigned URL as string. If error, returns None.
     """
-    # Generate a presigned URL for the S3 object
-    # mime = magic.Magic(mime=True)
     try:
         response = context.s3.generate_presigned_url('put_object',
             Params={'Bucket': context.bucket,
-                    # 'Key': context.filename},
-                    'Key': context.userID + '/' + context.filename,
-                    # 'Key': 'testfolder/drop.jpg'},
-                    # 'Workspace': context.workspace},
+                    'Key': context.userID + '/' + context.workspace + '/' + context.filename,
                     'ContentType': context.filetype},
-                    # 'ContentType': mime.from_file(context.filename)},
-                    # 'ACL': 'public-read',
-                    # 'ContentMD5': 'false'},
-            # HttpMethod='Put',
             ExpiresIn=expiration)
     except ClientError as e:
         logging.error(e)
         return None
 
-    # The response contains the presigned URL
     return response
