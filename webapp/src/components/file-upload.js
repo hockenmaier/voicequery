@@ -1,6 +1,5 @@
 import React, {useCallback} from 'react'
-import { Link } from "react-router-dom";
-import './file-upload.css';
+import './file-select.css';
 import {useDropzone} from 'react-dropzone'
 import axios from 'axios';
 
@@ -88,7 +87,7 @@ class FileUpload extends React.Component {
                             width: window.innerWidth/2.3,
                             }}
                     >
-                    <h1>Create a New Dataset</h1>
+                    <h1>Upload some Data</h1>
                     <FileDropzone addFile={this.addFile} newFile={this.state.newFile}/>
                     <input 
                         className="workspace-name-input"

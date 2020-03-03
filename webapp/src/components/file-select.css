@@ -1,17 +1,7 @@
 :root {
   --main-background: rgb(6, 0, 12);
   --room-background: rgb(58, 56, 56);
-  --subject-color: rgb(75, 155, 44); 
-  --subject-text-light: rgb(218, 255, 204); 
-  --condition-color: rgb(102, 64, 190); 
-  --condition-text-light: rgb(188, 159, 255); 
-  --info-field-color: rgb(113, 132, 136); 
-  --info-value-color: rgb(78, 105, 112); 
-  --info-text-light: rgb(186, 216, 221);
-  --concept-color: rgb(216, 216, 216);
-  --concept-text-light: rgb(235, 235, 235);
-  --top-bar: rgb(226, 226, 226);
-  --lock-color: rgb(150, 150, 150)
+  --main-theme-color: rgb(173, 240, 105);
 }
 
 body {
@@ -21,7 +11,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--room-background);
+  background: var(--main-background);
 }
 
 /*** UNIVERSAL SYLES ***/
@@ -36,3 +26,49 @@ body {
     user-select: none;
   }
   
+  .file-upload-box {
+    color: var(--main-theme-color);
+    background: var(--room-background);
+    text-align: center;
+    border: 2px solid grey;
+    padding: 0px;
+    font-size: 14px;
+    margin: 10px auto;
+    border-radius: 15px 15px 15px 15px;
+    user-select: none;
+  }
+  
+  .drop-box {
+    color: var(--main-theme-color);
+    text-align: center;
+    border: 4px dashed white;
+    padding: 5px;
+    font-size: 22px;
+    margin: auto;
+    border-radius: 9px 9px 9px 9px;
+    user-select: none;
+    outline: none;
+  }
+  
+  .submit-button{
+    color: black;
+    background: var(--main-theme-color);
+    margin: 0px;
+    padding: 0px;
+    border-radius: 3px;
+    border-width: 0px;
+    font-size: 24px;
+    font-weight: 900;
+    outline: none;
+  }
+  
+  .workspace-name-input{
+    color: black;
+    background: lightgrey;
+    border: 2px var(--main-theme-color);
+    border-radius: 5px;
+    font-size: 18px;
+    text-align: center;
+    margin: 20px;
+    outline: none;
+  }
