@@ -7,7 +7,27 @@ class FileList extends React.Component {
     constructor(props){
         super(props);
     }
+    
+    getFileList = () =>{
+         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/get-datasets', {
+            userID: 'voicequery-user',
+        },
+        )
+        .then(function(response){
+            console.log('get datasets http successful');
+            console.log(response);
+            return response.data.objects;
+        })
+        .catch(function(error){
+            console.log('get datasets http error');
+            console.log(error);
+        });
+    }
+    
     render(){
+        
+        this.getFileList();
+        
         return(
             <div>
                 <div className = 'file-upload-box'
