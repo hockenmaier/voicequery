@@ -6,17 +6,29 @@ import axios from 'axios';
 class FileList extends React.Component {
     constructor(props){
         super(props);
+        this.state = {
+            fileList: undefined,
+        };
+    }
+    
+    componentDidMount(){
+        this.getFileList();
+        console.log('mounted')
     }
     
     getFileList = () =>{
-         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/get-datasets', {
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/get-datasets', {
             userID: 'voicequery-user',
         },
         )
         .then(function(response){
             console.log('get datasets http successful');
             console.log(response);
-            return response.data.objects;
+            var parsedData = JSON.parse(response.data);
+            self.setState({
+                fileList: parsedData,
+            })
         })
         .catch(function(error){
             console.log('get datasets http error');
@@ -24,9 +36,15 @@ class FileList extends React.Component {
         });
     }
     
+    pushTest = () => {
+        console.log('test')
+        console.log(this.state.fileList)
+        console.log(this.state.fileList.objects.Contents)
+    }
+    
     render(){
         
-        this.getFileList();
+        console.log(this.state.fileList);
         
         return(
             <div>
@@ -39,6 +57,13 @@ class FileList extends React.Component {
                             }}
                     >
                     <h1>Ask Your Data Anything</h1>
+                    <button
+                        className="submit-button"
+                        onClick={this.pushTest}
+                        style={{
+                            width: window.innerWidth/6
+                        }}
+                    >Test</button>
                 </div>
             </div>
         );
