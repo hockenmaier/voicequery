@@ -150,6 +150,4 @@ function FileDropzone(props) {
     )
 }
 
-
-
 export default FileUpload;

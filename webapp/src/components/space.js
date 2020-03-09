@@ -635,8 +635,8 @@ class Space extends React.Component{
 
     moveBubble(e){
         //console.log('workroom drop, id of dragged bubble is: ' + lastDragStart.id);
-        const newX = e.nativeEvent.clientX - lastDragStart.shiftX; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
-        const newY = e.nativeEvent.clientY - lastDragStart.shiftY; //SOLVED: I had a 3 px margin in my main bubble css class!
+        const newX = e.nativeEvent.clientX - lastDragStart.shiftX ; //I don't know why subtracting 3 pixels is necessary but it is to get the shift perfect
+        const newY = e.nativeEvent.clientY - lastDragStart.shiftY ; //SOLVED: I had a 3 px margin in my main bubble css class!
 
         const newBubbles = this.state.bubbles.map((bub) => {
             for (let inner = 0; inner < bub.bubbles.length; inner++){
