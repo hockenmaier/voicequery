@@ -13,7 +13,7 @@ class FileButton extends React.Component {
     
     render(){
         
-        console.log(this.state.fileList);
+        // console.log(this.state.fileList);
         
         return(
              <button
@@ -22,7 +22,7 @@ class FileButton extends React.Component {
                 style={{
                     width: window.innerWidth/6
                 }}
-            >Sample Workspace</button>
+            >{this.props.name}</button>
         );
     }
 }

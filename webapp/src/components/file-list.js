@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 import './file-select.css';
+import FileButton from './file-button.js';
 import axios from 'axios';
 
 class FileList extends React.Component {
@@ -42,9 +43,27 @@ class FileList extends React.Component {
         console.log(this.state.fileList.objects.Contents)
     }
     
+    renderFileButton(id,object){
+        console.log(object.Key)
+        return (
+            <div>
+                <FileButton key={id}
+                      name = {object.Key}
+                />
+                <br/>
+            </div>
+        );
+    }
+    
     render(){
         
-        console.log(this.state.fileList);
+        let fileButtonArray = [];
+        if(this.state.fileList != undefined){
+            let id;
+            for (id in this.state.fileList.objects.Contents){
+                fileButtonArray.push(this.renderFileButton(id,this.state.fileList.objects.Contents[id]));
+            }
+        }
         
         return(
             <div>
@@ -57,6 +76,7 @@ class FileList extends React.Component {
                             }}
                     >
                     <h1>Ask Your Data Anything</h1>
+                    {fileButtonArray}
                     <button
                         className="submit-button"
                         onClick={this.pushTest}
