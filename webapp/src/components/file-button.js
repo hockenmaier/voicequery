@@ -17,12 +17,14 @@ class FileButton extends React.Component {
         
         return(
              <button
-                className="submit-button"
+                className="file-button"
                 onClick={this.pushTest}
                 style={{
-                    width: window.innerWidth/6
+                    width: window.innerWidth/2.5
                 }}
-            >{this.props.name}</button>
+                ><span className='workspaceText'>{this.props.workspace}</span>
+                <span className='fileNameText'>{this.props.fullfilename}</span>
+            </button>
         );
     }
 }

@@ -37,18 +37,15 @@ class FileList extends React.Component {
         });
     }
     
-    pushTest = () => {
-        console.log('test')
-        console.log(this.state.fileList)
-        console.log(this.state.fileList.objects.Contents)
-    }
-    
     renderFileButton(id,object){
+        console.log(id)
         console.log(object.Key)
+        let s3KeySplit = object.Key.split("/")
         return (
             <div>
                 <FileButton key={id}
-                      name = {object.Key}
+                      workspace = {s3KeySplit[1]}
+                      fullfilename = {s3KeySplit[2]}
                 />
                 <br/>
             </div>
@@ -71,19 +68,11 @@ class FileList extends React.Component {
                     style={{
                             top: 100,
                             left: 300,
-                            height: 280,
                             width: window.innerWidth/2.3,
                             }}
                     >
                     <h1>Ask Your Data Anything</h1>
                     {fileButtonArray}
-                    <button
-                        className="submit-button"
-                        onClick={this.pushTest}
-                        style={{
-                            width: window.innerWidth/6
-                        }}
-                    >Test</button>
                 </div>
             </div>
         );

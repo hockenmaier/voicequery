@@ -2,6 +2,7 @@
   --main-background: rgb(6, 0, 12);
   --room-background: rgb(58, 56, 56);
   --main-theme-color: rgb(173, 240, 105);
+  --file-button-color: #344028;
 }
 
 body {
@@ -26,12 +27,14 @@ body {
     user-select: none;
   }
   
-  .file-upload-box {
-    color: var(--main-theme-color);
+  /** FILE UPLOAD STYLES **/
+  
+  .file-upload-box {  /* Also used for file-select box*/
+    color: white;
     background: var(--room-background);
     text-align: center;
     border: 2px solid grey;
-    padding: 0px;
+    padding: 15px;
     font-size: 14px;
     margin: 10px auto;
     border-radius: 15px 15px 15px 15px;
@@ -62,6 +65,7 @@ body {
     outline: none;
   }
   
+  
   .workspace-name-input{
     color: black;
     background: lightgrey;
@@ -71,4 +75,40 @@ body {
     text-align: center;
     margin: 20px;
     outline: none;
+  }
+  
+  /** FILE BUTTON STYLES **/
+  
+  .file-button{
+    color: black;
+    background: var(--file-button-color);
+    margin: 4px;
+    padding: 2px;
+    border: 2px solid var(--main-theme-color);
+    border-radius: 3px;
+    font-size: 24px;
+    font-weight: 900;
+    outline: none;
+  }
+  
+  .workspaceText {
+    position: relative;
+    text-align: center;
+    font-size: 14px;
+    color: white;
+    font-weight: 600;
+    white-space: pre-wrap;
+    display:block;
+    line-height: 1;
+  }
+  
+  .fileNameText {
+    position: relative;
+    text-align: center;
+    font-size: 10px;
+    color: #CFCFCF;
+    font-weight: 600;
+    white-space: pre-wrap;
+    display:block;
+    line-height: .9;
   }
