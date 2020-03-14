@@ -10,11 +10,9 @@ class FileSelect extends React.Component {
             <div>
                 <div className = 'title'>
                     <h1>The Answering Machine</h1>
-                
+                    
                     <FileUpload />
-                    <FileList />
-                
-                    <Link to="/space">Go to Workspace</Link>
+                    <FileList selectWorkSpace = {this.props.selectWorkSpace}/>
                 </div>
             </div>
         );

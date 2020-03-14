@@ -759,6 +759,7 @@ class Space extends React.Component{
     }
     
     resetAll = (workspace) => {
+        console.log('props workspace is: ' + this.props.workspace)
         resetCounts();
         this.setState({
             workspace: workspace,

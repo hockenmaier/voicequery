@@ -25,8 +25,8 @@ class FileList extends React.Component {
         )
         .then(function(response){
             console.log('get datasets http successful');
-            console.log(response);
             var parsedData = JSON.parse(response.data);
+            console.log(parsedData);
             self.setState({
                 fileList: parsedData,
             })
@@ -38,14 +38,18 @@ class FileList extends React.Component {
     }
     
     renderFileButton(id,object){
-        console.log(id)
-        console.log(object.Key)
+        // console.log(id)
+        // console.log(object.Key)
         let s3KeySplit = object.Key.split("/")
+        let s3LastModifiedSplit = object.LastModified.split(" ")
         return (
             <div>
                 <FileButton key={id}
-                      workspace = {s3KeySplit[1]}
-                      fullfilename = {s3KeySplit[2]}
+                    s3objectKey = {object.Key}
+                    workspace = {s3KeySplit[1]}
+                    fullfilename = {s3KeySplit[2]}
+                    selectWorkSpace = {this.props.selectWorkSpace}
+                    uploadDate = {s3LastModifiedSplit[0]}
                 />
                 <br/>
             </div>
@@ -57,8 +61,9 @@ class FileList extends React.Component {
         let fileButtonArray = [];
         if(this.state.fileList != undefined){
             let id;
-            for (id in this.state.fileList.objects.Contents){
-                fileButtonArray.push(this.renderFileButton(id,this.state.fileList.objects.Contents[id]));
+            let sortedFileList = this.state.fileList.objects.Contents.sort((a, b) => (a.LastModified < b.LastModified) ? 1 : -1)
+            for (id in sortedFileList){
+                fileButtonArray.push(this.renderFileButton(id,sortedFileList[id]));
             }
         }
         

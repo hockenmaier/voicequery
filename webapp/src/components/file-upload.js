@@ -83,7 +83,6 @@ class FileUpload extends React.Component {
                     style={{
                             top: 100,
                             left: 300,
-                            height: 280,
                             width: window.innerWidth/2.3,
                             }}
                     >
@@ -135,7 +134,6 @@ function FileDropzone(props) {
                 style={{
                       top: 100,
                       left: 300,
-                      height: 70,
                       width: window.innerWidth/2.5,
                       }}
                 >

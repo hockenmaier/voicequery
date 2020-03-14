@@ -11,19 +11,32 @@ export default class App extends React.Component {
   constructor(props){
       super(props);
       this.state = {
-          workspace: '',
+        workspace: '',
       };
   }
+  
+  selectWorkSpace = (workspace) => {
+    this.setState({
+      workspace: workspace,
+    })
+    // console.log('At app component and workspace was just set to: ' + workspace)
+  }
+  
   render(){
     return (
       <Router>
         <div>
           <Switch>
             <Route exact path="/">
-              <FileSelect />
+              <FileSelect
+                selectWorkSpace = {this.selectWorkSpace}
+                workspace = {this.state.workspace}
+              />
             </Route>
             <Route path="/space">
-              <Space />
+              <Space
+                workspace = {this.state.workspace}
+              />
             </Route>
           </Switch>
         </div>
