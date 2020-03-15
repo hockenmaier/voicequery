@@ -17,7 +17,8 @@ def answer(parseObject):
     workspace = parseObject['workspace']
     query = parseObject['query']
     # table = setup_dynamo()
-    sourceDataFile = "sample-data/HRData_QuickSightSample.csv"
+    sourceDataFile = workspace
+    # sourceDataFile = "sample-data/HRData_QuickSightSample.csv"
     # sourceDataFile = "sample-data/SalesPipeline_QuickSightSample.csv"
     df = setup_S3_source(workspace, sourceDataFile)
     

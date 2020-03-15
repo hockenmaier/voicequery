@@ -69,6 +69,7 @@ class FileUpload extends React.Component {
         .then((response) => {
             console.log('fetch upload file http response');
             console.log(response);
+            window.location.reload(true); //reload page so that new data appears
         });
     };
     

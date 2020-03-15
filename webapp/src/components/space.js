@@ -20,7 +20,7 @@ class Space extends React.Component{
             sampleQuery: randomSampleQuery(),
             queryInput: '',
             queryResponseHTML: '',
-            workspace: '1',
+            workspace: this.props.workspace,
             recording: false,
             recorder: null,
             dataIsLoaded: false

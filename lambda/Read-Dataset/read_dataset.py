@@ -13,7 +13,8 @@ def lambda_handler(event, context):
     
 def read_dataset(workspace):
     context = create_context(workspace)
-    context.file_name = "sample-data/HRData_QuickSightSample.csv"
+    context.file_name = workspace
+    # context.file_name = "sample-data/HRData_QuickSightSample.csv"
     # context.file_name = "sample-data/index_2013.csv"
     # context.file_name = "sample-data/SalesPipeline_QuickSightSample.csv"
     context.unique_value_limit = 15
