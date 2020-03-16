@@ -30,11 +30,6 @@ export default class App extends React.Component {
       return (
       <Router>
         <div>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-          </ul>
           <Switch>
             <Route exact path="/">
               <FileSelect
