@@ -7,12 +7,14 @@ import {
 import Space from './space.js';
 import FileSelect from './file-select.js';
 import { Link } from "react-router-dom";
+import { Redirect } from 'react-router-dom';
 
 export default class App extends React.Component {
   constructor(props){
       super(props);
       this.state = {
         workspace: '',
+        redirected: false,
       };
   }
   
@@ -24,18 +26,13 @@ export default class App extends React.Component {
   }
   
   render(){
-    return (
+    if (this.state.redirected){
+      return (
       <Router>
         <div>
           <ul>
             <li>
               <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/space">Space</Link>
-            </li>
-            <li>
-              <Link to="/dashboard">Dashboard</Link>
             </li>
           </ul>
           <Switch>
@@ -54,5 +51,15 @@ export default class App extends React.Component {
         </div>
       </Router>
     );
+    }else{
+      this.setState({
+        redirected: true,
+      })
+      return(
+        <Router>
+          <Redirect push to="/"/>
+        </Router>
+      );
+    }
   }
 }
