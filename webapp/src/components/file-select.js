@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from "react-router-dom";
 import './file-select.css';
 import FileUpload from './file-upload.js';
 import FileList from './file-list.js';

@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Space from './space.js';
 import FileSelect from './file-select.js';
+import { Link } from "react-router-dom";
 
 export default class App extends React.Component {
   constructor(props){
@@ -26,6 +27,17 @@ export default class App extends React.Component {
     return (
       <Router>
         <div>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/space">Space</Link>
+            </li>
+            <li>
+              <Link to="/dashboard">Dashboard</Link>
+            </li>
+          </ul>
           <Switch>
             <Route exact path="/">
               <FileSelect

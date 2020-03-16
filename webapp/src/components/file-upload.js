@@ -20,7 +20,7 @@ class FileUpload extends React.Component {
     }
 
     sendFile = () => {
-        if (this.state.newFile == undefined | this.state.workspaceNameInput == ''){
+        if (this.state.newFile === undefined | this.state.workspaceNameInput === ''){
             window.alert("Please select a data file and name it")
         }else{
             let uploadOK = window.confirm("Upload " + this.state.newFile.name + " under the name " + this.state.workspaceNameInput + " for analysis?");
@@ -126,7 +126,7 @@ function FileDropzone(props) {
         props.addFile(fileSelected)
     }, [])
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
-    let fileText = (props.newFile == undefined ? 'Drag and drop a data file (or click to browse)' : props.newFile.name)
+    let fileText = (props.newFile === undefined ? 'Drag and drop a data file (or click to browse)' : props.newFile.name)
     
     return (
         <div>

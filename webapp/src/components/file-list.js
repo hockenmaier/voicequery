@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from "react-router-dom";
 import './file-select.css';
 import FileButton from './file-button.js';
 import axios from 'axios';
@@ -59,7 +58,7 @@ class FileList extends React.Component {
     render(){
         
         let fileButtonArray = [];
-        if(this.state.fileList != undefined){
+        if(this.state.fileList !== undefined){
             let id;
             let sortedFileList = this.state.fileList.objects.Contents.sort((a, b) => (a.LastModified < b.LastModified) ? 1 : -1)
             for (id in sortedFileList){
