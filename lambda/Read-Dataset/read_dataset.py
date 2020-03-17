@@ -46,13 +46,24 @@ def create_context(workspace):
 
 def setup_S3_source(context):
     bucket = "voicequery-datasets"
-    s3 = boto3.client('s3') 
-    # 's3' is a key word. create connection to S3 using default config and all buckets within S3
+    s3 = boto3.client('s3')
+    obj = s3.get_object(Bucket= bucket, Key= context.file_name)
+    return readAnyType(obj['ContentType'],obj['Body'])
     
-    obj = s3.get_object(Bucket= bucket, Key= context.file_name) 
-    # get object and file (key) from bucket
+def readAnyType(contentType, body):
+    if (contentType == 'text/csv'):
+        return pd.read_csv(body)
+    elif (contentType == 'application/vnd.ms-excel') | (contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
+        return pd.read_excel(body)
+    elif (contentType =='application/json')|(contentType == 'application/ld+json'):
+        return pd.read_json(body)
+    elif (contentType == 'text/html'):
+        return pd.read_html(body)
+    elif (contentType == 'text/plain'):
+        return pd.read_fwf(body)
+    else:
+        return None
     
-    return pd.read_csv(obj['Body'])
 
 def setup_dynamo():
     dynamodb = boto3.resource('dynamodb')
@@ -193,7 +204,7 @@ def store_fields(context):
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-# read_dataset('1')
+# read_dataset('voicequery-user/HR Activity Sample/HRData_QuickSightSample.csv')
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
