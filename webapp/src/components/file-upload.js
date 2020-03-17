@@ -23,20 +23,24 @@ class FileUpload extends React.Component {
         if (this.state.newFile === undefined | this.state.workspaceNameInput === ''){
             window.alert("Please select a data file and name it")
         }else{
-            let uploadOK = window.confirm("Upload " + this.state.newFile.name + " under the name " + this.state.workspaceNameInput + " for analysis?");
-            if (uploadOK){
-                this.getPresignedUrl(this.state.newFile, this.state.workspaceNameInput);
+            var mime = require('mime-types')
+            var fileType = mime.lookup(this.state.newFile.name)
+            console.log("type: " + fileType)
+            let supported = ['text/csv','application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+            if(supported.includes(fileType)){
+                let uploadOK = window.confirm("Upload " + this.state.newFile.name + " under the name " + this.state.workspaceNameInput + " for analysis?");
+                if (uploadOK){
+                    this.getPresignedUrl(this.state.newFile, fileType, this.state.workspaceNameInput);
+                }
+            }else{
+                window.alert("This doesn't look like a data file.  Try something like a CSV or Excel file.")
             }
         }
     }
     
-    getPresignedUrl = (file, workspace) => {
+    getPresignedUrl = (file, fileType, workspace) => {
         console.log('Sending call for presigned url to save-dataset API')
         var self = this;
-        
-        var mime = require('mime-types')
-        var fileType = mime.lookup(file.name)
-        console.log("type: " + fileType)
         
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-dataset', {
             option: 'geturl',
