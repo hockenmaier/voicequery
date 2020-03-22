@@ -204,7 +204,7 @@ def store_fields(context):
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-read_dataset('voicequery-user/prop test/Property Unused Assets Since 2005.xls')
+# read_dataset('voicequery-user/prop test/Property Unused Assets Since 2005.xls')
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
