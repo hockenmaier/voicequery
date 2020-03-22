@@ -5,18 +5,32 @@ import logging
 
 
 def lambda_handler(event, context):
-    jsonData = save_dataset(event['workspace'], event['filename'], event['filetype'])
+    jsonData = save_dataset(event['workspace'], event['filename'], event['filetype'], event['option'])
     return jsonData
 
-def save_dataset(workspace, filename, filetype):
+def save_dataset(workspace, filename, filetype, option):
     context = create_context(workspace,filename,filetype)
-    url = create_presigned_url(context)
-    data = {}
-    data['statusCode'] = '200'
-    data['version'] = "0.0.1"
-    data['presignedurl'] = url
-    data['fileName'] = context.userID + '/' + context.filename
-    print(data)
+    if (option == 'geturl'):
+        url = create_presigned_url(context)
+        data = {}
+        data['statusCode'] = '200'
+        data['version'] = "0.0.1"
+        data['presignedurl'] = url
+        data['fileName'] = context.userID + '/' + context.filename
+        data['note'] = "presigned url successfully generated"
+        print(data)
+    elif (option == 'delete'):
+        delete_file(context)
+        data = {}
+        data['statusCode'] = '200'
+        data['version'] = "0.0.1"
+        data['note'] = "file successfully deleted"
+        print(data)
+    else:
+        data = {}
+        data['statusCode'] = '400'
+        data['version'] = "0.0.1"
+        data['note'] = "invalid option"
     return data
     
 class contextObject:
@@ -52,6 +66,17 @@ def create_presigned_url(context, expiration=3600):
                     'Key': context.userID + '/' + context.workspace + '/' + context.filename,
                     'ContentType': context.filetype},
             ExpiresIn=expiration)
+    except ClientError as e:
+        logging.error(e)
+        return None
+
+    return response
+    
+def delete_file(context):
+    try:
+        response = context.s3.delete_object(
+            Params={'Bucket': context.bucket,
+                    'Key': context.userID + '/' + context.workspace + '/' + context.filename})
     except ClientError as e:
         logging.error(e)
         return None

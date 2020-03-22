@@ -12,9 +12,16 @@ class FileButton extends React.Component {
         // console.log('at filebutton layer and sending key: ' + this.props.s3objectKey)
     }
     
+    clickDelete = () => {
+        console.log('clicked delete')
+        this.props.deleteWorkSpace(this.props.s3objectKey)
+    }
+    
     render(){
         return(
-             <Link to="/space">
+             <div>
+                <button><img src={require('../img/small-delete-can.png')} alt="Delete File" onClick={this.clickDelete} /></button>
+                <Link to="/space">
                  <button
                     className="file-button"
                     onClick={this.clickWorkSpace}
@@ -24,7 +31,8 @@ class FileButton extends React.Component {
                     ><span className='workspaceText'>{this.props.workspace}</span>
                     <div className='fileNameText'>{this.props.fullfilename}</div><div className='dateText'>Uploaded  {this.props.uploadDate}</div>
                 </button>
-            </Link>
+                </Link>
+            </div>
         );
     }
 }
