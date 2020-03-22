@@ -33,7 +33,7 @@ class FileUpload extends React.Component {
                     this.getPresignedUrl(this.state.newFile, fileType, this.state.workspaceNameInput);
                 }
             }else{
-                window.alert("This doesn't look like a data file.  Try a CSV Excel, or other structured data file.")
+                window.alert("This isn't a data file I recognize.  Try a CSV, Excel, or JSON file.")
             }
         }
     }
