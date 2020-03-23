@@ -21,6 +21,7 @@ def save_dataset(workspace, filename, filetype, option):
         print(data)
     elif (option == 'delete'):
         delete_file(context)
+        # TO DO:  Delete all associated data to workspace in DynamoDB
         data = {}
         data['statusCode'] = '200'
         data['version'] = "0.0.1"

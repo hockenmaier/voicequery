@@ -13,25 +13,37 @@ class FileButton extends React.Component {
     }
     
     clickDelete = () => {
+        let deleteOK = window.confirm("Are you sure you want to permanently delete " + this.props.workspace + " and all underlying data?");
         console.log('clicked delete')
-        this.props.deleteWorkSpace(this.props.s3objectKey)
+        // this.props.deleteWorkSpace(this.props.s3objectKey)
     }
     
     render(){
         return(
              <div>
-                <button><img src={require('../img/small-delete-can.png')} alt="Delete File" onClick={this.clickDelete} /></button>
                 <Link to="/space">
                  <button
                     className="file-button"
                     onClick={this.clickWorkSpace}
                     style={{
-                        width: window.innerWidth/2.5
+                        width: window.innerWidth/2.5,
+                        height: window.innerHeight/20,
                     }}
                     ><span className='workspaceText'>{this.props.workspace}</span>
                     <div className='fileNameText'>{this.props.fullfilename}</div><div className='dateText'>Uploaded  {this.props.uploadDate}</div>
+                    <Link to="/"
+                        className="file-delete"
+                        style={{
+                            top: -25,
+                            left: 2,
+                            width: window.innerHeight/28,
+                            height: window.innerHeight/28,
+                        }}
+                        ><img src={require('../img/small-delete-can.png')} alt="Delete File" onClick={this.clickDelete} />
+                    </Link>
                 </button>
                 </Link>
+                
             </div>
         );
     }
