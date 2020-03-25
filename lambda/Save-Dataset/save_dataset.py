@@ -73,13 +73,23 @@ def create_presigned_url(context, expiration=3600):
 
     return response
     
-def delete_file(context):
+def copy_file_to_archive(context):
     try:
-        response = context.s3.delete_object(
-                    Bucket= context.bucket,
-                    Key= context.userID + '/' + context.workspace + '/' + context.filename)
+        response = client.copy_object(
+            Bucket=context.bucket,
+            Key='archive' + '/' + context.userID + '/' + context.workspace + '/' + context.filename,
+            CopySource={'Bucket':context.bucket, 'Key':context.userID + '/' + context.workspace + '/' + context.filename},
     except ClientError as e:
         logging.error(e)
         return None
-
+    return response
+    
+def delete_file(context):
+    try:
+        response = context.s3.delete_object(
+            Bucket= context.bucket,
+            Key= context.userID + '/' + context.workspace + '/' + context.filename)
+    except ClientError as e:
+        logging.error(e)
+        return None
     return response
