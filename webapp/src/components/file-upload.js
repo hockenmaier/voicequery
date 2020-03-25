@@ -48,18 +48,17 @@ class FileUpload extends React.Component {
             workspace: workspace,
             filename: file.name,
             filetype: fileType,
-            option: 'geturl',
         },
         )
         .then(function(response){
-            console.log('transcribe get presigned url http successful');
+            console.log('save-dataset get presigned url http successful');
             console.log(response);
             let presignedUrl = response.data.presignedurl;
             let fileName = response.data.fileName;
             self.uploadFile(file,presignedUrl,fileName,fileType);
         })
         .catch(function(error){
-            console.log('transcribe get presigned url http error');
+            console.log('save-dataset get presigned url http error');
             console.log(error);
         });
     }

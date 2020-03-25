@@ -36,6 +36,29 @@ class FileList extends React.Component {
         });
     }
     
+    deleteWorkSpace = (key, workspace, filename) =>{
+        console.log('Sending call to delete workspace '+ key +' to save-dataset API')
+        var self = this;
+        
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-dataset', {
+            option: 'delete',
+            workspace: workspace,
+            filename: filename,
+            filetype:'unknown',
+            // filetype: fileType,
+        },
+        )
+        .then(function(response){
+            console.log('save-dataset delete http successful');
+            console.log(response);
+            self.getFileList();
+        })
+        .catch(function(error){
+            console.log('save-dataset delete http error');
+            console.log(error);
+        });
+    }
+    
     renderFileButton(id,object){
         // console.log(id)
         // console.log(object.Key)
@@ -49,6 +72,7 @@ class FileList extends React.Component {
                     fullfilename = {s3KeySplit[2]}
                     selectWorkSpace = {this.props.selectWorkSpace}
                     uploadDate = {s3LastModifiedSplit[0]}
+                    deleteWorkSpace = {this.deleteWorkSpace}
                 />
                 <br/>
             </div>

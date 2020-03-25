@@ -76,8 +76,8 @@ def create_presigned_url(context, expiration=3600):
 def delete_file(context):
     try:
         response = context.s3.delete_object(
-            Params={'Bucket': context.bucket,
-                    'Key': context.userID + '/' + context.workspace + '/' + context.filename})
+                    Bucket= context.bucket,
+                    Key= context.userID + '/' + context.workspace + '/' + context.filename)
     except ClientError as e:
         logging.error(e)
         return None
