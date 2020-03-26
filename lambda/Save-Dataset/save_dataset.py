@@ -20,6 +20,7 @@ def save_dataset(workspace, filename, filetype, option):
         data['note'] = "presigned url successfully generated"
         print(data)
     elif (option == 'delete'):
+        copy_file_to_archive(context)
         delete_file(context)
         # TO DO:  Delete all associated data to workspace in DynamoDB
         data = {}
@@ -75,10 +76,10 @@ def create_presigned_url(context, expiration=3600):
     
 def copy_file_to_archive(context):
     try:
-        response = client.copy_object(
+        response = context.s3.copy_object(
             Bucket=context.bucket,
             Key='archive' + '/' + context.userID + '/' + context.workspace + '/' + context.filename,
-            CopySource={'Bucket':context.bucket, 'Key':context.userID + '/' + context.workspace + '/' + context.filename},
+            CopySource={'Bucket':context.bucket, 'Key':context.userID + '/' + context.workspace + '/' + context.filename})
     except ClientError as e:
         logging.error(e)
         return None
