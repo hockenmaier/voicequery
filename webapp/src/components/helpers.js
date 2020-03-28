@@ -72,5 +72,20 @@ export function initializeLayout(){
       'info-value': 90,
       'concept': 160,
     };
-    
+}
+
+export function randomSampleQuery(){
+    let queries = [];
+    queries.push("How many female employees are in Engineering?");
+    queries.push("What is the average salary of employees with doctorate's degrees?");
+    queries.push("What is the median tenure of manager level employees in the US?");
+    queries.push("How many entry-level employees were hired last April?");
+    queries.push("How many leads did Anne Smith generate in 2015?");
+    queries.push("Sum our spend on data storage services in Azure this year to date.");
+    queries.push("What was the total forecasted revenue for deals won in Europe in 2014?");
+    queries.push("What was the median revenue goal for startups in 2013?");
+    queries.push("How many enterprises are we working with in Asia?");
+    const randomInt = Math.floor(Math.random()*queries.length);
+    //console.log(queries[randomInt]);
+    return queries[randomInt];
 }

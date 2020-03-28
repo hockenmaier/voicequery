@@ -1,6 +1,6 @@
 import React from 'react';
 import Bubble from './bubble.js';
-import {lastDragStart, layout, initializeLayout} from './helpers.js';
+import {lastDragStart, layout, initializeLayout, randomSampleQuery} from './helpers.js';
 //import bubblesPayload from '../sample-payloads/bubblesv3.json';
 //import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
 import axios from 'axios';
@@ -909,11 +909,12 @@ class Space extends React.Component{
         };
         
         let recordText = (this.state.recording ? '🔴' : '🎤');
-        let workspaces = [
-        { value: '1', label: 'Workspace: 1' },
-        { value: '2', label: 'Workspace: 2' },
-        { value: '3', label: 'Workspace: 3' }]
-        ;
+        // let workspaces = [
+        // { value: '1', label: 'Workspace: 1' },
+        // { value: '2', label: 'Workspace: 2' },
+        // { value: '3', label: 'Workspace: 3' }]
+        // ;
+        let workspaces = [];
         let workspaceDropdownDisablingClass = (this.state.dataIsLoaded ? 'query-workspace-dropdown' : 'query-workspace-dropdown-disable')
         let workspaceDefault = (this.state.dataIsLoaded ? this.state.workspace : 'Loading: ' + this.state.workspace + '...');
         
@@ -1052,19 +1053,19 @@ class Space extends React.Component{
                     <button
                         className="query-workspace-dropdown-container"
                         style={{
-                            width: 130,
+                            width: layout.infoWidth,
                             height: 30,
                             top: layout.queryTop - 4,
                             right: layout.rightMargin,
                         }}
-                    ><Dropdown 
-                        className={workspaceDropdownDisablingClass}
-                        options={workspaces}
-                        onChange={this.handleWorkspaceSelect}
-                        value={workspaceDefault}
-                        placeholder="Workspace"
-                    ></Dropdown></button>
-                    
+                        ><Dropdown 
+                            className={workspaceDropdownDisablingClass}
+                            options={workspaces}
+                            onChange={this.handleWorkspaceSelect}
+                            value={workspaceDefault}
+                            placeholder="Workspace"
+                        ></Dropdown>
+                    </button>
                 </div>                
             </div>
         );
@@ -1124,22 +1125,6 @@ function getNextBubbleID(){
     const next = nextBubbleID;
     nextBubbleID++;
     return next.toString();
-}
-
-function randomSampleQuery(){
-    let queries = [];
-    queries.push("What was my highest utilization edit bay last month?");
-    queries.push("How many visitors came on campus during upfronts?");
-    queries.push("What was the most popular week to visit the lot last year?");
-    queries.push("Which grip assets are most often part of a subrental?");
-    queries.push("What was my AWS spend last month?");
-    queries.push("How much did I spend on data storage services in Azure this year to date?");
-    queries.push("Which department has the highest AWS spend per user?");
-    queries.push("Which department has the lowest revenue per square foot?");
-    queries.push("How well are the props purchased in the last year renting?");
-    const randomInt = Math.floor(Math.random()*queries.length);
-    //console.log(queries[randomInt]);
-    return queries[randomInt];
 }
 
 function resetCounts(){
