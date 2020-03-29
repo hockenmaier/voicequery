@@ -793,4 +793,6 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 
 # parse_query(None,"how many managers were hired 200 weeks ago?")
 
+# parse_query(None, "What was the total forecasted revenue for deals won in Europe in 2014?", "voicequery-user/Sales Pipeline Data Sample/SalesPipeline_QuickSightSample.csv")
+
 #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#

@@ -280,9 +280,16 @@ class Space extends React.Component{
         )
         .then(function(response){
             console.log('http successful')
-            //console.log(response)
-            self.updateBubbles(response.data)
-            self.updateQueryResponse(response.data)
+            console.log(response)
+            if ('errorMessage' in response.data){
+                console.log('error from parse query')
+                self.setState({
+                    queryResponseHTML: '<p>There was an error answering this question.. Oops!</p>',                
+                })
+            }else{
+                self.updateBubbles(response.data)
+                self.updateQueryResponse(response.data)
+            }
         })
         .catch(function(error){
             console.log('http error')
