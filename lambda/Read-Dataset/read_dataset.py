@@ -169,6 +169,50 @@ def package_JSON(context):
     #print(data)
     return data
     
+def calculate_and_store(context):
+    fields = []
+    columns = context.dataset.columns
+    length = len(context.dataset)
+    for col in columns:
+        datatype = get_datatype(context.dataset,col)
+        columnName = str(col)
+        unique = context.dataset[col].unique()
+        uniqueLength = len(unique)
+        cardinalityRatio = uniqueLength/length
+        fieldID = getFieldID(col,columnName,context)
+        put = context.table.put_item(
+            Item={
+                'item_id': fieldID,
+                'field_id': fieldID,
+                'text': columnName,
+                'storage_source': 'dataset',
+                'query_part': 'info-field',
+                'data_type': datatype,
+                'data_set_name': context.file_name,
+                'unique_value_count': uniqueLength,
+                'cardinality_ratio': str(cardinalityRatio),
+                'create_time': str(datetime.datetime.now()),
+                'workspace': context.workspace,
+            }
+        )
+        if (len(unique) < context.unique_value_limit):
+            for value in unique:
+                valueName = str(value)
+                valueID = getValueID(value,valueName,col,columnName,context)
+                put = context.table.put_item(
+                    Item={
+                        'item_id': valueID,
+                        'parent_field_id': fieldID,
+                        'parent_field_name': columnName,
+                        'text': valueName,
+                        'storage_source': 'dataset',
+                        'query_part': 'info-value',
+                        'data_set_name': context.file_name,
+                        'create_time': str(datetime.datetime.now()),
+                        'workspace': context.workspace,
+                    }
+                )
+    
 def store_fields(context):
     for col in context.jsonData['bubbles']:
         put = context.table.put_item(
