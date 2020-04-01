@@ -38,7 +38,7 @@ export function initializeLayout(){
     layout.conditionBottom = layout.roomBuffer;
     layout.conditionTop = window.innerHeight/2 + (layout.roomBuffer/2);
     
-    layout.infoWidth = 500;
+    layout.infoWidth = 300;
     
     layout.BubbleRoomLeftMargin = 20;
     // layout.BubbleRoomTopMargin = 30;
