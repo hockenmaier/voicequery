@@ -21,6 +21,8 @@ def get_workspace_data(table, workspace, getItems):
         chosenExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('subject') | Key('query_part').eq('condition'))
     elif (getItems == 'concepts'):
         chosenExpression=Key('workspace').eq(workspace) & Key('query_part').eq('concept')
+    elif (getItems == 'data'):
+        chosenExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('info-field') | Key('query_part').eq('info-value'))
     foundItems = table.scan(
         FilterExpression = chosenExpression
     )
@@ -40,6 +42,9 @@ def package_JSON(workspaceItems):
             bubble['closestMatchText'] = item['closest_match_text'] if ('closest_match_text' in item) else '' 
             bubble['bubbles'] = [] if ('bubbles' in item) else '' 
             bubble['concept_items'] = item['concept_items'] if ('concept_items' in item) else ''
+            bubble['dataType'] = item['datatype'] if ('datatype' in item) else ''
+            bubble['unique_value_count'] = item['unique_value_count'] if ('unique_value_count' in item) else ''
+            bubble['cardinality_ratio'] = item['cardinality_ratio'] if ('cardinality_ratio' in item) else ''
             bubbles.append(bubble)
         data['bubbles'] = bubbles
         return data   #.replace('\/', r'/')
