@@ -23,9 +23,10 @@ def read_dataset(workspace):
     context.table = setup_dynamo()
     context.available_data = get_workspace_data(context)
     
-    context.jsonData = package_JSON(context)
     delete_workspace_data(context)
-    store_fields(context)
+    calculate_and_store(context)
+    
+    context.jsonData = package_JSON(context)
     print(context.jsonData)
     return context.jsonData
 
@@ -133,39 +134,7 @@ def package_JSON(context):
     data = {}
     data['statusCode'] = '200'
     data['version'] = "0.0.1"
-    bubbles = []
-    columns = context.dataset.columns
-    length = len(context.dataset)
-    
-    for col in columns:
-        # print('column: ' + col)
-        datatype = get_datatype(context.dataset,col)
-        columnName = str(col)
-        unique = context.dataset[col].unique()
-        uniqueLength = len(unique)
-        cardinalityRatio = uniqueLength/length
-        fieldID = getFieldID(col,columnName,context)
-        bubble = {}
-        bubble['internalID'] = fieldID
-        bubble['name'] = columnName
-        bubble['type'] = 'info-field'
-        bubble['dataType'] = datatype
-        bubble['bubbles'] = []
-        bubble['unique_value_count'] = uniqueLength
-        bubble['cardinality_ratio'] = str(cardinalityRatio)
-        if (len(unique) < context.unique_value_limit):
-            for value in unique:
-                valueName = str(value)
-                # print('unique value: ' + value)
-                valueID = getValueID(value,valueName,col,columnName,context)
-                subBubble = {}
-                subBubble['internalID'] = valueID
-                subBubble['name'] = valueName
-                subBubble['type'] = 'info-value'
-                subBubble['bubbles'] = []
-                bubble['bubbles'].append(subBubble)
-        bubbles.append(bubble)
-    data['bubbles'] = bubbles
+    data['note'] = 'successfully read'
     #print(data)
     return data
     
@@ -213,38 +182,38 @@ def calculate_and_store(context):
                     }
                 )
     
-def store_fields(context):
-    for col in context.jsonData['bubbles']:
-        put = context.table.put_item(
-            Item={
-                'item_id': col['internalID'],
-                'field_id': col['internalID'],
-                'text': col['name'],
-                'storage_source': 'dataset',
-                'query_part': 'info-field',
-                'data_type': col['dataType'],
-                'data_set_name': context.file_name,
-                'unique_value_count': col['unique_value_count'],
-                'cardinality_ratio': col['cardinality_ratio'],
-                'create_time': str(datetime.datetime.now()),
-                'workspace': context.workspace,
-                # 'unique_values': col['bubbles'] #if col['bubbles'] else 'More than ' + str(unique_value_limit) + ' unique values',
-            }
-        )
-        for value in col['bubbles']:
-            put = context.table.put_item(
-                Item={
-                    'item_id': value['internalID'],
-                    'parent_field_id': col['internalID'],
-                    'parent_field_name': col['name'],
-                    'text': value['name'],
-                    'storage_source': 'dataset',
-                    'query_part': 'info-value',
-                    'data_set_name': context.file_name,
-                    'create_time': str(datetime.datetime.now()),
-                    'workspace': context.workspace,
-                }
-        )
+# def store_fields(context):
+#     for col in context.jsonData['bubbles']:
+#         put = context.table.put_item(
+#             Item={
+#                 'item_id': col['internalID'],
+#                 'field_id': col['internalID'],
+#                 'text': col['name'],
+#                 'storage_source': 'dataset',
+#                 'query_part': 'info-field',
+#                 'data_type': col['dataType'],
+#                 'data_set_name': context.file_name,
+#                 'unique_value_count': col['unique_value_count'],
+#                 'cardinality_ratio': col['cardinality_ratio'],
+#                 'create_time': str(datetime.datetime.now()),
+#                 'workspace': context.workspace,
+#                 # 'unique_values': col['bubbles'] #if col['bubbles'] else 'More than ' + str(unique_value_limit) + ' unique values',
+#             }
+#         )
+#         for value in col['bubbles']:
+#             put = context.table.put_item(
+#                 Item={
+#                     'item_id': value['internalID'],
+#                     'parent_field_id': col['internalID'],
+#                     'parent_field_name': col['name'],
+#                     'text': value['name'],
+#                     'storage_source': 'dataset',
+#                     'query_part': 'info-value',
+#                     'data_set_name': context.file_name,
+#                     'create_time': str(datetime.datetime.now()),
+#                     'workspace': context.workspace,
+#                 }
+#         )
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 

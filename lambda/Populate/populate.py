@@ -23,6 +23,8 @@ def get_workspace_data(table, workspace, getItems):
         chosenExpression=Key('workspace').eq(workspace) & Key('query_part').eq('concept')
     elif (getItems == 'data'):
         chosenExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('info-field') | Key('query_part').eq('info-value'))
+    elif (getItems == 'all'):
+        chosenExpression=Key('workspace').eq(workspace) & (Key('query_part').eq('info-field') | Key('query_part').eq('info-value') | Key('query_part').eq('subject') | Key('query_part').eq('condition') | Key('query_part').eq('concept'))
     foundItems = table.scan(
         FilterExpression = chosenExpression
     )
