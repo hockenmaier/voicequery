@@ -34,7 +34,7 @@ class Space extends React.Component{
     }
 
     initializeBubbles(){
-        this.getWorkspaceLexiconBubbles()
+        this.getAllBubbles()
     }
 
     sendParseLambdaBootMessage = () => {
@@ -54,71 +54,13 @@ class Space extends React.Component{
             console.log(error);
         });
     }
-
-    getWorkspaceLexiconBubbles = () => {
-        console.log('Sending populate http call with query: ' + this.state.workspace)
-        var self = this;
-        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/populate', {
-            workspace: this.state.workspace,
-            getItems: 'lexicon'
-        },
-        )
-        .then(function(response){
-            console.log('populate http successful')
-            //console.log(response)
-            self.updateBubbles(response.data)
-            self.getWorkspaceDataBubbles()
-        })
-        .catch(function(error){
-            console.log('populate http error')
-            console.log(error);
-        });
-    }
-
-    // getWorkspaceDataBubbles = () => {
-    //     console.log('Sending read-dataset http call with query: ' + this.state.workspace)
-    //     var self = this;
-    //     axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/read-dataset', {
-    //         workspace: this.state.workspace
-    //     },
-    //     )
-    //     .then(function(response){
-    //         console.log('read-dataset http successful')
-    //         //console.log(response)
-    //         self.updateBubbles(response.data)
-    //         self.getWorkspaceConceptBubbles()
-    //     })
-    //     .catch(function(error){
-    //         console.log('read-dataset http error')
-    //         console.log(error);
-    //     });
-    // }
     
-    getWorkspaceDataBubbles = () => {
+    getAllBubbles = () => {
         console.log('Sending populate http call with query: ' + this.state.workspace)
         var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/populate', {
             workspace: this.state.workspace,
-            getItems: 'data'
-        },
-        )
-        .then(function(response){
-            console.log('populate http successful')
-            self.updateBubbles(response.data)
-            self.getWorkspaceConceptBubbles()
-        })
-        .catch(function(error){
-            console.log('populate http error')
-            console.log(error);
-        });
-    }
-    
-    getWorkspaceConceptBubbles = () => {
-        console.log('Sending populate http call with query: ' + this.state.workspace)
-        var self = this;
-        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/populate', {
-            workspace: this.state.workspace,
-            getItems: 'concepts'
+            getItems: 'all'
         },
         )
         .then(function(response){
@@ -342,17 +284,8 @@ class Space extends React.Component{
     }
 
     createBubbleDeets(bubbles){
-        //initializing full bubbledeets object for each top-level bubble in incoming payload
         const newBubbles = bubbles.map((bub) => {
-            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,bub.bubbles,"","",bub.closestMatchId,bub.closestMatchText,"","",bub.concept_items,true);
-
-            //Now we do the same for sub-bubbles
-            if(newBub.bubbles.length > 0){
-                newBub.bubbles = newBub.bubbles.map((intBub) => {
-                    const newIntBub = new BubbleDeets(intBub.internalID,intBub.name,intBub.type,intBub.bubbles,newBub.id,newBub.frontendID,bub.closestMatchId,bub.closestMatchText,"","","",true);
-                    return newIntBub;
-                })
-            }
+            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,"","",bub.closestMatchId,bub.closestMatchText,"","",bub.concept_items,true);
             return newBub;
         })
         return newBubbles;
@@ -446,7 +379,7 @@ class Space extends React.Component{
         newbubsInConcept.push(dragged.id);
         newbubsInConcept.push(dropped.id);
 
-        const newConcept = new BubbleDeets('','Concept','concept',[],'','','','',newX,newY,newbubsInConcept,false)
+        const newConcept = new BubbleDeets('','Concept','concept','','','','',newX,newY,newbubsInConcept,false)
         newBubbles.unshift(newConcept);
         this.saveConcept(newConcept);
         // console.log(newBubbles);
@@ -456,8 +389,6 @@ class Space extends React.Component{
     }
 
     addToConcept = (draggedChild,droppedConcept, e) => {
-        //TODO
-        //Add logic to not be able to add different types of bubbles (conditions to subjects or more than one info)
         const typesInConcept = this.getConceptTypes(droppedConcept);
         const includesConditions = typesInConcept.includes('condition');
         const includesSubjects = typesInConcept.includes('subject');
@@ -614,12 +545,6 @@ class Space extends React.Component{
             if (newBubbles[topBubble].id === id){
                 newBubbles[topBubble].room = roomValue;
             }
-            // let subBubble; //TODO Delete later, relic of unflattened bubbles
-            // for (subBubble in newBubbles[topBubble].bubbles){
-            //     if (newBubbles[topBubble].bubbles[subBubble].id === id){
-            //         newBubbles[topBubble].bubbles[subBubble].room = roomValue;
-            //     }
-            // }
         }
         this.setState({
             bubbles: newBubbles
@@ -665,12 +590,6 @@ class Space extends React.Component{
         const newY = e.nativeEvent.clientY - lastDragStart.shiftY ; //SOLVED: I had a 3 px margin in my main bubble css class!
 
         const newBubbles = this.state.bubbles.map((bub) => {
-            // for (let inner = 0; inner < bub.bubbles.length; inner++){  //TODO Delete later, relic of unflattened bubbles
-            //     if (bub.bubbles[inner].id === lastDragStart.id.toString()){
-            //         bub.bubbles[inner].xLocation = newX;
-            //         bub.bubbles[inner].yLocation = newY;
-            //     }
-            // }
             if (bub.id === lastDragStart.id.toString()){
                 bub.xLocation = newX;
                 bub.yLocation = newY;
@@ -702,17 +621,6 @@ class Space extends React.Component{
                 outerBubble.yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(outerBubble.id)*nextYOffset);
                 // outerBubble.room = (concept.room == 'concept' ? 'work' : concept.room);
                 outerBubble.room = (concept.room);
-            }      
-            if (newBubbles[outer].bubbles.length > 0){
-                for (let inner = 0; inner < newBubbles[outer].bubbles.length; inner++){
-                    if(concept.bubsInConcept.includes(newBubbles[outer].bubbles[inner].id)){
-                        let innerBubble = newBubbles[outer].bubbles[inner];
-                        innerBubble.xLocation = X + this.getConceptXOffset(innerBubble.type);
-                        innerBubble.yLocation = Y + yOffset + (concept.bubsInConcept.indexOf(innerBubble.id)*nextYOffset);
-                        // innerBubble.room = (concept.room == 'concept' ? 'work' : concept.room);
-                        innerBubble.room = (concept.room);
-                    }   
-                }
             }
         };
         this.setState({
@@ -837,19 +745,6 @@ class Space extends React.Component{
         })
     }
     
-    // bubbleFlattener(bubbles){  //TODO delete later, relic of unflattened bubbles
-    //     let flatBubbles = [];        
-    //     for (let outer = 0; outer < bubbles.length; outer++){            
-    //         flatBubbles.push(bubbles[outer]);
-    //         if (bubbles[outer].bubbles.length > 0){
-    //             for (let inner = 0; inner < bubbles[outer].bubbles.length; inner++){
-    //                 flatBubbles.push(bubbles[outer].bubbles[inner]);
-    //             }
-    //         }
-    //     };
-    //     return flatBubbles;
-    // }
-    
     getBubbles(ids){
         let bubbleArray = [];
         let id;
@@ -937,7 +832,7 @@ class Space extends React.Component{
         };
         
         let recordText = (this.state.recording ? '🔴' : '🎤');
-        // let workspaces = [
+        // let workspaces = [ 
         // { value: '1', label: 'Workspace: 1' },
         // { value: '2', label: 'Workspace: 2' },
         // { value: '3', label: 'Workspace: 3' }]
@@ -1103,7 +998,7 @@ class Space extends React.Component{
 let bubblesInitialized = false;
 
 class BubbleDeets{
-    constructor(internalID,text,typetext,bubbles,parentBubbleId, parentFrontendID, closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept,fromServer){ //last three are not set on construction
+    constructor(internalID,text,typetext,parentBubbleId, parentFrontendID, closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept,fromServer){ //last three are not set on construction
         let room = typetext;
         let shrink = false;
         if(typetext === 'info-field' | typetext === 'info-value'){
@@ -1123,7 +1018,7 @@ class BubbleDeets{
         this.id = ((internalID === '') ? frontendID : internalID);
         this.text = text;
         this.type = typetext;        
-        this.bubbles = bubbles;
+        // this.bubbles = bubbles;
         this.parentBubbleId = parentBubbleId;
         this.parentFrontendID = parentFrontendID;
         this.room = room;
