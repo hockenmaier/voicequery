@@ -16,7 +16,7 @@ def save_dataset(workspace, filename, filetype, option):
         data['statusCode'] = '200'
         data['version'] = "0.0.1"
         data['presignedurl'] = url
-        data['fileName'] = context.userID + '/' + context.filename
+        data['fileName'] = context.userID+ '/' + workspace + '/' + context.filename
         data['note'] = "presigned url successfully generated"
         print(data)
     elif (option == 'delete'):

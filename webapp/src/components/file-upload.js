@@ -74,9 +74,27 @@ class FileUpload extends React.Component {
         .then((response) => {
             console.log('fetch upload file http response');
             console.log(response);
-            window.location.reload(true); //reload page so that new data appears
+            self.readAndAnalyzeDataset(fileName);
         });
     };
+    
+    readAndAnalyzeDataset = (fileName) => {
+        console.log('Sending read-dataset http call with query: ' + fileName)
+        var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/read-dataset', {
+            workspace: fileName
+        },
+        )
+        .then(function(response){
+            console.log('read-dataset http successful')
+            console.log(response)
+            window.location.reload(true); //reload page so that new data appears
+        })
+        .catch(function(error){
+            console.log('read-dataset http error')
+            console.log(error);
+        });
+    }
     
     handleWorkspaceNameChange = (e) => {
         this.setState({workspaceNameInput: e.target.value})
