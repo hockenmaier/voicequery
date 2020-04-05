@@ -491,15 +491,7 @@ def get_most_similar_info(lexObjects,dataSynsetPacks):
                             # if dataPack.text == 'Female':
                             #     print(str(lexSyn) + ' and ' + str(dataSyn) + ' similarity: ' + str(similarity))
                             
-def getLCS(synset1, synset2):
-    if (synset1 is not None) & (synset2 is not None):
-        LCSList = synset1.lowest_common_hypernyms(synset2)
-        if len(LCSList) > 0:
-            return LCSList[0]
-        else:
-            return None
-    else:
-        return None
+
     
 
 def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity,dataSyn,lexSyn):
@@ -510,8 +502,8 @@ def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity,data
             isGreatMatch = True
     if similarity > maxSimilarity:
         isClosestMatch = True
-        print('Found New closest match for ' + str(dataSyn) + ' and ' + str(lexSyn))
-        print('LCS is: ' + str(getLCS(dataSyn,lexSyn)))
+        # print('Found New closest match for ' + str(dataSyn) + ' and ' + str(lexSyn))
+        # print('LCS is: ' + str(getLCS(dataSyn,lexSyn)))
     if dataSyn:
         isWordNetMatch = True
         
@@ -806,6 +798,6 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 
 # parse_query(None,"how many managers were hired 200 weeks ago?")
 
-parse_query(None, "What was the total forecasted revenue for deals won in Europe in 2014?", "voicequery-user/Sales Pipeline Data Sample/SalesPipeline_QuickSightSample.csv")
+# parse_query(None, "What was the total forecasted revenue for deals won in Europe in 2014?", "voicequery-user/Sales Pipeline Data Sample/SalesPipeline_QuickSightSample.csv")
 
 #-----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
