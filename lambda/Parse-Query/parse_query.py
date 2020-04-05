@@ -1,5 +1,10 @@
 import json
+# import flask
+import sys
+import os
+sys.path.append(os.path.abspath("../Layers/custom_NLTK/python"))
 import nltk
+from nltk_vq_utils import getLCS, setup_nltk_data
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.treebank import TreebankWordDetokenizer
@@ -11,20 +16,14 @@ from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import datetime
 import contextlib, io
-# import sys
-# import os
-# sys.path.append(os.path.abspath("/nltk_contrib"))
-
 import timex_mod
 # import importlib
 # importlib.reload(timex_mod)
-
 # import jsonpickle
 import copy
 # from nltk.internals import find_jars_within_path
 # from nltk.tag.stanford import StanfordPOSTagger
 # from nltk.tag.senna import SennaTagger
-
 
 def lambda_handler(event, context):
     jsonData = parse_query(event, event['query'], event['workspace'])
@@ -237,18 +236,18 @@ def get_workspace_concepts(table, workspace):
     )
     return foundItems['Items']
 
-def setup_nltk_data():
-    #Adding temporary directory:
-    nltk.data.path += [str('/tmp/nltk_data')]
-    # print('nltk data paths:', nltk.data.path)
+# def setup_nltk_data():
+#     #Adding temporary directory:
+#     nltk.data.path += [str('/tmp/nltk_data')]
+#     # print('nltk data paths:', nltk.data.path)
     
-    #Now downloading data to temporary directory
-    nltk.download('punkt', download_dir='/tmp/nltk_data')
-    # nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
-    nltk.download('maxent_treebank_pos_tagger', download_dir='/tmp/nltk_data')
-    nltk.download('stopwords', download_dir='/tmp/nltk_data')
-    nltk.download('wordnet', download_dir='/tmp/nltk_data')
-    nltk.download('wordnet_ic', download_dir='/tmp/nltk_data')
+#     #Now downloading data to temporary directory
+#     nltk.download('punkt', download_dir='/tmp/nltk_data')
+#     # nltk.download('averaged_perceptron_tagger', download_dir='/tmp/nltk_data')
+#     nltk.download('maxent_treebank_pos_tagger', download_dir='/tmp/nltk_data')
+#     nltk.download('stopwords', download_dir='/tmp/nltk_data')
+#     nltk.download('wordnet', download_dir='/tmp/nltk_data')
+#     nltk.download('wordnet_ic', download_dir='/tmp/nltk_data')
 
 def get_timex_tags(query,context):
     tagText = timex_mod.tag(query)
@@ -502,8 +501,8 @@ def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity,data
             isGreatMatch = True
     if similarity > maxSimilarity:
         isClosestMatch = True
-        # print('Found New closest match for ' + str(dataSyn) + ' and ' + str(lexSyn))
-        # print('LCS is: ' + str(getLCS(dataSyn,lexSyn)))
+        print('Found New closest match for ' + str(dataSyn) + ' and ' + str(lexSyn))
+        print('LCS is: ' + str(getLCS(dataSyn,lexSyn)))
     if dataSyn:
         isWordNetMatch = True
         
