@@ -29,8 +29,8 @@ def get_lcs(synset1, synset2):
         return None
 
 def get_synset_combos(phrase1, phrase2):
-    synsets1 = wordnet.synsets(phrase1)
-    synsets2 = wordnet.synsets(phrase2)
+    synsets1 = wordnet.synsets(phrase1.replace(' ','_'))
+    synsets2 = wordnet.synsets(phrase2.replace(' ','_'))
     comboList = []
     for syn1 in synsets1:
         for syn2 in synsets2:
@@ -55,6 +55,10 @@ def get_common_concept_name(phrase1,phrase2):
     comboList = get_synset_combos(phrase1,phrase2)
     bestCombo = find_best_combo(comboList)
     commonName = get_lcs(bestCombo[0],bestCombo[1])
-    return commonName
+    # print(commonName.lemmas())
+    # print(commonName.lemmas()[0].name().replace('_',' '))
+    return commonName.lemmas()[0].name().replace('_',' ')
 
-print(get_common_concept_name('blue', 'sky'))
+# print(get_common_concept_name('library', 'high school'))
+# print(get_common_concept_name('doctorate', 'phd'))
+# print(get_common_concept_name('killer', 'criminal'))

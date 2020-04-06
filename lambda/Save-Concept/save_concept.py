@@ -1,3 +1,10 @@
+import sys
+import os
+sys.path.append(os.path.abspath("../Layers/custom_NLTK/python"))
+import nltk
+from nltk_vq_utils import setup_nltk_data, get_common_concept_name
+from nltk.corpus import wordnet
+from nltk.corpus import wordnet_ic
 import json
 import uuid
 import datetime
@@ -12,13 +19,17 @@ def save_concept(event):
     table = setup_dynamo()
     responseText = ''
     conceptID = ''
+    conceptName = ''
     if(event['internal_ID'] == ''): 
     # - CREATE ---- A blank ID denotes a brand new concept
+        setup_nltk_data()
+        conceptName = get_common_concept_name(event['concept_item_detail'][0]['text'],event['concept_item_detail'][1]['text'])
         conceptID = str(uuid.uuid4())
         put = table.put_item(
             Item=convert_empty_values({
                 'item_id': conceptID,
-                'text': event['text'],
+                # 'text': event['text'],
+                'text': conceptName,
                 'storage_source': 'save_concept',
                 'query_part': 'concept',
                 'create_time': str(datetime.datetime.now()),
@@ -67,7 +78,8 @@ def save_concept(event):
     return {
         'statusCode': 200,
         'body': json.dumps(responseText),
-        'conceptID': conceptID
+        'conceptID': conceptID,
+        'conceptName': conceptID
     }
 
 def setup_dynamo():

@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.append(os.path.abspath("../Layers/custom_NLTK/python"))
 import nltk
-from nltk_vq_utils import getLCS, setup_nltk_data
+from nltk_vq_utils import get_lcs, setup_nltk_data
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.treebank import TreebankWordDetokenizer
