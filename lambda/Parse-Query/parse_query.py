@@ -502,7 +502,7 @@ def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity,data
     if similarity > maxSimilarity:
         isClosestMatch = True
         print('Found New closest match for ' + str(dataSyn) + ' and ' + str(lexSyn))
-        print('LCS is: ' + str(getLCS(dataSyn,lexSyn)))
+        print('LCS is: ' + str(get_lcs(dataSyn,lexSyn)))
     if dataSyn:
         isWordNetMatch = True
         
@@ -523,13 +523,13 @@ def addToMatches(dataPack, lex, similarity, dataPacksMatched, maxSimilarity,data
             maxSimilarity = similarity
     return maxSimilarity
 
-def get_lcs(dataSyn,lexSyn):
-    sortedHypernyms = dataSyn.lowest_common_hypernyms(lexSyn)
-    # print('New Closest Match')
-    # print('data Synset: ' + str(dataSyn))
-    # print('lex Synset: ' + str(lexSyn))
-    # print(sortedHypernyms)
-    return sortedHypernyms[0]
+# def get_lcs(dataSyn,lexSyn):
+#     sortedHypernyms = dataSyn.lowest_common_hypernyms(lexSyn)
+#     # print('New Closest Match')
+#     # print('data Synset: ' + str(dataSyn))
+#     # print('lex Synset: ' + str(lexSyn))
+#     # print(sortedHypernyms)
+#     return sortedHypernyms[0]
 
 class PhraseAndPOS:
     def __init__(self):

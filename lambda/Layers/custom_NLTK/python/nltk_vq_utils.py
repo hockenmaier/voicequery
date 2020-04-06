@@ -18,7 +18,7 @@ def setup_nltk_data():
     nltk.download('wordnet', download_dir='/tmp/nltk_data')
     nltk.download('wordnet_ic', download_dir='/tmp/nltk_data')
     
-def getLCS(synset1, synset2):
+def get_lcs(synset1, synset2):
     if (synset1 is not None) & (synset2 is not None):
         LCSList = synset1.lowest_common_hypernyms(synset2)
         if len(LCSList) > 0:
@@ -27,3 +27,34 @@ def getLCS(synset1, synset2):
             return None
     else:
         return None
+
+def get_synset_combos(phrase1, phrase2):
+    synsets1 = wordnet.synsets(phrase1)
+    synsets2 = wordnet.synsets(phrase2)
+    comboList = []
+    for syn1 in synsets1:
+        for syn2 in synsets2:
+            comboList.append((syn1,syn2))
+    return comboList
+    
+def find_best_combo(comboList):
+    maxSimilarity = 0
+    bestCombo = None
+    semcor_ic = wordnet_ic.ic('ic-semcor.dat')
+    for combo in comboList:
+        similarity = 0
+        if(combo[0].pos() == combo[1].pos()):
+            if ((combo[0].pos() != 's') & (combo[0].pos() != 'a') & (combo[0].pos() != 'r')):
+                similarity = combo[0].res_similarity(combo[1], semcor_ic)
+        if similarity > maxSimilarity:
+            maxSimilarity = similarity
+            bestCombo = combo
+    return bestCombo
+
+def get_common_concept_name(phrase1,phrase2):
+    comboList = get_synset_combos(phrase1,phrase2)
+    bestCombo = find_best_combo(comboList)
+    commonName = get_lcs(bestCombo[0],bestCombo[1])
+    return commonName
+
+print(get_common_concept_name('blue', 'sky'))
