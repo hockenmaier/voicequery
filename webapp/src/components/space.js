@@ -82,6 +82,11 @@ class Space extends React.Component{
     saveConcept = (concept) => {
         console.log('Sending create/update save_concept http call with internal ID: ' + concept.internalID)
         var self = this;
+        // axios.interceptors.request.use(request => {
+        //   console.log('Starting Request', request)
+        //   return request
+        // })
+        console.log(this.getBubblesForAPI(concept.bubsInConcept))
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
