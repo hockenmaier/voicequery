@@ -86,7 +86,7 @@ class Space extends React.Component{
         //   console.log('Starting Request', request)
         //   return request
         // })
-        console.log(this.getBubblesForAPI(concept.bubsInConcept))
+        // console.log(this.getBubblesForAPI(concept.bubsInConcept))
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
@@ -98,7 +98,8 @@ class Space extends React.Component{
         .then(function(response){
             console.log('save_concept http successful')
             console.log(response);
-            self.updateInternalID(concept.id,response['data']['conceptID'])
+            self.updateInternalID(concept.id,response['data']['conceptID']);
+            self.updateText(concept.id, response['data']['conceptName']);
         })
         .catch(function(error){
             console.log('save_concept http error')
@@ -549,6 +550,19 @@ class Space extends React.Component{
         for (topBubble in newBubbles){
             if (newBubbles[topBubble].id === id){
                 newBubbles[topBubble].room = roomValue;
+            }
+        }
+        this.setState({
+            bubbles: newBubbles
+        })
+    }
+    
+    updateText(id,textValue){
+        let newBubbles = this.state.bubbles.slice(0);
+        let bubble;
+        for (bubble in newBubbles){
+            if (newBubbles[bubble].id === id){
+                newBubbles[bubble].text = textValue;
             }
         }
         this.setState({

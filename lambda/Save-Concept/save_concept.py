@@ -19,11 +19,13 @@ def save_concept(event):
     table = setup_dynamo()
     responseText = ''
     conceptID = ''
-    conceptName = ''
+    conceptName = event['text']
     if(event['internal_ID'] == ''): 
     # - CREATE ---- A blank ID denotes a brand new concept
         setup_nltk_data()
         conceptName = get_common_concept_name(event['concept_item_detail'][0]['text'],event['concept_item_detail'][1]['text'])
+        if conceptName == '':
+            conceptName = 'concept'
         conceptID = str(uuid.uuid4())
         put = table.put_item(
             Item=convert_empty_values({
@@ -79,7 +81,7 @@ def save_concept(event):
         'statusCode': 200,
         'body': json.dumps(responseText),
         'conceptID': conceptID,
-        'conceptName': conceptID
+        'conceptName': conceptName
     }
 
 def setup_dynamo():

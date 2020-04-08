@@ -54,10 +54,14 @@ def find_best_combo(comboList):
 def get_common_concept_name(phrase1,phrase2):
     comboList = get_synset_combos(phrase1,phrase2)
     bestCombo = find_best_combo(comboList)
-    commonName = get_lcs(bestCombo[0],bestCombo[1])
+    if bestCombo is not None:
+        commonName = get_lcs(bestCombo[0],bestCombo[1])
+        return commonName.lemmas()[0].name().replace('_',' ')
+    else:
+        return "concept"
     # print(commonName.lemmas())
     # print(commonName.lemmas()[0].name().replace('_',' '))
-    return commonName.lemmas()[0].name().replace('_',' ')
+    
 
 # print(get_common_concept_name('library', 'high school'))
 # print(get_common_concept_name('doctorate', 'phd'))
