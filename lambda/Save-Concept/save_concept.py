@@ -20,6 +20,15 @@ def save_concept(event):
     responseText = ''
     conceptID = ''
     conceptName = event['text']
+    if(event['internal_ID'] == '.'): 
+        setup_nltk_data()
+        return {
+        'statusCode': 200,
+        'body': 'save-concept booted successfully',
+        'conceptID': '',
+        'conceptName': ''
+        }
+    
     if(event['internal_ID'] == ''): 
     # - CREATE ---- A blank ID denotes a brand new concept
         setup_nltk_data()

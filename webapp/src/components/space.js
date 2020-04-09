@@ -29,7 +29,8 @@ class Space extends React.Component{
 
     componentDidMount(){
         this.resetAllAndInitialize(this.state.workspace); //This initializes Bubbles
-        this.sendParseLambdaBootMessage()
+        this.sendParseLambdaBootMessage();
+        this.sendSaveConceptLambdaBootMessage();
         bubblesInitialized = true;
     }
 
@@ -43,6 +44,27 @@ class Space extends React.Component{
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
             query: '.',
             workspace: this.state.workspace
+        },
+        )
+        .then(function(response){
+            console.log('http successful')
+            console.log(response)
+        })
+        .catch(function(error){
+            console.log('http error')
+            console.log(error);
+        });
+    }
+    
+    sendSaveConceptLambdaBootMessage = () => {
+        console.log('Sending lambda boot parse http call')
+        // var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
+            internal_ID: '.',
+            workspace: this.state.workspace,
+            text: '',
+            concept_item_detail: '',
+            concept_items: ''
         },
         )
         .then(function(response){
@@ -82,11 +104,12 @@ class Space extends React.Component{
     saveConcept = (concept) => {
         console.log('Sending create/update save_concept http call with internal ID: ' + concept.internalID)
         var self = this;
-        // axios.interceptors.request.use(request => {
-        //   console.log('Starting Request', request)
-        //   return request
-        // })
-        // console.log(this.getBubblesForAPI(concept.bubsInConcept))
+        // if (isNew === false) {
+        //     while (concept.internalID === ''){
+        //         console.log('concept hasnt saved, waiting 1 sec');
+        //         await new Promise(r => setTimeout(r, 1000));
+        //     }
+        // }
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
