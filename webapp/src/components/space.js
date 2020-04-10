@@ -57,7 +57,7 @@ class Space extends React.Component{
     }
     
     sendSaveConceptLambdaBootMessage = () => {
-        console.log('Sending lambda boot parse http call')
+        console.log('Sending lambda boot save-concept http call')
         // var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: '.',
