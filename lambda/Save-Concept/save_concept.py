@@ -20,19 +20,26 @@ def save_concept(event):
     responseText = ''
     conceptID = ''
     conceptName = event['text']
-    if(event['internal_ID'] == '.'): 
-        setup_nltk_data()
+    useHyponymNames = event['useHyponymNames']
+    if(event['internal_ID'] == '.'):
+        if (useHyponymNames):
+            setup_nltk_data()
+            conceptName = get_common_concept_name('test','assessment')
+        if conceptName == '':
+            conceptName = 'concept'
         return {
         'statusCode': 200,
         'body': 'save-concept booted successfully',
         'conceptID': '',
-        'conceptName': ''
+        'conceptName': '',
+        'useHyponymNames': useHyponymNames
         }
     
     if(event['internal_ID'] == ''): 
     # - CREATE ---- A blank ID denotes a brand new concept
-        setup_nltk_data()
-        conceptName = get_common_concept_name(event['concept_item_detail'][0]['text'],event['concept_item_detail'][1]['text'])
+        if (useHyponymNames):
+            setup_nltk_data()
+            conceptName = get_common_concept_name(event['concept_item_detail'][0]['text'],event['concept_item_detail'][1]['text'])
         if conceptName == '':
             conceptName = 'concept'
         conceptID = str(uuid.uuid4())
@@ -90,7 +97,8 @@ def save_concept(event):
         'statusCode': 200,
         'body': json.dumps(responseText),
         'conceptID': conceptID,
-        'conceptName': conceptName
+        'conceptName': conceptName,
+        'useHyponymNames': useHyponymNames
     }
 
 def setup_dynamo():

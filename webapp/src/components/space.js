@@ -64,7 +64,8 @@ class Space extends React.Component{
             workspace: this.state.workspace,
             text: '',
             concept_item_detail: '',
-            concept_items: ''
+            concept_items: '',
+            useHyponymNames: true
         },
         )
         .then(function(response){
@@ -104,18 +105,13 @@ class Space extends React.Component{
     saveConcept = (concept) => {
         console.log('Sending create/update save_concept http call with internal ID: ' + concept.internalID)
         var self = this;
-        // if (isNew === false) {
-        //     while (concept.internalID === ''){
-        //         console.log('concept hasnt saved, waiting 1 sec');
-        //         await new Promise(r => setTimeout(r, 1000));
-        //     }
-        // }
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
             text: concept.text,
             concept_item_detail: this.getBubblesForAPI(concept.bubsInConcept),
-            concept_items: concept.bubsInConcept
+            concept_items: concept.bubsInConcept,
+            useHyponymNames: true
         },
         )
         .then(function(response){
@@ -138,7 +134,8 @@ class Space extends React.Component{
             workspace: this.state.workspace,
             text: concept.text,
             concept_item_detail: '',
-            concept_items: ''
+            concept_items: '',
+            useHyponymNames: false
         },
         )
         .then(function(response){
