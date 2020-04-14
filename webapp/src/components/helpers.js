@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 //var lastDragStartId = '';
 export class lastDragStart{
     id = '';
@@ -88,4 +90,44 @@ export function randomSampleQuery(){
     const randomInt = Math.floor(Math.random()*queries.length);
     //console.log(queries[randomInt]);
     return queries[randomInt];
+}
+
+export function sendParseLambdaBootMessage(workspace){
+        console.log('Sending lambda boot parse http call')
+        // var self = this;
+        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
+            query: '.',
+            workspace: workspace
+        },
+        )
+        .then(function(response){
+            console.log('http successful')
+            console.log(response)
+        })
+        .catch(function(error){
+            console.log('http error')
+            console.log(error);
+        });
+    }
+    
+export function sendSaveConceptLambdaBootMessage(workspace){
+    console.log('Sending lambda boot save-concept http call')
+    // var self = this;
+    axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
+        internal_ID: '.',
+        workspace: workspace,
+        text: '',
+        concept_item_detail: '',
+        concept_items: '',
+        useHyponymNames: true
+    },
+    )
+    .then(function(response){
+        console.log('http successful')
+        console.log(response)
+    })
+    .catch(function(error){
+        console.log('http error')
+        console.log(error);
+    });
 }

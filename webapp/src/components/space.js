@@ -1,6 +1,6 @@
 import React from 'react';
 import Bubble from './bubble.js';
-import {lastDragStart, layout, initializeLayout, randomSampleQuery} from './helpers.js';
+import {lastDragStart, layout, initializeLayout, randomSampleQuery, sendParseLambdaBootMessage, sendSaveConceptLambdaBootMessage} from './helpers.js';
 //import bubblesPayload from '../sample-payloads/bubblesv3.json';
 //import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
 import axios from 'axios';
@@ -29,53 +29,13 @@ class Space extends React.Component{
 
     componentDidMount(){
         this.resetAllAndInitialize(this.state.workspace); //This initializes Bubbles
-        this.sendParseLambdaBootMessage();
-        this.sendSaveConceptLambdaBootMessage();
+        sendParseLambdaBootMessage(this.state.workspace);
+        sendSaveConceptLambdaBootMessage(this.state.workspace);
         bubblesInitialized = true;
     }
 
     initializeBubbles(){
         this.getAllBubbles()
-    }
-
-    sendParseLambdaBootMessage = () => {
-        console.log('Sending lambda boot parse http call')
-        // var self = this;
-        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/parse', {
-            query: '.',
-            workspace: this.state.workspace
-        },
-        )
-        .then(function(response){
-            console.log('http successful')
-            console.log(response)
-        })
-        .catch(function(error){
-            console.log('http error')
-            console.log(error);
-        });
-    }
-    
-    sendSaveConceptLambdaBootMessage = () => {
-        console.log('Sending lambda boot save-concept http call')
-        // var self = this;
-        axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
-            internal_ID: '.',
-            workspace: this.state.workspace,
-            text: '',
-            concept_item_detail: '',
-            concept_items: '',
-            useHyponymNames: true
-        },
-        )
-        .then(function(response){
-            console.log('http successful')
-            console.log(response)
-        })
-        .catch(function(error){
-            console.log('http error')
-            console.log(error);
-        });
     }
     
     getAllBubbles = () => {

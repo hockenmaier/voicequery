@@ -142,6 +142,7 @@ def calculate_and_store(context):
     fields = []
     columns = context.dataset.columns
     length = len(context.dataset)
+    fieldRank = 0
     for col in columns:
         datatype = get_datatype(context.dataset,col)
         columnName = str(col)
@@ -162,9 +163,13 @@ def calculate_and_store(context):
                 'cardinality_ratio': str(cardinalityRatio),
                 'create_time': str(datetime.datetime.now()),
                 'workspace': context.workspace,
+                'field_rank': fieldRank,
+                'valueRank': 0,
             }
         )
+        fieldRank += 1
         if (len(unique) < context.unique_value_limit):
+            valueRank=1
             for value in unique:
                 valueName = str(value)
                 valueID = getValueID(value,valueName,col,columnName,context)
@@ -179,8 +184,11 @@ def calculate_and_store(context):
                         'data_set_name': context.file_name,
                         'create_time': str(datetime.datetime.now()),
                         'workspace': context.workspace,
+                        'field_rank': fieldRank,
+                        'valueRank': valueRank,
                     }
                 )
+                valueRank += 1
     
 # def store_fields(context):
 #     for col in context.jsonData['bubbles']:
