@@ -190,38 +190,25 @@ def calculate_and_store(context):
                 )
                 valueRank += 1
     
-# def store_fields(context):
-#     for col in context.jsonData['bubbles']:
-#         put = context.table.put_item(
-#             Item={
-#                 'item_id': col['internalID'],
-#                 'field_id': col['internalID'],
-#                 'text': col['name'],
-#                 'storage_source': 'dataset',
-#                 'query_part': 'info-field',
-#                 'data_type': col['dataType'],
-#                 'data_set_name': context.file_name,
-#                 'unique_value_count': col['unique_value_count'],
-#                 'cardinality_ratio': col['cardinality_ratio'],
-#                 'create_time': str(datetime.datetime.now()),
-#                 'workspace': context.workspace,
-#                 # 'unique_values': col['bubbles'] #if col['bubbles'] else 'More than ' + str(unique_value_limit) + ' unique values',
-#             }
-#         )
-#         for value in col['bubbles']:
-#             put = context.table.put_item(
-#                 Item={
-#                     'item_id': value['internalID'],
-#                     'parent_field_id': col['internalID'],
-#                     'parent_field_name': col['name'],
-#                     'text': value['name'],
-#                     'storage_source': 'dataset',
-#                     'query_part': 'info-value',
-#                     'data_set_name': context.file_name,
-#                     'create_time': str(datetime.datetime.now()),
-#                     'workspace': context.workspace,
-#                 }
-#         )
+def re_read_all_datasets():
+    print('Retrieving list of datasets')
+    datasets = get_datasets()
+    for dataset in datasets['Contents']:
+        print('Reading Dataset ' + str(dataset))
+        try:
+            read_dataset(dataset['Key'])
+            print('success')
+        except:
+            print('failed to read dataset')
+
+def get_datasets():
+    userID = "voicequery-user"
+    bucket = "voicequery-datasets"
+    s3 = boto3.client('s3')
+    objects = s3.list_objects_v2(Bucket= bucket, Prefix= userID + '/')
+    print(objects)
+    return objects
+
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
@@ -229,3 +216,10 @@ def calculate_and_store(context):
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
+
+
+# # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
+
+re_read_all_datasets()
+
+# # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
