@@ -141,6 +141,7 @@ def package_JSON(context):
 def calculate_and_store(context):
     fields = []
     columns = context.dataset.columns
+    samples = context.dataset.sample(5)
     length = len(context.dataset)
     fieldRank = 0
     for col in columns:
@@ -220,6 +221,6 @@ def get_datasets():
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-re_read_all_datasets()
+# re_read_all_datasets()
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
