@@ -145,6 +145,10 @@ def calculate_and_store(context):
     length = len(context.dataset)
     fieldRank = 0
     for col in columns:
+        # print('printing data for ' + col)
+        columnIndex = columns.get_loc(col)
+        # print(samples.iloc[1,[columnIndex]])
+        # print(samples.iloc[1,[columnIndex]].values[0])
         datatype = get_datatype(context.dataset,col)
         columnName = str(col)
         unique = context.dataset[col].unique()
@@ -166,6 +170,11 @@ def calculate_and_store(context):
                 'workspace': context.workspace,
                 'field_rank': fieldRank,
                 'valueRank': 0,
+                'sample_1': samples.iloc[1,[columnIndex]].values[0],
+                'sample_2': samples.iloc[2,[columnIndex]].values[0],
+                'sample_3': samples.iloc[3,[columnIndex]].values[0],
+                'sample_4': samples.iloc[4,[columnIndex]].values[0],
+                'sample_5': samples.iloc[5,[columnIndex]].values[0],
             }
         )
         fieldRank += 1
@@ -213,7 +222,7 @@ def get_datasets():
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-# read_dataset('voicequery-user/prop test/Property Unused Assets Since 2005.xls')
+# read_dataset('voicequery-user/HR Activity Sample/HRData_QuickSightSample.csv')
 
 # # -----ENSURE ALL TEST RUNS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
@@ -221,6 +230,6 @@ def get_datasets():
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-# re_read_all_datasets()
+re_read_all_datasets()
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
