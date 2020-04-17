@@ -142,13 +142,15 @@ def calculate_and_store(context):
     fields = []
     columns = context.dataset.columns
     samples = context.dataset.sample(5)
+    # print('samples:')
+    # print(samples)
     length = len(context.dataset)
     fieldRank = 0
     for col in columns:
-        # print('printing data for ' + col)
         columnIndex = columns.get_loc(col)
-        # print(samples.iloc[1,[columnIndex]])
-        # print(samples.iloc[1,[columnIndex]].values[0])
+        # print('col: ' + str(col))
+        # print('sample 1: ' + str(samples.iloc[0,[columnIndex]].values[0]))
+        # print('sample 5: ' + str(samples.iloc[4,[columnIndex]].values[0]))
         datatype = get_datatype(context.dataset,col)
         columnName = str(col)
         unique = context.dataset[col].unique()
@@ -170,11 +172,11 @@ def calculate_and_store(context):
                 'workspace': context.workspace,
                 'field_rank': fieldRank,
                 'valueRank': 0,
-                'sample_1': samples.iloc[1,[columnIndex]].values[0],
-                'sample_2': samples.iloc[2,[columnIndex]].values[0],
-                'sample_3': samples.iloc[3,[columnIndex]].values[0],
-                'sample_4': samples.iloc[4,[columnIndex]].values[0],
-                'sample_5': samples.iloc[5,[columnIndex]].values[0],
+                'sample_1': str(samples.iloc[0,[columnIndex]].values[0]),
+                'sample_2': str(samples.iloc[1,[columnIndex]].values[0]),
+                'sample_3': str(samples.iloc[2,[columnIndex]].values[0]),
+                'sample_4': str(samples.iloc[3,[columnIndex]].values[0]),
+                'sample_5': str(samples.iloc[4,[columnIndex]].values[0]),
             }
         )
         fieldRank += 1
@@ -230,6 +232,6 @@ def get_datasets():
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
-re_read_all_datasets()
+# re_read_all_datasets()
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
