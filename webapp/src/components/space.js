@@ -50,6 +50,7 @@ class Space extends React.Component{
             console.log('populate http successful')
             //console.log(response)
             self.updateBubbles(response.data)
+            self.deleteMissingConceptBubbles()
             self.formatConceptBubbles()
             self.setState({
                 dataIsLoaded: true
@@ -60,6 +61,33 @@ class Space extends React.Component{
             console.log('populate http error')
             console.log(error);
         });
+    }
+    
+    deleteMissingConceptBubbles = () => {
+        let newBubbles = this.state.bubbles.slice(0);
+        let bubble;
+        for (bubble in newBubbles){
+            if (newBubbles[bubble].type === 'concept'){
+                let conceptBubID;
+                newBubbles[bubble].bubsInConcept = this.returnNewBubsInConcept(newBubbles[bubble].bubsInConcept)
+            }
+        }
+        this.setState({
+            bubbles: newBubbles
+        })
+    }
+    
+    returnNewBubsInConcept = (ids) => {
+        let newIDarray = [];
+        let id;
+        for (id in ids){
+            if (typeof this.getBubble(ids[id]) !== 'undefined'){
+                newIDarray.push(ids[id]);
+            }else{
+                console.log("One of the bubbles in this list is missing from the bubble array.  The most likely culprit is that the IDs of the info-fields and info-values in this dataset were reset somehow.  Delete the concept and re-create it to not see this error")
+            }
+        }
+        return newIDarray
     }
     
     saveConcept = (concept) => {
@@ -777,6 +805,8 @@ class Space extends React.Component{
 
     renderBubble(bub){
         const conceptBubbles = this.getBubbles(bub.bubsInConcept)
+        // console.log('concept is: ' + bub.text)
+        // console.log(conceptBubbles)
         const dataIsLoaded = this.state.dataIsLoaded
         return (
             <Bubble key={bub.id}

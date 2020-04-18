@@ -44,6 +44,8 @@ class Bubble extends React.Component{
         let item;
         if (this.props.room === 'concept'){
             for (item in this.props.conceptBubbles){
+                // console.log(item)
+                // console.log(this.props.conceptBubbles[item])
                 conceptTexts[this.props.conceptBubbles[item].type] += '\n' + this.props.conceptBubbles[item].text;
             }
         }
