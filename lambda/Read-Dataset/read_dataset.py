@@ -232,6 +232,8 @@ def get_datasets():
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
 
+# # Remember to comment out the "delete all workspaces" method before testing, and only put it back in when it's fully successful.  
+# # If this re-read fails, data will be deleted and Info IDs will be lost
 # re_read_all_datasets()
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
