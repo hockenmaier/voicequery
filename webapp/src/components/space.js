@@ -299,7 +299,7 @@ class Space extends React.Component{
 
     createBubbleDeets(bubbles){
         const newBubbles = bubbles.map((bub) => {
-            const newBub = new BubbleDeets(bub.internalID,bub.name,bub.type,"","",bub.closestMatchId,bub.closestMatchText,"","",bub.concept_items,true);
+            const newBub = new BubbleDeets(bub.internalID, bub.name, bub.type, bub.parent_field_id, bub.parent_field_name, "", bub.closestMatchId,bub.closestMatchText, "", "", bub.concept_items, true);
             return newBub;
         })
         return newBubbles;
@@ -393,7 +393,7 @@ class Space extends React.Component{
         newbubsInConcept.push(dragged.id);
         newbubsInConcept.push(dropped.id);
 
-        const newConcept = new BubbleDeets('','Concept','concept','','','','',newX,newY,newbubsInConcept,false)
+        const newConcept = new BubbleDeets('','Concept','concept','','','','','',newX,newY,newbubsInConcept,false)
         newBubbles.unshift(newConcept);
         this.saveConcept(newConcept);
         // console.log(newBubbles);
@@ -808,6 +808,7 @@ class Space extends React.Component{
         // console.log('concept is: ' + bub.text)
         // console.log(conceptBubbles)
         const dataIsLoaded = this.state.dataIsLoaded
+        let parentFieldName = bub.parentFieldName
         return (
             <Bubble key={bub.id}
                   internalID = {bub.internalId}
@@ -823,6 +824,7 @@ class Space extends React.Component{
                   room={bub.room}
                   conceptBubbles={conceptBubbles}
                   dataIsLoaded={dataIsLoaded}
+                  parentFieldName={parentFieldName}
             />
         );
     }
@@ -1027,7 +1029,7 @@ class Space extends React.Component{
 let bubblesInitialized = false;
 
 class BubbleDeets{
-    constructor(internalID,text,typetext,parentBubbleId, parentFrontendID, closestMatchId,closestMatchText, xLocation, yLocation,bubsInConcept,fromServer){ //last three are not set on construction
+    constructor(internalID, text, typetext, parentFieldID, parentFieldName, parentFrontendID, closestMatchId, closestMatchText, xLocation, yLocation, bubsInConcept, fromServer){ //last three are not set on construction
         let room = typetext;
         let shrink = false;
         if(typetext === 'info-field' | typetext === 'info-value'){
@@ -1048,7 +1050,8 @@ class BubbleDeets{
         this.text = text;
         this.type = typetext;        
         // this.bubbles = bubbles;
-        this.parentBubbleId = parentBubbleId;
+        this.parentFieldID = parentFieldID;
+        this.parentFieldName = parentFieldName;
         this.parentFrontendID = parentFrontendID;
         this.room = room;
         this.closestMatchId = closestMatchId;

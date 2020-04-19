@@ -63,7 +63,7 @@ export function initializeLayout(){
       'subject': 50,
       'condition': 50,
       'info-field': 40,
-      'info-value': 30,
+      'info-value': 36,
       'concept': 160,
     };
     
@@ -71,7 +71,7 @@ export function initializeLayout(){
       'subject': 120,
       'condition': 120,
       'info-field': 150,
-      'info-value': 90,
+      'info-value': 130,
       'concept': 160,
     };
 }

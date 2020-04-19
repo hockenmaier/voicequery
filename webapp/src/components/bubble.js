@@ -72,6 +72,9 @@ class Bubble extends React.Component{
         if (this.props.type === 'subject' | this.props.type === 'condition'){
             subText = '\n' + 'close: ' + this.props.closestMatchText
         }
+        if (this.props.type === 'info-value'){
+            subText = '\n' + '(' + this.props.parentFieldName + ')'
+        }
         //modify size based on dragover event
         const dragScale = 1.15;
         height = (this.state.dragover ? height*dragScale : height);
