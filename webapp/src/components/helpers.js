@@ -21,43 +21,39 @@ export function initializeLayout(){
     layout.queryTop = 15;
     layout.queryWidth = 700;
     
-    layout.queryResponseTop = layout.topbarHeight - 1;
-    layout.queryResponseWidth = 1000;
     layout.leftMargin = 20;
     layout.topMargin = layout.topbarHeight + 15;
     layout.rightMargin = 20;
     layout.bottomMargin = 20;
     layout.roomBuffer = 20;
     
+    //Information Panel
+    layout.infoHeight = (window.innerHeight - layout.topbarHeight) * .382;
+    
+    //Subject and Condition Panel
+    layout.lexTop = layout.topMargin + layout.infoHeight + layout.roomBuffer
     layout.subjectBottom = window.innerHeight/2 + (layout.roomBuffer/2);
     layout.lexWidth = 155;
     layout.queryLeft = layout.lexWidth + layout.leftMargin;
     layout.homeWidth = 70;
     layout.homeLeft = layout.leftMargin + 5;
     
-    layout.queryResponseLeft = layout.leftMargin + layout.lexWidth + layout.roomBuffer;
-    
     layout.conditionBottom = layout.roomBuffer;
     layout.conditionTop = window.innerHeight/2 + (layout.roomBuffer/2);
-    
-    layout.infoWidth = 300;
+    layout.conditionLeft = layout.leftMargin + layout.lexWidth + layout.roomBuffer
     
     layout.BubbleRoomLeftMargin = 20;
-    // layout.BubbleRoomTopMargin = 30;
     layout.BubbleRoomTopMargin = -30;
     layout.BubbleLeftMargin = layout.leftMargin + layout.BubbleRoomLeftMargin;
     layout.BubbleTopMargin = layout.topMargin + layout.BubbleRoomTopMargin;
     layout.conditionBubbleTopMargin = layout.conditionTop + layout.BubbleRoomTopMargin;
     
-    layout.InfoBubbleLeft = window.innerWidth - (layout.infoWidth + layout.rightMargin - layout.BubbleRoomLeftMargin);
+    //Concept Panel
+    layout.conceptWidth = 155;
     
-    // layout.conceptWidth = 180;
-    // layout.conceptHeight = 160;
-    
-    layout.conceptRoomHeight = 150;
-    layout.conceptRoomBottomMargin = layout.roomBuffer;
-    layout.conceptRoomRight = layout.infoWidth + layout.leftMargin + layout.roomBuffer;
-    layout.conceptRoomLeft = layout.lexWidth + layout.leftMargin + layout.roomBuffer;
+    // Answer Area
+    layout.queryResponseLeft = layout.leftMargin + layout.lexWidth*2 + layout.roomBuffer*2;
+    layout.queryResponseTop = layout.topMargin + layout.infoHeight + layout.roomBuffer;
     
     layout.bubbleHeight = {
       'subject': 50,

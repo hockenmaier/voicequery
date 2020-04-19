@@ -911,8 +911,8 @@ class Space extends React.Component{
                     onDragOver={this.handleWorkRoomDragOver}
                     style={{
                         width: layout.lexWidth,
-                        top: layout.topMargin,
-                        bottom: layout.subjectBottom,
+                        top: layout.lexTop,
+                        bottom: layout.bottomMargin,
                         left: layout.leftMargin,
                     }}
                     >
@@ -925,8 +925,8 @@ class Space extends React.Component{
                     style={{
                         width: layout.lexWidth,
                         bottom: layout.bottomMargin,
-                        top: layout.conditionTop,
-                        left: layout.leftMargin,
+                        top: layout.lexTop,
+                        left: layout.conditionLeft,
                     }}
                     >
                     New Conditions
@@ -934,10 +934,10 @@ class Space extends React.Component{
                 </div>
                 <div className = "room info-room"
                     style={{
-                        width: layout.infoWidth,
-                        bottom: layout.bottomMargin,
+                        left: layout.leftMargin,
                         top: layout.topMargin,
                         right: layout.rightMargin,
+                        height: layout.infoHeight,
                     }}
                     >
                     Available Info
@@ -947,10 +947,10 @@ class Space extends React.Component{
                     onDrop={this.handleConceptRoomDrop.bind(this)}
                     onDragOver={this.handleWorkRoomDragOver}
                     style={{
-                        height: layout.conceptRoomHeight,
-                        bottom: layout.conceptRoomBottomMargin,
-                        right: layout.conceptRoomRight,
-                        left: layout.conceptRoomLeft,
+                        top: layout.lexTop,
+                        bottom: layout.bottomMargin,
+                        right: layout.rightMargin,
+                        width: layout.conceptWidth,
                     }}
                     >
                     Concept Storage
