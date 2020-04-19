@@ -21,9 +21,9 @@ export function initializeLayout(){
     layout.queryTop = 15;
     layout.queryWidth = 700;
     
-    layout.leftMargin = 20;
+    layout.leftMargin = 15;
     layout.topMargin = layout.topbarHeight + 15;
-    layout.rightMargin = 20;
+    layout.rightMargin = 15;
     layout.bottomMargin = 20;
     layout.roomBuffer = 20;
     

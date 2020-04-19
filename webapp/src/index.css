@@ -214,8 +214,8 @@ body {
   .concept-position { 
     position: static;
     margin-left: -30px;
-    text-indent: -50px;
-    margin-top: 0px;
+    text-indent: 100px;
+    margin-top: -10px;
   }
   
 /** CONCEPT BUBBLE STYLES **/
