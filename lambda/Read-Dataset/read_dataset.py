@@ -171,7 +171,7 @@ def calculate_and_store(context):
                 'create_time': str(datetime.datetime.now()),
                 'workspace': context.workspace,
                 'field_rank': fieldRank,
-                'valueRank': 0,
+                'value_rank': 0,
                 'sample_1': str(samples.iloc[0,[columnIndex]].values[0]),
                 'sample_2': str(samples.iloc[1,[columnIndex]].values[0]),
                 'sample_3': str(samples.iloc[2,[columnIndex]].values[0]),
@@ -179,7 +179,6 @@ def calculate_and_store(context):
                 'sample_5': str(samples.iloc[4,[columnIndex]].values[0]),
             }
         )
-        fieldRank += 1
         if (len(unique) < context.unique_value_limit):
             valueRank=1
             for value in unique:
@@ -197,10 +196,11 @@ def calculate_and_store(context):
                         'create_time': str(datetime.datetime.now()),
                         'workspace': context.workspace,
                         'field_rank': fieldRank,
-                        'valueRank': valueRank,
+                        'value_rank': valueRank,
                     }
                 )
                 valueRank += 1
+        fieldRank += 1
     
 def re_read_all_datasets():
     print('Retrieving list of datasets')
@@ -234,6 +234,6 @@ def get_datasets():
 
 # # Remember to comment out the "delete all workspaces" method before testing, and only put it back in when it's fully successful.  
 # # If this re-read fails, data will be deleted and Info IDs will be lost
-# re_read_all_datasets()
+re_read_all_datasets()
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#

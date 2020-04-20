@@ -299,7 +299,7 @@ class Space extends React.Component{
 
     createBubbleDeets(bubbles){
         const newBubbles = bubbles.map((bub) => {
-            const newBub = new BubbleDeets(bub.internalID, bub.name, bub.type, bub.parent_field_id, bub.parent_field_name, "", bub.closestMatchId,bub.closestMatchText, "", "", bub.concept_items, true);
+            const newBub = new BubbleDeets(bub.internalID, bub.name, bub.type, bub.parent_field_id, bub.parent_field_name, "", bub.closestMatchId,bub.closestMatchText, "", "", bub.concept_items, true, bub.field_rank, bub.value_rank);
             return newBub;
         })
         return newBubbles;
@@ -540,6 +540,32 @@ class Space extends React.Component{
         }
     }
     
+    handleInfoRoomDrop(e){
+        const draggedID = lastDragStart.id.toString();
+        const draggedType = this.getBubble(draggedID).type;
+        if (draggedType === 'info-field' | draggedType === 'info-value'){
+            this.updateLastDraggedRoom('info');
+            this.updateLocation(draggedID,draggedType);
+            this.removeFromConcept(lastDragStart.id.toString());
+        }
+    }
+    
+    updateLocation(id, type){
+        const fieldRank = this.getBubble(id).fieldRank;
+        const valueRank = this.getBubble(id).valueRank;
+        let newBubbles = this.state.bubbles.slice(0);
+        let topBubble;
+        for (topBubble in newBubbles){
+            if (newBubbles[topBubble].id === id){
+                newBubbles[topBubble].xLocation = getXLocation(type,fieldRank,valueRank);
+                newBubbles[topBubble].yLocation = getYLocation(type,fieldRank,valueRank);
+            }
+        }
+        this.setState({
+            bubbles: newBubbles
+        })
+    }
+    
     handleInputKeyPress = (e) => {
         let code = e.keyCode || e.which;
         if(code === 13) { //13 is the enter keycode
@@ -721,7 +747,6 @@ class Space extends React.Component{
     
     resetAllAndInitialize = (workspace) => {
         // console.log('props workspace is: ' + this.props.workspace)
-        resetCounts();
         this.setState({
             workspace: workspace,
             bubbles: [],
@@ -734,7 +759,6 @@ class Space extends React.Component{
     }
     
     resetAll = (workspace) => {
-        resetCounts();
         this.setState({
             workspace: workspace,
             bubbles: [],
@@ -805,8 +829,6 @@ class Space extends React.Component{
 
     renderBubble(bub){
         const conceptBubbles = this.getBubbles(bub.bubsInConcept)
-        // console.log('concept is: ' + bub.text)
-        // console.log(conceptBubbles)
         const dataIsLoaded = this.state.dataIsLoaded
         let parentFieldName = bub.parentFieldName
         return (
@@ -863,11 +885,6 @@ class Space extends React.Component{
         };
         
         let recordText = (this.state.recording ? '🔴' : '🎤');
-        // let workspaces = [ 
-        // { value: '1', label: 'Workspace: 1' },
-        // { value: '2', label: 'Workspace: 2' },
-        // { value: '3', label: 'Workspace: 3' }]
-        // ;
         let workspaces = [];
         let workspaceDropdownDisablingClass = (this.state.dataIsLoaded ? 'query-workspace-dropdown' : 'query-workspace-dropdown-disable')
         let workspaceDefault = (this.state.dataIsLoaded ? this.state.workspace : 'Loading: ' + this.state.workspace + '...');
@@ -933,6 +950,8 @@ class Space extends React.Component{
                     {conditionRoomBubbleArray.reverse()}
                 </div>
                 <div className = "room info-room"
+                    onDrop={this.handleInfoRoomDrop.bind(this)}
+                    onDragOver={this.handleWorkRoomDragOver}
                     style={{
                         left: layout.leftMargin,
                         top: layout.topMargin,
@@ -940,7 +959,6 @@ class Space extends React.Component{
                         height: layout.infoHeight,
                     }}
                     >
-                    Available Info
                     {infoRoomBubbleArray}
                 </div>
                 <div className = "room concept-room"
@@ -1029,19 +1047,14 @@ class Space extends React.Component{
 let bubblesInitialized = false;
 
 class BubbleDeets{
-    constructor(internalID, text, typetext, parentFieldID, parentFieldName, parentFrontendID, closestMatchId, closestMatchText, xLocation, yLocation, bubsInConcept, fromServer){ //last three are not set on construction
+    constructor(internalID, text, typetext, parentFieldID, parentFieldName, parentFrontendID, closestMatchId, closestMatchText, xLocation, yLocation, bubsInConcept, fromServer, fieldRank, valueRank){ //last three are not set on construction
         let room = typetext;
         let shrink = false;
         if(typetext === 'info-field' | typetext === 'info-value'){
             room = 'info';
         }
         if(typetext === 'concept'){
-            // if (fromServer){
-            //     room = 'concept';
-            //     shrink = true;
-            // }else{
-                room = 'work';
-            // }
+            room = 'work';
         }
         const frontendID = getNextBubbleID();
         this.internalID = internalID;
@@ -1057,6 +1070,8 @@ class BubbleDeets{
         this.closestMatchId = closestMatchId;
         this.closestMatchText = closestMatchText;
         this.shrink = shrink;
+        this.fieldRank = fieldRank;
+        this.valueRank = valueRank;
         if (bubsInConcept){
             this.bubsInConcept = bubsInConcept;
         }else{
@@ -1065,12 +1080,12 @@ class BubbleDeets{
         if(xLocation){
             this.xLocation = xLocation;
         }else{
-            this.xLocation = nextXLocation(this.type,this.frontendID,this.parentFrontendID);
+            this.xLocation = getXLocation(this.type,this.fieldRank,this.valueRank);
         }
         if(xLocation){
             this.yLocation = yLocation;
         }else{
-            this.yLocation = nextYLocation(this.type,this.frontendID,this.parentFrontendID);
+            this.yLocation = getYLocation(this.type,this.fieldRank,this.valueRank);
         }
     }
 }
@@ -1082,39 +1097,25 @@ function getNextBubbleID(){
     return next.toString();
 }
 
-function resetCounts(){
-    infoFieldCount = 0;
-}
-
-let infoFieldCount = 0;
-const infoValueRows = 3;
-
-function nextXLocation(type,id,parentId){
+function getXLocation(type,fieldRank,valueRank){
     if (type === 'subject' | type === 'condition'){
         return layout.BubbleLeftMargin;
     }else if (type === 'info-field'){
-        // return layout.InfoBubbleLeft;
-        return 0;
+        return fieldRank * (layout.bubbleWidth['info-field'] + layout.infoSpacing);
     }else if (type === 'info-value'){
-        // return 55 + (((parseInt(id)-parseInt(parentId)-1)%infoValueRows + 1)*105);
-        return 170;
+        return fieldRank * (layout.bubbleWidth['info-field'] + layout.infoSpacing);
     }else{
     return 300;
     }
 }
 
-function nextYLocation(type,id,parentId){
+function getYLocation(type,fieldRank,valueRank){
     if (type === 'info-field'){
-        const nextY = layout.BubbleTopMargin + infoFieldCount*55;
-        infoFieldCount++;
-        return nextY;
+        return layout.infoSpacing;
     }
     else if (type === 'info-value'){
-        const nextY = layout.BubbleTopMargin + (infoFieldCount-1)*55 + 5;
-        if((parseInt(id)-parseInt(parentId)-1)%infoValueRows === 2){
-            infoFieldCount++;
-        }
-        return nextY;
+        const fieldHeightAdjustment = 0 - layout.bubbleHeight['info-value'] + layout.bubbleHeight['info-field'] + layout.infoSpacing
+        return valueRank * (layout.bubbleHeight['info-value'] + layout.infoSpacing) + fieldHeightAdjustment
     }
     else{
         return 300;

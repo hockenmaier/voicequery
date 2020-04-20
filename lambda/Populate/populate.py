@@ -49,6 +49,8 @@ def package_JSON(workspaceItems):
             bubble['cardinality_ratio'] = item['cardinality_ratio'] if ('cardinality_ratio' in item) else ''
             bubble['parent_field_id'] = item['parent_field_id'] if ('parent_field_id' in item) else ''
             bubble['parent_field_name'] = item['parent_field_name'] if ('parent_field_name' in item) else ''
+            bubble['field_rank'] = item['field_rank'] if ('field_rank' in item) else ''
+            bubble['value_rank'] = item['value_rank'] if ('value_rank' in item) else ''
             bubbles.append(bubble)
         data['bubbles'] = bubbles
         return data   #.replace('\/', r'/')

@@ -29,6 +29,7 @@ export function initializeLayout(){
     
     //Information Panel
     layout.infoHeight = (window.innerHeight - layout.topbarHeight) * .382;
+    layout.infoSpacing = 3;
     
     //Subject and Condition Panel
     layout.lexTop = layout.topMargin + layout.infoHeight + layout.roomBuffer
@@ -67,7 +68,7 @@ export function initializeLayout(){
       'subject': 120,
       'condition': 120,
       'info-field': 150,
-      'info-value': 130,
+      'info-value': 150,
       'concept': 160,
     };
 }
