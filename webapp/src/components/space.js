@@ -850,6 +850,29 @@ class Space extends React.Component{
             />
         );
     }
+    
+    renderInfoGhosts(bub){
+        let parentFieldName = bub.parentFieldName
+        // return (
+        //     <Ghost key={bub.id}
+        //           internalID = {bub.internalId}
+        //           id= {bub.id}
+        //           name= {bub.text}
+        //           type= {bub.type}
+        //           xLocation= {bub.xLocation}
+        //           yLocation={bub.yLocation}
+        //           parentFieldName={parentFieldName}
+        //     />
+        // );
+    }
+    
+    renderInfoSamples(bub,index){
+        
+    }
+    
+    renderInfoDataTypes(bub){
+        
+    }
 
 
     render(){
@@ -863,8 +886,8 @@ class Space extends React.Component{
         let conditionRoomBubbleArray = [];
         let infoRoomBubbleArray = [];
         let conceptRoomBubbleArray = [];
-        // let flatBubbles = this.bubbleFlattener(this.state.bubbles);
-        let flatBubbles = this.state.bubbles.slice(0)
+        
+        let flatBubbles = this.state.bubbles.slice(0) //Loop through and render all bubble lists by room
         for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
             if (flatBubbles[bubblePos].room === 'work')
                 if (flatBubbles[bubblePos].type === 'concept'){
@@ -882,6 +905,18 @@ class Space extends React.Component{
                 if (flatBubbles[bubblePos].type === 'concept'){
                     conceptRoomBubbleArray.push(this.renderBubble(flatBubbles[bubblePos])); 
                 }
+        };
+        
+        let fieldGhostArray = [];
+        let valueGhostArray = [];
+        let sampleGhostArray = [];
+        let dataTypeGhostArray = [];
+        
+        for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
+            if (flatBubbles[bubblePos].type === 'info-field' | flatBubbles[bubblePos].type === 'info-value'){
+                fieldGhostArray.push(this.renderBubble(flatBubbles[bubblePos]));
+            }
+            //create other arrays
         };
         
         let recordText = (this.state.recording ? '🔴' : '🎤');
@@ -1115,7 +1150,8 @@ function getYLocation(type,fieldRank,valueRank){
     }
     else if (type === 'info-value'){
         const fieldHeightAdjustment = 0 - layout.bubbleHeight['info-value'] + layout.bubbleHeight['info-field'] + layout.infoSpacing
-        return valueRank * (layout.bubbleHeight['info-value'] + layout.infoSpacing) + fieldHeightAdjustment
+        const extraInfoSpacing = 80
+        return valueRank * (layout.bubbleHeight['info-value'] + layout.infoSpacing) + fieldHeightAdjustment + extraInfoSpacing
     }
     else{
         return 300;
