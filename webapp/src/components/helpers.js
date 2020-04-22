@@ -62,6 +62,8 @@ export function initializeLayout(){
       'info-field': 40,
       'info-value': 36,
       'concept': 160,
+      'data-type': 17,
+      'data-sample': 17,
     };
     
     layout.bubbleWidth = {
@@ -70,6 +72,8 @@ export function initializeLayout(){
       'info-field': 150,
       'info-value': 150,
       'concept': 160,
+      'data-type': 150,
+      'data-sample': 150,
     };
 }
 

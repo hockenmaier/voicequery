@@ -44,13 +44,16 @@ def package_JSON(workspaceItems):
             bubble['closestMatchText'] = item['closest_match_text'] if ('closest_match_text' in item) else '' 
             bubble['bubbles'] = [] if ('bubbles' in item) else '' 
             bubble['concept_items'] = item['concept_items'] if ('concept_items' in item) else ''
-            bubble['dataType'] = item['datatype'] if ('datatype' in item) else ''
+            bubble['data_type'] = item['data_type'] if ('data_type' in item) else ''
             bubble['unique_value_count'] = item['unique_value_count'] if ('unique_value_count' in item) else ''
             bubble['cardinality_ratio'] = item['cardinality_ratio'] if ('cardinality_ratio' in item) else ''
             bubble['parent_field_id'] = item['parent_field_id'] if ('parent_field_id' in item) else ''
             bubble['parent_field_name'] = item['parent_field_name'] if ('parent_field_name' in item) else ''
             bubble['field_rank'] = item['field_rank'] if ('field_rank' in item) else ''
             bubble['value_rank'] = item['value_rank'] if ('value_rank' in item) else ''
+            bubble['sample_1'] = item['sample_1'] if ('sample_1' in item) else ''
+            bubble['sample_2'] = item['sample_2'] if ('sample_2' in item) else ''
+            bubble['sample_3'] = item['sample_3'] if ('sample_3' in item) else ''
             bubbles.append(bubble)
         data['bubbles'] = bubbles
         return data   #.replace('\/', r'/')

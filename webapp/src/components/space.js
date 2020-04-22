@@ -300,7 +300,7 @@ class Space extends React.Component{
 
     createBubbleDeets(bubbles){
         const newBubbles = bubbles.map((bub) => {
-            const newBub = new BubbleDeets(bub.internalID, bub.name, bub.type, bub.parent_field_id, bub.parent_field_name, "", bub.closestMatchId,bub.closestMatchText, "", "", bub.concept_items, true, bub.field_rank, bub.value_rank);
+            const newBub = new BubbleDeets(bub.internalID, bub.name, bub.type, bub.parent_field_id, bub.parent_field_name, "", bub.closestMatchId,bub.closestMatchText, "", "", bub.concept_items, true, bub.field_rank, bub.value_rank, bub.data_type, bub.sample_1, bub.sample_2, bub.sample_3);
             return newBub;
         })
         return newBubbles;
@@ -858,25 +858,79 @@ class Space extends React.Component{
         let staticYLocation = getYLocation(bub.type,bub.fieldRank,bub.valueRank);
         
         return (
-            <Ghost key={bub.id}
-                  internalID = {bub.internalId}
-                  id= {bub.id}
-                  name= {bub.text}
-                  type= {bub.type}
-                  xLocation= {staticXLocation}
-                  yLocation= {staticYLocation}
-                  parentFieldName={parentFieldName}
-                  room='info'
+            <Ghost key={bub.id + 'ghost'}
+                id= {bub.id}
+                name= {bub.text}
+                type= {bub.type}
+                xLocation= {staticXLocation}
+                yLocation= {staticYLocation}
+                parentFieldName={parentFieldName}
+                room='info'
+                ghostType = {bub.type}
             />
         );
     }
     
-    renderInfoSample(bub,index){
+    renderInfoDataType(bub){
+        let parentFieldName = bub.parentFieldName
+        let staticXLocation = getXLocation(bub.type,bub.fieldRank,bub.valueRank);
+        let staticYLocation = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.infoSpacing;
         
+        return (
+            <Ghost key={bub.id + 'type'}
+                id= {bub.id}
+                name= {bub.data_type}
+                type= 'info-value'
+                xLocation= {staticXLocation}
+                yLocation= {staticYLocation}
+                parentFieldName={parentFieldName}
+                room='info'
+                ghostType = 'data-type'
+            />
+        );
     }
     
-    renderInfoDataType(bub){
+    renderInfoSamples(bub){
+        let parentFieldName = bub.parentFieldName
+        let staticXLocation = getXLocation(bub.type,bub.fieldRank,bub.valueRank);
+        let YLocation1 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.infoSpacing * 3;
+        let YLocation2 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] + layout.infoSpacing * 4;
+        let YLocation3 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] * 2 + layout.infoSpacing * 4;
         
+        return (
+            <div>
+                <Ghost key={bub.id + 'sample_1'}
+                    id= {bub.id}
+                    name= {bub.sample_1}
+                    type= 'info-value'
+                    xLocation= {staticXLocation}
+                    yLocation= {YLocation1}
+                    parentFieldName={parentFieldName}
+                    room='info'
+                    ghostType = 'data-sample'
+                />
+                <Ghost key={bub.id + 'sample_2'}
+                    id= {bub.id}
+                    name= {bub.sample_2}
+                    type= 'info-value'
+                    xLocation= {staticXLocation}
+                    yLocation= {YLocation2}
+                    parentFieldName={parentFieldName}
+                    room='info'
+                    ghostType = 'data-sample'
+                />
+                <Ghost key={bub.id + 'sample_3'}
+                    id= {bub.id}
+                    name= {bub.sample_3}
+                    type= 'info-value'
+                    xLocation= {staticXLocation}
+                    yLocation= {YLocation3}
+                    parentFieldName={parentFieldName}
+                    room='info'
+                    ghostType = 'data-sample'
+                />
+            </div>
+        );
     }
 
 
@@ -913,12 +967,14 @@ class Space extends React.Component{
         };
         
         let fieldGhostArray = [];
-        let sampleGhostArray = [];
-        let dataTypeGhostArray = [];
         
         for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
-            if (flatBubbles[bubblePos].type === 'info-field' | flatBubbles[bubblePos].type === 'info-value'){
+            if (flatBubbles[bubblePos].type === 'info-field'){
                 fieldGhostArray.push(this.renderInfoGhost(flatBubbles[bubblePos]));
+                fieldGhostArray.push(this.renderInfoDataType(flatBubbles[bubblePos]));
+                fieldGhostArray.push(this.renderInfoSamples(flatBubbles[bubblePos]));
+            }else if (flatBubbles[bubblePos].type === 'info-value'){
+                fieldGhostArray.push(this.renderInfoGhost(flatBubbles[bubblePos]))
             }
             //create other arrays
         };
@@ -1087,7 +1143,7 @@ class Space extends React.Component{
 let bubblesInitialized = false;
 
 class BubbleDeets{
-    constructor(internalID, text, typetext, parentFieldID, parentFieldName, parentFrontendID, closestMatchId, closestMatchText, xLocation, yLocation, bubsInConcept, fromServer, fieldRank, valueRank){ //last three are not set on construction
+    constructor(internalID, text, typetext, parentFieldID, parentFieldName, parentFrontendID, closestMatchId, closestMatchText, xLocation, yLocation, bubsInConcept, fromServer, fieldRank, valueRank, data_type, sample_1, sample_2, sample_3){ //last three are not set on construction
         let room = typetext;
         let shrink = false;
         if(typetext === 'info-field' | typetext === 'info-value'){
@@ -1112,6 +1168,10 @@ class BubbleDeets{
         this.shrink = shrink;
         this.fieldRank = fieldRank;
         this.valueRank = valueRank;
+        this.data_type = data_type;
+        this.sample_1 = sample_1;
+        this.sample_2 = sample_2;
+        this.sample_3 = sample_3;
         if (bubsInConcept){
             this.bubsInConcept = bubsInConcept;
         }else{
@@ -1155,7 +1215,7 @@ function getYLocation(type,fieldRank,valueRank){
     }
     else if (type === 'info-value'){
         const fieldHeightAdjustment = 0 - layout.bubbleHeight['info-value'] + layout.bubbleHeight['info-field'] + layout.infoSpacing
-        const extraInfoSpacing = 80
+        const extraInfoSpacing = layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] * 3 + layout.infoSpacing * 5
         return valueRank * (layout.bubbleHeight['info-value'] + layout.infoSpacing) + fieldHeightAdjustment + extraInfoSpacing
     }
     else{

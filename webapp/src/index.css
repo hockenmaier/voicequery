@@ -190,7 +190,7 @@ body {
   .info-field-ghost {
     background: transparent;
     border: 2px solid white;
-    border-radius: 12px 12px 2px 2px;
+    border-radius: 14px 14px 3px 3px;
     text-indent: -.5em;
   }
   
@@ -215,9 +215,25 @@ body {
   .info-value-ghost {
     background: transparent;
     border: 1.5px solid white;
-    border-radius: 5px;
+    border-radius: 7px;
     text-indent: -.5em;
-    /*transform: skew(-10deg);*/
+  }
+  
+  .data-type-ghost {
+    font-style: bold;
+    color: grey;
+    background: transparent;
+    border: 0px solid white;
+    border-radius: 7px;
+    text-indent: -.5em;
+  }
+  
+  .data-sample-ghost {
+    font-style: italic;
+    background: transparent;
+    border: 0px solid white;
+    border-radius: 7px;
+    text-indent: -.5em;
   }
 
 /** CONCEPT ROOM STYLES **/

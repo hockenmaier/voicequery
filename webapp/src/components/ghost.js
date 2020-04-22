@@ -8,16 +8,18 @@ class Ghost extends React.Component{
     
     render(){
         //set base size by type        
-        let height = layout.bubbleHeight[this.props.type];
-        let width = layout.bubbleWidth[this.props.type];
+        let height = layout.bubbleHeight[this.props.ghostType];
+        let width = layout.bubbleWidth[this.props.ghostType];
         //turn size into strings
         const stringHeight = (height + 'px');
         const stringWidth = (width + 'px');
         
         //set subtext
         let subText = ''
-        if (this.props.type === 'info-value'){
+        if (this.props.ghostType === 'info-value'){
             subText = '\n' + '(' + this.props.parentFieldName + ')'
+        }else{
+            subText = ''
         }
 
         //set location based on props
@@ -29,7 +31,7 @@ class Ghost extends React.Component{
 
         let typeBubble = this.props.room + '-position bubble ' + this.props.type //3 Styles here: room-position, bubble, and type
         let titleClass = typeBubble + '-title' //1 Style here: type-title
-        let typeGhost = this.props.room + '-position ghost ' + this.props.type + '-ghost'
+        let typeGhost = this.props.room + '-position ghost ' + this.props.ghostType + '-ghost'
         
         return(
             <button 
