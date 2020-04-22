@@ -893,9 +893,9 @@ class Space extends React.Component{
     renderInfoSamples(bub){
         let parentFieldName = bub.parentFieldName
         let staticXLocation = getXLocation(bub.type,bub.fieldRank,bub.valueRank);
-        let YLocation1 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.infoSpacing * 3;
-        let YLocation2 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] + layout.infoSpacing * 4;
-        let YLocation3 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] * 2 + layout.infoSpacing * 4;
+        let YLocation1 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.infoSpacing * 2;
+        let YLocation2 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] + layout.infoSpacing * 2;
+        let YLocation3 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] * 2 + layout.infoSpacing * 2;
         
         return (
             <div>
