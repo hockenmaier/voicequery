@@ -33,6 +33,7 @@ class Ghost extends React.Component{
         let titleClass = typeBubble + '-title' //1 Style here: type-title
         let typeGhost = this.props.room + '-position ghost ' + this.props.ghostType + '-ghost'
         
+        
         return(
             <button 
                 id = {this.props.id}

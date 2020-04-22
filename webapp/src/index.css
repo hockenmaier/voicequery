@@ -224,7 +224,7 @@ body {
     color: grey;
     background: transparent;
     border: 0px solid white;
-    border-radius: 7px;
+    border-radius: 0px;
     text-indent: -.5em;
   }
   
@@ -232,7 +232,9 @@ body {
     font-style: italic;
     background: transparent;
     border: 0px solid white;
-    border-radius: 7px;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+    border-radius: 0px;
     text-indent: -.5em;
   }
 

@@ -72,8 +72,8 @@ export function initializeLayout(){
       'info-field': 150,
       'info-value': 150,
       'concept': 160,
-      'data-type': 150,
-      'data-sample': 150,
+      'data-type': 150 + layout.infoSpacing,
+      'data-sample': 150 + layout.infoSpacing,
     };
 }
 
