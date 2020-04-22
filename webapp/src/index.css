@@ -45,6 +45,12 @@ body {
     isolation: isolate;
   }
   
+  .ghost {
+    padding: 0px;
+    outline: none;
+    isolation: isolate;
+  }
+  
   .room {
     background: var(--room-background);
     border-radius: 10px;
@@ -181,6 +187,13 @@ body {
     line-height: 1;
   }
   
+  .info-field-ghost {
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 12px 12px 2px 2px;
+    text-indent: -.5em;
+  }
+  
 /* INFO-VALUES */
   
   .info-value {
@@ -197,6 +210,14 @@ body {
     white-space: pre-wrap;
     display:block;
     line-height: 1;
+  }
+  
+  .info-value-ghost {
+    background: transparent;
+    border: 1.5px solid white;
+    border-radius: 5px;
+    text-indent: -.5em;
+    /*transform: skew(-10deg);*/
   }
 
 /** CONCEPT ROOM STYLES **/

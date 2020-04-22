@@ -1,5 +1,6 @@
 import React from 'react';
 import Bubble from './bubble.js';
+import Ghost from './ghost.js';
 import {lastDragStart, layout, initializeLayout, randomSampleQuery, sendParseLambdaBootMessage, sendSaveConceptLambdaBootMessage} from './helpers.js';
 //import bubblesPayload from '../sample-payloads/bubblesv3.json';
 //import bubbleUpdatePayload from './sample-payloads/bubbleUpdatev1.json'
@@ -851,26 +852,30 @@ class Space extends React.Component{
         );
     }
     
-    renderInfoGhosts(bub){
+    renderInfoGhost(bub){
         let parentFieldName = bub.parentFieldName
-        // return (
-        //     <Ghost key={bub.id}
-        //           internalID = {bub.internalId}
-        //           id= {bub.id}
-        //           name= {bub.text}
-        //           type= {bub.type}
-        //           xLocation= {bub.xLocation}
-        //           yLocation={bub.yLocation}
-        //           parentFieldName={parentFieldName}
-        //     />
-        // );
+        let staticXLocation = getXLocation(bub.type,bub.fieldRank,bub.valueRank);
+        let staticYLocation = getYLocation(bub.type,bub.fieldRank,bub.valueRank);
+        
+        return (
+            <Ghost key={bub.id}
+                  internalID = {bub.internalId}
+                  id= {bub.id}
+                  name= {bub.text}
+                  type= {bub.type}
+                  xLocation= {staticXLocation}
+                  yLocation= {staticYLocation}
+                  parentFieldName={parentFieldName}
+                  room='info'
+            />
+        );
     }
     
-    renderInfoSamples(bub,index){
+    renderInfoSample(bub,index){
         
     }
     
-    renderInfoDataTypes(bub){
+    renderInfoDataType(bub){
         
     }
 
@@ -908,13 +913,12 @@ class Space extends React.Component{
         };
         
         let fieldGhostArray = [];
-        let valueGhostArray = [];
         let sampleGhostArray = [];
         let dataTypeGhostArray = [];
         
         for (let bubblePos = 0; bubblePos < flatBubbles.length; bubblePos++){
             if (flatBubbles[bubblePos].type === 'info-field' | flatBubbles[bubblePos].type === 'info-value'){
-                fieldGhostArray.push(this.renderBubble(flatBubbles[bubblePos]));
+                fieldGhostArray.push(this.renderInfoGhost(flatBubbles[bubblePos]));
             }
             //create other arrays
         };
@@ -994,6 +998,7 @@ class Space extends React.Component{
                         height: layout.infoHeight,
                     }}
                     >
+                    {fieldGhostArray}
                     {infoRoomBubbleArray}
                 </div>
                 <div className = "room concept-room"
