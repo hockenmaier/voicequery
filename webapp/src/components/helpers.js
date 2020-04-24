@@ -56,6 +56,7 @@ export function initializeLayout(){
     layout.queryResponseLeft = layout.leftMargin + layout.lexWidth*2 + layout.roomBuffer*2;
     layout.queryResponseTop = layout.topMargin + layout.infoHeight + layout.roomBuffer;
     
+    //Bubble Sizes
     layout.bubbleHeight = {
       'subject': 50,
       'condition': 50,
@@ -75,6 +76,12 @@ export function initializeLayout(){
       'data-type': 150 + layout.infoSpacing,
       'data-sample': 150 + layout.infoSpacing,
     };
+    
+    // Sample Data and Data Type spacing
+    layout.dataTypeAdjustment = layout.bubbleHeight['info-field'] + layout.infoSpacing;
+    layout.sampleDataAdjustment1 = layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.infoSpacing * 2;
+    layout.sampleDataAdjustment2 = layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] + layout.infoSpacing * 2;
+    layout.sampleDataAdjustment3 = layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] * 2 + layout.infoSpacing * 2;
 }
 
 export function randomSampleQuery(){

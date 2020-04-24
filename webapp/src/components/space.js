@@ -874,7 +874,7 @@ class Space extends React.Component{
     renderInfoDataType(bub){
         let parentFieldName = bub.parentFieldName
         let staticXLocation = getXLocation(bub.type,bub.fieldRank,bub.valueRank);
-        let staticYLocation = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.infoSpacing;
+        let staticYLocation = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.dataTypeAdjustment;
         
         return (
             <Ghost key={bub.id + 'type'}
@@ -893,9 +893,9 @@ class Space extends React.Component{
     renderInfoSamples(bub){
         let parentFieldName = bub.parentFieldName
         let staticXLocation = getXLocation(bub.type,bub.fieldRank,bub.valueRank);
-        let YLocation1 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.infoSpacing * 2;
-        let YLocation2 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] + layout.infoSpacing * 2;
-        let YLocation3 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] * 2 + layout.infoSpacing * 2;
+        let YLocation1 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment1
+        let YLocation2 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment2
+        let YLocation3 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment3;
         
         return (
             <div>
