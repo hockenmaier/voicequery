@@ -30,8 +30,9 @@ class Ghost extends React.Component{
         const stringXLocation = xLocation + 'px';
 
         let typeBubble = this.props.room + '-position bubble ' + this.props.type //3 Styles here: room-position, bubble, and type
-        let titleClass = typeBubble + '-title' //1 Style here: type-title
+        
         let typeGhost = this.props.room + '-position ghost ' + this.props.ghostType + '-ghost'
+        let titleClass = this.props.ghostType + '-ghost' + '-title' //1 Style here: type-title
         
         
         return(

@@ -212,6 +212,8 @@ body {
     line-height: 1;
   }
   
+/* Ghosts and Samples */
+  
   .info-value-ghost {
     background: transparent;
     border: 1.5px solid white;
@@ -226,6 +228,7 @@ body {
     border: 0px solid white;
     border-radius: 0px;
     text-indent: -.5em;
+    text-align: left;
   }
   
   .data-sample-ghost {
@@ -235,7 +238,31 @@ body {
     border-right: 1px solid grey;
     border-bottom: 1px solid grey;
     border-radius: 0px;
-    text-indent: -.5em;
+  }
+  
+  .data-type-ghost-title {
+    color: #a6a6a6;
+    font-weight: 700;
+    font-size: 12px;
+    position: relative;
+    text-align: center;
+    white-space: pre-wrap;
+    display:block;
+    line-height: 1;
+  }
+  
+  .data-sample-ghost-title {
+    color: white;
+    font-size: 12px;
+    position: relative;
+    text-align: left;
+    white-space: pre-wrap;
+    display:block;
+    line-height: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-indent: .5em;
   }
 
 /** CONCEPT ROOM STYLES **/
