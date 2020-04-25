@@ -187,13 +187,6 @@ body {
     line-height: 1;
   }
   
-  .info-field-ghost {
-    background: transparent;
-    border: 2px solid white;
-    border-radius: 14px 14px 3px 3px;
-    text-indent: -.5em;
-  }
-  
 /* INFO-VALUES */
   
   .info-value {
@@ -214,11 +207,16 @@ body {
   
 /* Ghosts and Samples */
   
+  .info-field-ghost {
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 14px 14px 3px 3px;
+  }
+  
   .info-value-ghost {
     background: transparent;
     border: 1.5px solid white;
     border-radius: 7px;
-    text-indent: -.5em;
   }
   
   .data-type-ghost {

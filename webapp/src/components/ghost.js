@@ -28,11 +28,17 @@ class Ghost extends React.Component{
         //turn location into strings
         const stringYLocation = yLocation + 'px';
         const stringXLocation = xLocation + 'px';
-
-        let typeBubble = this.props.room + '-position bubble ' + this.props.type //3 Styles here: room-position, bubble, and type
         
-        let typeGhost = this.props.room + '-position ghost ' + this.props.ghostType + '-ghost'
-        let titleClass = this.props.ghostType + '-ghost' + '-title' //1 Style here: type-title
+        let typeGhost;
+        let titleClass;
+
+        if (this.props.ghostType === 'info-value' | this.props.ghostType == 'info-field'){
+            typeGhost = this.props.room + '-position bubble ' + this.props.type + '-ghost'
+            titleClass = this.props.ghostType + '-title' //1 Style here: type-title
+        }else{
+            typeGhost = this.props.room + '-position ghost ' + this.props.ghostType + '-ghost'
+            titleClass = this.props.ghostType + '-ghost' + '-title' //1 Style here: type-title
+        }
         
         
         return(
