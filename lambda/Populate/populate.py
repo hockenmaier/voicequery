@@ -44,7 +44,7 @@ def package_JSON(workspaceItems):
             bubble['closestMatchText'] = item['closest_match_text'] if ('closest_match_text' in item) else '' 
             bubble['bubbles'] = [] if ('bubbles' in item) else '' 
             bubble['concept_items'] = item['concept_items'] if ('concept_items' in item) else ''
-            bubble['data_type'] = item['data_type'] if ('data_type' in item) else ''
+            bubble['data_type'] = item['friendly_data_type'] if ('friendly_data_type' in item) else ''
             bubble['unique_value_count'] = item['unique_value_count'] if ('unique_value_count' in item) else ''
             bubble['cardinality_ratio'] = item['cardinality_ratio'] if ('cardinality_ratio' in item) else ''
             bubble['parent_field_id'] = item['parent_field_id'] if ('parent_field_id' in item) else ''

@@ -14,9 +14,6 @@ def lambda_handler(event, context):
 def read_dataset(workspace):
     context = create_context(workspace)
     context.file_name = workspace
-    # context.file_name = "sample-data/HRData_QuickSightSample.csv"
-    # context.file_name = "sample-data/index_2013.csv"
-    # context.file_name = "sample-data/SalesPipeline_QuickSightSample.csv"
     context.unique_value_limit = 15
     
     context.dataset = setup_S3_source(context)
@@ -80,6 +77,18 @@ def get_datatype(df,col):
             pass
     return dataType
     
+def get_friendly_datatype(datatype, isShortList):
+    if (datatype == 'string'):
+        return 'List of Text Values' if isShortList else 'Text'
+    if ('int' in datatype):
+        return 'List of Integer Numbers' if isShortList else 'Integer Number'
+    if ('float' in datatype):
+        return 'List of Decimal Numbers' if isShortList else 'Decimal Number'
+    if (datatype == 'bool'):
+        return 'Yes/No'
+    if (datatype == 'datetime'):
+        return 'List of Date/Times' if isShortList else 'Date/Time'
+    
 def map_numpy_datatypes(dtype):
     stringedType = str(dtype)
     if (stringedType == 'object'):
@@ -139,68 +148,72 @@ def package_JSON(context):
     return data
     
 def calculate_and_store(context):
-    fields = []
-    columns = context.dataset.columns
+    fields = context.dataset.columns
     samples = context.dataset.sample(5)
-    # print('samples:')
-    # print(samples)
     length = len(context.dataset)
     fieldRank = 0
-    for col in columns:
-        columnIndex = columns.get_loc(col)
-        # print('col: ' + str(col))
-        # print('sample 1: ' + str(samples.iloc[0,[columnIndex]].values[0]))
-        # print('sample 5: ' + str(samples.iloc[4,[columnIndex]].values[0]))
+    for col in fields:
+        columnIndex = fields.get_loc(col)
+        values = context.dataset[col].unique()
         datatype = get_datatype(context.dataset,col)
-        columnName = str(col)
-        unique = context.dataset[col].unique()
-        uniqueLength = len(unique)
+        isShortList = True if (len(values) < context.unique_value_limit) else False
+        friendlyDatatype = get_friendly_datatype(datatype, isShortList)
+        fieldName = str(col)
+        uniqueLength = len(values)
         cardinalityRatio = uniqueLength/length
-        fieldID = getFieldID(col,columnName,context)
-        put = context.table.put_item(
-            Item={
-                'item_id': fieldID,
-                'field_id': fieldID,
-                'text': columnName,
-                'storage_source': 'dataset',
-                'query_part': 'info-field',
-                'data_type': datatype,
-                'data_set_name': context.file_name,
-                'unique_value_count': uniqueLength,
-                'cardinality_ratio': str(cardinalityRatio),
-                'create_time': str(datetime.datetime.now()),
-                'workspace': context.workspace,
-                'field_rank': fieldRank,
-                'value_rank': 0,
-                'sample_1': str(samples.iloc[0,[columnIndex]].values[0]),
-                'sample_2': str(samples.iloc[1,[columnIndex]].values[0]),
-                'sample_3': str(samples.iloc[2,[columnIndex]].values[0]),
-                'sample_4': str(samples.iloc[3,[columnIndex]].values[0]),
-                'sample_5': str(samples.iloc[4,[columnIndex]].values[0]),
-            }
-        )
-        if (len(unique) < context.unique_value_limit):
+        fieldID = getFieldID(col,fieldName,context)
+        put_field(context, fieldID, fieldName, columnIndex, datatype, friendlyDatatype, uniqueLength, cardinalityRatio, fieldRank, samples)
+        if (isShortList):
             valueRank=1
-            for value in unique:
+            for value in values:
                 valueName = str(value)
-                valueID = getValueID(value,valueName,col,columnName,context)
-                put = context.table.put_item(
-                    Item={
-                        'item_id': valueID,
-                        'parent_field_id': fieldID,
-                        'parent_field_name': columnName,
-                        'text': valueName,
-                        'storage_source': 'dataset',
-                        'query_part': 'info-value',
-                        'data_set_name': context.file_name,
-                        'create_time': str(datetime.datetime.now()),
-                        'workspace': context.workspace,
-                        'field_rank': fieldRank,
-                        'value_rank': valueRank,
-                    }
-                )
+                valueID = getValueID(value,valueName,col,fieldName,context)
+                put_value(context,valueID,valueName,valueRank,fieldID,fieldName,fieldRank)
                 valueRank += 1
         fieldRank += 1
+        
+        
+def put_field(context, fieldID, fieldName, columnIndex, datatype, friendlyDatatype, uniqueLength, cardinalityRatio, fieldRank, samples):
+    put = context.table.put_item(
+        Item={
+            'item_id': fieldID,
+            'field_id': fieldID,
+            'text': fieldName,
+            'storage_source': 'dataset',
+            'query_part': 'info-field',
+            'data_type': datatype,
+            'friendly_data_type': friendlyDatatype,
+            'data_set_name': context.file_name,
+            'unique_value_count': uniqueLength,
+            'cardinality_ratio': str(cardinalityRatio),
+            'create_time': str(datetime.datetime.now()),
+            'workspace': context.workspace,
+            'field_rank': fieldRank,
+            'value_rank': 0,
+            'sample_1': str(samples.iloc[0,[columnIndex]].values[0]),
+            'sample_2': str(samples.iloc[1,[columnIndex]].values[0]),
+            'sample_3': str(samples.iloc[2,[columnIndex]].values[0]),
+            'sample_4': str(samples.iloc[3,[columnIndex]].values[0]),
+            'sample_5': str(samples.iloc[4,[columnIndex]].values[0]),
+        }
+    )
+        
+def put_value(context, valueID, valueName, valueRank, fieldID, fieldName, fieldRank):
+    put = context.table.put_item(
+        Item={
+            'item_id': valueID,
+            'parent_field_id': fieldID,
+            'parent_field_name': fieldName,
+            'text': valueName,
+            'storage_source': 'dataset',
+            'query_part': 'info-value',
+            'data_set_name': context.file_name,
+            'create_time': str(datetime.datetime.now()),
+            'workspace': context.workspace,
+            'field_rank': fieldRank,
+            'value_rank': valueRank,
+        }
+    )
     
 def re_read_all_datasets():
     print('Retrieving list of datasets')
@@ -234,6 +247,6 @@ def get_datasets():
 
 # # Remember to comment out the "delete all workspaces" method before testing, and only put it back in when it's fully successful.  
 # # If this re-read fails, data will be deleted and Info IDs will be lost
-re_read_all_datasets()
+# re_read_all_datasets()
 
 # # -----ENSURE ALL FUNCTIONS ARE COMMENTED OUT BEFORE DEPLOYING TO LAMBDA------------------#
