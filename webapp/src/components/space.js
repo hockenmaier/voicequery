@@ -329,15 +329,16 @@ class Space extends React.Component{
         
         if(dragged.type === 'concept'){
             return; //don't add concepts to other concepts or create concepts out of concepts
-        }   
-        else if(dragged.type === 'subject' && dropped.type === 'condition'){
-            console.log('subject-condition');
-            return;
         }
-        else if(dragged.type === 'condition' && dropped.type === 'subject'){
-            console.log('condition-subject');
-            return;            
-        }
+        // Add this section to disallow subject-condition concepts
+        // else if(dragged.type === 'subject' && dropped.type === 'condition'){
+        //     console.log('subject-condition');
+        //     return;
+        // }
+        // else if(dragged.type === 'condition' && dropped.type === 'subject'){
+        //     console.log('condition-subject');
+        //     return;            
+        // }
         else if(dragged.type === 'info-value' && dropped.type === 'info-field'){
             console.log('value-field');
             return;
@@ -408,16 +409,17 @@ class Space extends React.Component{
         const includesConditions = typesInConcept.includes('condition');
         const includesSubjects = typesInConcept.includes('subject');
         const includesInfo = (typesInConcept.includes('info-value') | typesInConcept.includes('info-field'));
-
-        if (draggedChild.type === 'subject' && includesConditions){
-            console.log('No subject-condition addition');
-            return;
-        }
-        else if (draggedChild.type === 'condition' && includesSubjects){
-            console.log('No condition-subject addition');
-            return;
-        }
-        else if (((draggedChild.type === 'info-value')|(draggedChild.type === 'info-field')) && includesInfo){
+        
+        // Add this section to disallow subject-condition concepts
+        // if (draggedChild.type === 'subject' && includesConditions){
+        //     console.log('No subject-condition addition');
+        //     return;
+        // }
+        // else if (draggedChild.type === 'condition' && includesSubjects){
+        //     console.log('No condition-subject addition');
+        //     return;
+        // }
+        if (((draggedChild.type === 'info-value')|(draggedChild.type === 'info-field')) && includesInfo){
             console.log('Too much info addition');
             return;
         }
