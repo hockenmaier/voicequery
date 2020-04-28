@@ -29,7 +29,7 @@ class FileButton extends React.Component {
                     onClick={this.clickWorkSpace}
                     style={{
                         width: window.innerWidth/2.5,
-                        height: window.innerHeight/20,
+                        height: 45,
                     }}
                     ><span className='workspaceText'>{this.props.workspace}</span>
                     <div className='fileNameText'>{this.props.fullfilename}</div><div className='dateText'>Uploaded  {this.props.uploadDate}</div>

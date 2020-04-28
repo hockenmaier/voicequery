@@ -29,22 +29,21 @@ class Ghost extends React.Component{
         const stringYLocation = yLocation + 'px';
         const stringXLocation = xLocation + 'px';
         
-        let typeGhost;
+        let classGhost;
         let titleClass;
 
         if (this.props.ghostType === 'info-value' | this.props.ghostType == 'info-field'){
-            typeGhost = this.props.room + '-position bubble ' + this.props.type + '-ghost'
+            classGhost = this.props.room + '-position bubble ' + this.props.type + '-ghost'
             titleClass = this.props.ghostType + '-title' //1 Style here: type-title
         }else{
-            typeGhost = this.props.room + '-position ghost ' + this.props.ghostType + '-ghost'
+            classGhost = this.props.room + '-position ghost ' + this.props.ghostType + '-ghost'
             titleClass = this.props.ghostType + '-ghost' + '-title' //1 Style here: type-title
         }
-        
         
         return(
             <button 
                 id = {this.props.id}
-                className = {typeGhost}      
+                className = {classGhost}      
                 draggable="false" 
                 style={{
                     height: stringHeight,
