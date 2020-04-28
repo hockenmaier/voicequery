@@ -898,12 +898,15 @@ class Space extends React.Component{
         let YLocation1 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment1
         let YLocation2 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment2
         let YLocation3 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment3;
+        let sample1 = ((bub.sample_1 === 'nan') ? 'NaN (empty)' : bub.sample_1)
+        let sample2 = ((bub.sample_2 === 'nan') ? 'NaN (empty)' : bub.sample_2)
+        let sample3 = ((bub.sample_3 === 'nan') ? 'NaN (empty)' : bub.sample_3)
         
         return (
             <div>
                 <Ghost key={bub.id + 'sample_1'}
                     id= {bub.id}
-                    name= {bub.sample_1}
+                    name= {sample1}
                     type= 'info-value'
                     xLocation= {staticXLocation}
                     yLocation= {YLocation1}
@@ -913,7 +916,7 @@ class Space extends React.Component{
                 />
                 <Ghost key={bub.id + 'sample_2'}
                     id= {bub.id}
-                    name= {bub.sample_2}
+                    name= {sample2}
                     type= 'info-value'
                     xLocation= {staticXLocation}
                     yLocation= {YLocation2}
@@ -923,7 +926,7 @@ class Space extends React.Component{
                 />
                 <Ghost key={bub.id + 'sample_3'}
                     id= {bub.id}
-                    name= {bub.sample_3}
+                    name= {sample3}
                     type= 'info-value'
                     xLocation= {staticXLocation}
                     yLocation= {YLocation3}

@@ -86,7 +86,6 @@ class FileList extends React.Component {
             let id;
             let sortedFileList = this.state.fileList.objects.Contents.sort((a, b) => (a.LastModified < b.LastModified) ? 1 : -1)
             for (id in sortedFileList){
-                console.log(id)
                 fileButtonArray.push(this.renderFileButton(id,sortedFileList[id]));
             }
         }
