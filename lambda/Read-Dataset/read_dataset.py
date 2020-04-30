@@ -158,7 +158,7 @@ def calculate_and_store(context):
         datatype = get_datatype(context.dataset,col)
         isShortList = True if (len(values) < context.unique_value_limit) else False
         friendlyDatatype = get_friendly_datatype(datatype, isShortList)
-        fieldName = str(col)
+        fieldName = str(col).strip()
         uniqueLength = len(values)
         cardinalityRatio = uniqueLength/length
         fieldID = getFieldID(col,fieldName,context)
