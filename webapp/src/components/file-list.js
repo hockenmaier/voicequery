@@ -65,8 +65,8 @@ class FileList extends React.Component {
         let s3KeySplit = object.Key.split("/")
         let s3LastModifiedSplit = object.LastModified.split(" ")
         return (
-            <div>
-                <FileButton key={id + 'filelist'}
+            <div key = {id + 'filelist'}>
+                <FileButton
                     s3objectKey = {object.Key}
                     workspace = {s3KeySplit[1]}
                     fullfilename = {s3KeySplit[2]}
