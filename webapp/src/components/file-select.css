@@ -95,8 +95,22 @@ body {
     outline: none;
   }
   
-  .file-delete{
+  .file-delete-reference{
     position: relative;
+    background: var(--file-button-color);
+    border: 0px solid var(--delete-color);
+    text-align: left;
+    font-size: 10px;
+    color: #CFCFCF;
+    font-weight: 600;
+    white-space: pre-wrap;
+    display:block;
+    line-height: 0;
+    user-select: none;
+  }
+  
+  .file-delete{
+    position: absolute;
     background: var(--file-button-color);
     border: 0px solid var(--delete-color);
     text-align: left;

@@ -33,19 +33,28 @@ class FileButton extends React.Component {
                     }}
                     ><span className='workspaceText'>{this.props.workspace}</span>
                     <div className='fileNameText'>{this.props.fullfilename}</div><div className='dateText'>Uploaded  {this.props.uploadDate}</div>
+                    
+                </button>
+                </Link>
+                <div className="file-delete-reference"
+                    style={{
+                        top: -43,
+                        left: 30,
+                        width: 0,
+                        height: 0,
+                    }}
+                    >
                     <Link to="/"
                         className="file-delete"
                         style={{
-                            top: -25,
-                            left: 2,
+                            top: 0,
+                            left: 0,
                             width: window.innerHeight/28,
                             height: window.innerHeight/28,
                         }}
                         ><img src={require('../img/small-delete-can.png')} alt="Delete File" onClick={this.clickDelete} />
                     </Link>
-                </button>
-                </Link>
-                
+                </div>
             </div>
         );
     }
