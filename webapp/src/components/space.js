@@ -8,7 +8,7 @@ import axios from 'axios';
 // import AudioRecorder from 'react-audio-recorder';
 // import WebAudioRecorder from 'web-audio-recorder-js';
 // import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder, WebAssemblyRecorder, MediaStreamRecorder} from 'recordrtc';
-import { RecordRTC, RecordRTCPromisesHandler, invokeSaveAsDialog, StereoAudioRecorder} from 'recordrtc';
+import {RecordRTCPromisesHandler, StereoAudioRecorder} from 'recordrtc';
 import Dropdown from 'react-dropdown';
 import { Link } from "react-router-dom";
 
@@ -69,7 +69,6 @@ class Space extends React.Component{
         let bubble;
         for (bubble in newBubbles){
             if (newBubbles[bubble].type === 'concept'){
-                let conceptBubID;
                 newBubbles[bubble].bubsInConcept = this.returnNewBubsInConcept(newBubbles[bubble].bubsInConcept)
             }
         }
@@ -117,7 +116,7 @@ class Space extends React.Component{
     
     saveDeleteConcept = (concept) => {
         console.log('Sending delete save_concept http call with internal ID: ' + concept.internalID)
-        var self = this;
+        // var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/save-concept', {
             internal_ID: concept.internalID,
             workspace: this.state.workspace,
@@ -406,8 +405,8 @@ class Space extends React.Component{
 
     addToConcept = (draggedChild,droppedConcept, e) => {
         const typesInConcept = this.getConceptTypes(droppedConcept);
-        const includesConditions = typesInConcept.includes('condition');
-        const includesSubjects = typesInConcept.includes('subject');
+        // const includesConditions = typesInConcept.includes('condition');
+        // const includesSubjects = typesInConcept.includes('subject');
         const includesInfo = (typesInConcept.includes('info-value') | typesInConcept.includes('info-field'));
         
         // Add this section to disallow subject-condition concepts
@@ -893,7 +892,6 @@ class Space extends React.Component{
     }
     
     renderInfoSamples(bub){
-        let YLocation1 = layout.sampleDataAdjustment1
         let sampleNames = [];
         sampleNames[0] = ((bub.sample_1 === 'nan') ? 'NaN (empty)' : bub.sample_1)
         sampleNames[1] = ((bub.sample_2 === 'nan') ? 'NaN (empty)' : bub.sample_2)

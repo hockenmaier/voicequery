@@ -80,7 +80,7 @@ class FileUpload extends React.Component {
     
     readAndAnalyzeDataset = (fileName) => {
         console.log('Sending read-dataset http call with query: ' + fileName)
-        var self = this;
+        // var self = this;
         axios.post('https://j43d6iu0j3.execute-api.us-west-2.amazonaws.com/Dev/vq/read-dataset', {
             workspace: fileName
         },

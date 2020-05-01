@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import Space from './space.js';
 import FileSelect from './file-select.js';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { Redirect } from 'react-router-dom';
 
 export default class App extends React.Component {

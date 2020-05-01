@@ -1,11 +1,7 @@
 import React from 'react';
-import {lastDragStart, layout} from './helpers.js';
+import {layout} from './helpers.js';
 
 class Ghost extends React.Component{
-    constructor(props){
-        super(props);
-    }
-    
     render(){
         //set base size by type        
         let height = layout.bubbleHeight[this.props.ghostType];
@@ -32,7 +28,7 @@ class Ghost extends React.Component{
         let classGhost;
         let titleClass;
 
-        if (this.props.ghostType === 'info-value' | this.props.ghostType == 'info-field'){
+        if (this.props.ghostType === 'info-value' | this.props.ghostType === 'info-field'){
             classGhost = this.props.room + '-position bubble ' + this.props.type + '-ghost'
             titleClass = this.props.ghostType + '-title' //1 Style here: type-title
         }else{

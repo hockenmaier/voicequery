@@ -3,9 +3,6 @@ import { Link } from "react-router-dom";
 import './file-select.css';
 
 class FileButton extends React.Component {
-    constructor(props){
-        super(props);
-    }
     
     clickWorkSpace = () => {
         this.props.selectWorkSpace(this.props.s3objectKey)
