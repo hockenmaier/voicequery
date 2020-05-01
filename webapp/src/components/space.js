@@ -893,49 +893,36 @@ class Space extends React.Component{
     }
     
     renderInfoSamples(bub){
+        let YLocation1 = layout.sampleDataAdjustment1
+        let sampleNames = [];
+        sampleNames[0] = ((bub.sample_1 === 'nan') ? 'NaN (empty)' : bub.sample_1)
+        sampleNames[1] = ((bub.sample_2 === 'nan') ? 'NaN (empty)' : bub.sample_2)
+        sampleNames[2] = ((bub.sample_3 === 'nan') ? 'NaN (empty)' : bub.sample_3)
+        let samples = [];
+        for (let iteration = 0; iteration < 3; iteration++){
+            samples.push(this.getInfoSample(bub,sampleNames[iteration],iteration))
+        }
+        // console.log(samples)
+        return samples;
+    }
+    
+    getInfoSample(bub, name, iteration){
         let parentFieldName = bub.parentFieldName
-        let staticXLocation = getXLocation(bub.type,bub.fieldRank,bub.valueRank);
-        let YLocation1 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment1
-        let YLocation2 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment2
-        let YLocation3 = getYLocation(bub.type,bub.fieldRank,bub.valueRank) + layout.sampleDataAdjustment3;
-        let sample1 = ((bub.sample_1 === 'nan') ? 'NaN (empty)' : bub.sample_1)
-        let sample2 = ((bub.sample_2 === 'nan') ? 'NaN (empty)' : bub.sample_2)
-        let sample3 = ((bub.sample_3 === 'nan') ? 'NaN (empty)' : bub.sample_3)
+        let yLocation = layout.sampleDataAdjustments[iteration]
+        let xLocation = getXLocation(bub.type,bub.fieldRank,bub.valueRank);
         
         return (
-            <div>
-                <Ghost key={bub.id + 'sample_1'}
-                    id= {bub.id}
-                    name= {sample1}
-                    type= 'info-value'
-                    xLocation= {staticXLocation}
-                    yLocation= {YLocation1}
-                    parentFieldName={parentFieldName}
-                    room='info'
-                    ghostType = 'data-sample'
-                />
-                <Ghost key={bub.id + 'sample_2'}
-                    id= {bub.id}
-                    name= {sample2}
-                    type= 'info-value'
-                    xLocation= {staticXLocation}
-                    yLocation= {YLocation2}
-                    parentFieldName={parentFieldName}
-                    room='info'
-                    ghostType = 'data-sample'
-                />
-                <Ghost key={bub.id + 'sample_3'}
-                    id= {bub.id}
-                    name= {sample3}
-                    type= 'info-value'
-                    xLocation= {staticXLocation}
-                    yLocation= {YLocation3}
-                    parentFieldName={parentFieldName}
-                    room='info'
-                    ghostType = 'data-sample'
-                />
-            </div>
-        );
+            <Ghost key={bub.id + 'sample_' + iteration}
+                id= {bub.id}
+                name= {name}
+                type= 'info-value'
+                xLocation= {xLocation}
+                yLocation= {yLocation}
+                parentFieldName={parentFieldName}
+                room='info'
+                ghostType = 'data-sample'
+            />
+        )
     }
 
 
@@ -977,7 +964,7 @@ class Space extends React.Component{
             if (flatBubbles[bubblePos].type === 'info-field'){
                 fieldGhostArray.push(this.renderInfoGhost(flatBubbles[bubblePos]));
                 fieldGhostArray.push(this.renderInfoDataType(flatBubbles[bubblePos]));
-                fieldGhostArray.push(this.renderInfoSamples(flatBubbles[bubblePos]));
+                fieldGhostArray = fieldGhostArray.concat(this.renderInfoSamples(flatBubbles[bubblePos]));
             }else if (flatBubbles[bubblePos].type === 'info-value'){
                 fieldGhostArray.push(this.renderInfoGhost(flatBubbles[bubblePos]))
             }

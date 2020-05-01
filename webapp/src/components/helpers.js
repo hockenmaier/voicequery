@@ -79,9 +79,10 @@ export function initializeLayout(){
     
     // Sample Data and Data Type spacing
     layout.dataTypeAdjustment = layout.bubbleHeight['info-field'] + layout.infoSpacing;
-    layout.sampleDataAdjustment1 = layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.infoSpacing * 2;
-    layout.sampleDataAdjustment2 = layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] + layout.infoSpacing * 2;
-    layout.sampleDataAdjustment3 = layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] * 2 + layout.infoSpacing * 2;
+    layout.sampleDataAdjustments = [];
+    layout.sampleDataAdjustments[0] = layout.infoSpacing + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.infoSpacing * 2;
+    layout.sampleDataAdjustments[1] = layout.infoSpacing + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] + layout.infoSpacing * 2;
+    layout.sampleDataAdjustments[2] = layout.infoSpacing + layout.bubbleHeight['info-field'] + layout.bubbleHeight['data-type'] + layout.bubbleHeight['data-sample'] * 2 + layout.infoSpacing * 2;
 }
 
 export function randomSampleQuery(){
