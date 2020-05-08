@@ -10,7 +10,7 @@ class FileButton extends React.Component {
     }
     
     clickDelete = () => {
-        let deleteOK = window.confirm("Are you sure you want to permanently delete " + this.props.workspace + " and all underlying data?");
+        let deleteOK = window.confirm("Are you sure you want to permanently delete \"" + this.props.workspace + "\" and all underlying data?");
         console.log('clicked delete')
         if (deleteOK){
             this.props.deleteWorkSpace(this.props.s3objectKey, this.props.workspace, this.props.fullfilename)
@@ -45,7 +45,7 @@ class FileButton extends React.Component {
                         className="file-delete"
                         style={{
                             top: 0,
-                            left: 0,
+                            left: 5,
                             width: window.innerHeight/28,
                             height: window.innerHeight/28,
                         }}
