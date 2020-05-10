@@ -26,8 +26,8 @@ class FileUpload extends React.Component {
             var mime = require('mime-types')
             var fileType = mime.lookup(this.state.newFile.name)
             console.log("type: " + fileType)
-            // let supported = ['text/csv','application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/json', 'application/ld+json', 'text/html', 'text/plain']
-            let supported = ['text/csv', 'application/json', 'application/ld+json', 'text/html', 'text/plain']
+            let supported = ['text/csv','application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/json', 'application/ld+json', 'text/html', 'text/plain']
+            // let supported = ['text/csv', 'application/json', 'application/ld+json', 'text/html', 'text/plain']
             if(supported.includes(fileType)){
                 let uploadOK = window.confirm("Upload " + this.state.newFile.name + " under the name \"" + this.state.workspaceNameInput + "\" for analysis?");
                 if (uploadOK){

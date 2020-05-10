@@ -17,6 +17,7 @@ def read_dataset(workspace):
     context.unique_value_limit = 15
     
     context.dataset = setup_S3_source(context)
+    print(context.dataset)
     context.table = setup_dynamo()
     context.available_data = get_workspace_data(context)
     
@@ -52,7 +53,8 @@ def readAnyType(contentType, body):
     if (contentType == 'text/csv'):
         return pd.read_csv(body)
     elif (contentType == 'application/vnd.ms-excel') | (contentType == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
-        return pd.read_excel(body)
+        print('fileType: ' + contentType)
+        return pd.read_excel(body, header=0, sheet_name=1)
     elif (contentType =='application/json')|(contentType == 'application/ld+json'):
         return pd.read_json(body)
     elif (contentType == 'text/html'):
@@ -223,8 +225,9 @@ def re_read_all_datasets():
         try:
             read_dataset(dataset['Key'])
             print('success')
-        except:
+        except Exception as inst:
             print('failed to read dataset')
+            print(inst)
 
 def get_datasets():
     userID = "voicequery-user"
