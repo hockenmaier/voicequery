@@ -777,7 +777,7 @@ def store_and_dedup_phrases(table, phraseAndPOSList, workspace, queryID, lexType
 # parse_query(None,'what is the number of female managers in engineering that have bs degrees?')
 # parse_query(None, 'What is the average salary of managers in the quality department who have MS degrees?')
 # parse_query(None,'what is the average tenure of managers who are women with a high school degree?')
-# parse_query(None,'what\'s the median tenure of employees in sales?')
+# parse_query(None,'what\'s the median tenure of employees in sales?',"voicequery-user/HR Activity Sample/HRData_QuickSightSample.csv")
 
 # parse_query(None, 'What was the median revenue in the US for won opportunities?')
 
